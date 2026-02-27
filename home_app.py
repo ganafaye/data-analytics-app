@@ -954,59 +954,6 @@ st.markdown("""
         <h2 class='author-name'>Gana Faye</h2>
         <div class='author-title'>Data Scientist & Passionné par l'IA</div>
 
-        <div class='author-stats'>
-            <div class='stat-item'>
-                <div class='stat-number'>5+</div>
-                <div class='stat-label'>Projets ML</div>
-            </div>
-            <div class='stat-item'>
-                <div class='stat-number'>10+</div>
-                <div class='stat-label'>Technologies</div>
-            </div>
-            <div class='stat-item'>
-                <div class='stat-number'>3</div>
-                <div class='stat-label'>Certifications</div>
-            </div>
-        </div>
-
-        <div class='skills-container'>
-            <span class='skill-tag'>Python</span>
-            <span class='skill-tag'>Machine Learning</span>
-            <span class='skill-tag'>Data Science</span>
-            <span class='skill-tag'>Streamlit</span>
-            <span class='skill-tag'>Computer Vision</span>
-            <span class='skill-tag'>ACP</span>
-            <span class='skill-tag'>Pandas</span>
-            <span class='skill-tag'>Scikit-learn</span>
-        </div>
-
-        <div class='social-links'>
-            <a href='#' target='_blank' class='social-link'>
-                <span class='social-icon'>🔗</span>
-                <span class='social-text'>LinkedIn</span>
-            </a>
-            <a href='#' target='_blank' class='social-link'>
-                <span class='social-icon'>🐙</span>
-                <span class='social-text'>GitHub</span>
-            </a>
-            <a href='mailto:gana.faye@email.com' class='social-link'>
-                <span class='social-icon'>📧</span>
-                <span class='social-text'>Email</span>
-            </a>
-        </div>
-
-        <div class='author-quote'>
-            <span class='quote-mark'>"</span>
-            La data est le nouveau pétrole, l'analyse est la raffinerie
-            <span class='quote-mark'>"</span>
-        </div>
-
-        <div class='author-footer'>
-            <span class='institution'>🏛️ Université de Droit · Master SI</span>
-            <span class='separator'>•</span>
-            <span class='promo'>Promotion 2026</span>
-        </div>
-    </div>
 """, unsafe_allow_html=True)
 
 # --- STATISTIQUES RAPIDES ---
