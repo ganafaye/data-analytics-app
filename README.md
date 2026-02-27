@@ -194,10 +194,7 @@ Chaque analyse fournit :
 
 ### Image
 
-🖼 Visualisation originale
-🖼 Reconstruction avec différents niveaux
-🖼 Carte de résidus
-🖼 Histogrammes d’intensité
+🖼 <img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/df468919-6b7f-402c-aa7f-3510a7cefdfa" />
 
 ---
 
@@ -217,29 +214,3 @@ Ce projet est distribué sous la licence MIT.
 Voir le fichier `LICENSE` pour plus de détails.
 
 ---
-
-```
-
----
-
-# 🎉 Résultat
-
-✔ README clair et structuré  
-✔ Explique toutes les fonctionnalités  
-✔ Inclut lien de déploiement  
-✔ Montre la méthodologie ACP  
-✔ Décrit l’organisation du code  
-✔ Explique CI/CD  
-✔ Professionnel académique + portfolio friendly
-
----
-
-Si tu veux, je peux aussi te générer :
-
-📌 🎨 Badges Markdown (Build / Deploy / Version)  
-📌 📊 GIF animé de démonstration  
-📌 📁 Exemple de dataset  
-📌 🧠 Documentation automatique des pages
-
-Souhaites-tu ajouter des **badges GitHub** au README ?
-```
