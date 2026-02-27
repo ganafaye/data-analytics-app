@@ -1,28 +1,9 @@
-Super 👍 Merci pour le lien de l’application :
-🔗 **[https://ganafaye-analytics-data.streamlit.app/](https://ganafaye-analytics-data.streamlit.app/)**
-
-On va donc **adapter le README.md** pour refléter précisément :
-
-✅ L’analyse des **datasets tabulaires**
-✅ La détection automatique de types de variables
-✅ L’analyse ACP sur datasets *et* images
-✅ L’intégration professionnelle CI/CD
-✅ Le lien de déploiement public
-
----
-
-# 📘 README.md – Version **PRO complète**
-
-Copie-colle ce contenu dans ton `README.md`.
-
----
-
-```markdown
 # 🚀 Data & Image Analytics Hub
 
 Bienvenue dans **Data & Image Analytics Hub** — une application web interactive pour l’analyse avancée des datasets et des images, avec **détection automatisée de types de variables**, **exploration statistique**, **Analyse en Composantes Principales (ACP/SVD)**, et **visualisation scientifique**.
 
 🔗 **App en ligne :**  
+
 👉 https://ganafaye-analytics-data.streamlit.app/
 
 ---
@@ -68,14 +49,6 @@ Pour les **images médicales ou standards** :
 
 L’Analyse en Composantes Principales transforme un jeu de variables potentiellement corrélées en un ensemble de composantes non corrélées :
 
-\[
-X_{centré} = X - \bar{X}
-\]
-\[
-Z = X_{centré} \cdot V
-\]
-
-où \(Z\) est le jeu de données projeté sur les axes optimaux.
 
 ---
 
