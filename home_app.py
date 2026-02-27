@@ -812,10 +812,10 @@ with st.sidebar:
             </div>
     """, unsafe_allow_html=True)
 
-    if st.button("📊 Lancer Data Quality", use_container_width=True, key="sidebar_data"):
+    if st.button("📊 Lancer Data Quality", width='stretch', key="sidebar_data"):
         st.switch_page("pages/analyse_data_traitement.py")
 
-    if st.button("🔬 Lancer PCA Vision", use_container_width=True, key="sidebar_pca"):
+    if st.button("🔬 Lancer PCA Vision", width='stretch', key="sidebar_pca"):
         st.switch_page("pages/app_acp_v2.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
@@ -905,7 +905,7 @@ with col1:
         </div>
     """, unsafe_allow_html=True)
 
-    if st.button("🚀 Lancer Data Quality Analyzer", key="btn_data", use_container_width=True):
+    if st.button("🚀 Lancer Data Quality Analyzer", key="btn_data", width='stretch'):
         st.switch_page("pages/analyse_data_traitement.py")
 
 with col2:
@@ -925,7 +925,7 @@ with col2:
         </div>
     """, unsafe_allow_html=True)
 
-    if st.button("🔬 Lancer PCA Vision Pro", key="btn_pca", use_container_width=True):
+    if st.button("🔬 Lancer PCA Vision Pro", key="btn_pca", width='stretch'):
         st.switch_page("pages/app_acp_v2.py")
 
 # --- SECTION RÉALISATEUR CORRIGÉE ---

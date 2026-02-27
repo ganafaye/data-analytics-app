@@ -1468,7 +1468,7 @@ if file_avant:
                 fig = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
                              title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
                 fig.update_layout(height=350)
-                st.plotly_chart(fig, use_container_width=True, key="plot_types")
+                st.plotly_chart(fig, width='stretch', key="plot_types")
 
             with col_v2:
                 if analyse_avant['missing_cols']:
@@ -1480,7 +1480,7 @@ if file_avant:
                                  title="Top 10 valeurs manquantes", color='Manquantes',
                                  color_continuous_scale='Reds')
                     fig.update_layout(height=350)
-                    st.plotly_chart(fig, use_container_width=True, key="plot_missing")
+                    st.plotly_chart(fig, width='stretch', key="plot_missing")
                 else:
                     st.info("Aucune valeur manquante")
 
@@ -1489,7 +1489,7 @@ if file_avant:
                 fig = px.imshow(corr_matrix, text_auto='.2f', aspect="auto",
                                 title="Matrice de corrélation", color_continuous_scale='RdBu')
                 fig.update_layout(height=500)
-                st.plotly_chart(fig, use_container_width=True, key="plot_corr")
+                st.plotly_chart(fig, width='stretch', key="plot_corr")
 
         with tab6:
             st.markdown("### 🔧 Recommandations de nettoyage")
@@ -1662,7 +1662,7 @@ if file_avant:
                 height=400
             )
 
-            st.plotly_chart(fig_progress, use_container_width=True, key="plot_comparison_radar")
+            st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
 
 else:
     col1, col2, col3 = st.columns([1, 2, 1])

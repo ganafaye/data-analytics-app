@@ -110,18 +110,18 @@ if uploaded_file:
         c1, c2 = st.columns(2)
         with c1:
             st.subheader("🖼️ Originale (N&B)")
-            st.image(img_gray, use_container_width=True, clamp=True)
+            st.image(img_gray, width='stretch', clamp=True)
         with c2:
             if not show_residue:
                 st.subheader(f"🔄 Reconstruction (n={n_comp})")
                 fig_rec = px.imshow(img_final, color_continuous_scale=cmap_choice if cmap_choice != "bone" else "gray")
                 fig_rec.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, b=0, t=0))
-                st.plotly_chart(fig_rec, use_container_width=True)
+                st.plotly_chart(fig_rec, width='stretch')
             else:
                 st.subheader("🔍 Résidus (Erreur)")
                 residue = cv2.absdiff(img_gray, img_final)
                 residue = cv2.equalizeHist(residue)  # Améliore la visibilité de l'erreur
-                st.image(residue, use_container_width=True)
+                st.image(residue, width='stretch')
 
         is_success, buffer = cv2.imencode(".jpg", img_final)
         st.download_button("💾 Télécharger la reconstruction", buffer.tobytes(), "reconstruction.jpg", "image/jpeg")
@@ -136,7 +136,7 @@ if uploaded_file:
                                      name="Variance Cumulée"))
         fig_var.add_vline(x=n_comp, line_dash="dash", line_color="orange", annotation_text="Position")
         fig_var.update_layout(xaxis_title="Nombre de composantes", yaxis_title="% Information", height=400)
-        st.plotly_chart(fig_var, use_container_width=True)
+        st.plotly_chart(fig_var, width='stretch')
 
     with tab3:
         st.subheader("🧪 Simulation de compression multi-niveaux")
@@ -146,7 +146,7 @@ if uploaded_file:
         for i, p in enumerate(paliers):
             with cols_p[i]:
                 img_p, _ = executer_pca(img_norm, p)
-                st.image(img_p, caption=f"n={p}", use_container_width=True)
+                st.image(img_p, caption=f"n={p}", width='stretch')
 
     with tab4:
         st.subheader("🔢 Exploration de la Structure Matricielle")
@@ -169,7 +169,7 @@ if uploaded_file:
 else:
     st.info("👈 Chargez une image pour activer le moteur d'analyse PCA.")
     st.image("https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&q=80&w=1000",
-             caption="Prêt pour l'analyse médicale", use_container_width=True)
+             caption="Prêt pour l'analyse médicale", width='stretch')
 # --- SECTION COURS / RÉSUMÉ (À placer tout en bas du fichier) ---
 st.write("##")
 st.divider()

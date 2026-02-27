@@ -335,7 +335,7 @@ with st.container():
         if show_original:
             st.dataframe(
                 df.head(10),
-                use_container_width=True,
+                width='stretch',
                 height=300
             )
 
@@ -393,7 +393,7 @@ with st.container():
                     font=dict(family="Space Grotesk")
                 )
 
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
             with col_viz2:
                 # Métriques
@@ -418,7 +418,7 @@ with st.container():
                     yaxis_title="Variance (%)"
                 )
 
-                st.plotly_chart(fig_var, use_container_width=True)
+                st.plotly_chart(fig_var, width='stretch')
 
                 # Carte de métriques
                 st.markdown(f"""
@@ -492,7 +492,7 @@ with st.container():
                 legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
             )
 
-            st.plotly_chart(fig_cumsum, use_container_width=True)
+            st.plotly_chart(fig_cumsum, width='stretch')
 
         with col_var2:
             # Recommandations
@@ -561,7 +561,7 @@ with st.container():
             paper_bgcolor='rgba(0,0,0,0)'
         )
 
-        st.plotly_chart(fig_loadings, use_container_width=True)
+        st.plotly_chart(fig_loadings, width='stretch')
 
         st.markdown("""
             <div class='info-box'>
@@ -637,7 +637,7 @@ if n_components >= 2:
             )
 
             fig_corr.update_layout(height=400)
-            st.plotly_chart(fig_corr, use_container_width=True)
+            st.plotly_chart(fig_corr, width='stretch')
 
         with col_comp2:
             # Matrice de corrélation des composantes (devrait être diagonale)
@@ -652,7 +652,7 @@ if n_components >= 2:
             )
 
             fig_corr_pca.update_layout(height=400)
-            st.plotly_chart(fig_corr_pca, use_container_width=True)
+            st.plotly_chart(fig_corr_pca, width='stretch')
 
         st.markdown("""
             <div class='info-box'>
