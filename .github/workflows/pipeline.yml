@@ -9,15 +9,26 @@ jobs:
   streamlit-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configuration Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Smoke Test Streamlit
+
+      - name: 📦 Installation des dépendances
         run: |
-          nohup streamlit run app/home_app.py & 
-          sleep 10
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🧪 Smoke Test Streamlit
+        run: |
+          # Correction : on lance home_app.py directement depuis la racine
+          nohup streamlit run home_app.py & 
+          
+          # Attente que le serveur démarre
+          sleep 15
+          
+          # Vérification que l'application répond
           curl --fail http://localhost:8501/_stcore/health
