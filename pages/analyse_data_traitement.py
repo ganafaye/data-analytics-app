@@ -18,178 +18,15 @@ st.set_page_config(
 
 # --- INTÉGRATION DES GOOGLE MATERIAL ICONS ---
 st.markdown("""
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-""", unsafe_allow_html=True)
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
 
-
-# --- FONCTION POUR LES ICÔNES GOOGLE ---
-def google_icon(name, variant="outlined", size=24, color=None, gradient=False, className=""):
-    """Génère une icône Google Material avec style"""
-    classes = f"material-icons-{variant} {className}"
-    if gradient:
-        classes += " gradient-icon"
-
-    style = f"font-size: {size}px; line-height: 1; vertical-align: middle;"
-    if color and not gradient:
-        style += f" color: {color};"
-
-    return f"<span class='{classes}' style='{style}'>{name}</span>"
-
-
-def icon_text(name, text, variant="outlined", size=20, color=None, spacing="8px"):
-    """Combine icône et texte"""
-    return f"""
-    <span style='display: inline-flex; align-items: center; gap: {spacing};'>
-        {google_icon(name, variant, size, color)}
-        <span>{text}</span>
-    </span>
-    """
-
-
-# --- MAPPING DES ICÔNES POUR L'APPLICATION ---
-ICON_MAP = {
-    # Navigation & Actions
-    "dashboard": "dashboard",
-    "upload": "cloud_upload",
-    "download": "cloud_download",
-    "save": "save",
-    "delete": "delete",
-    "edit": "edit",
-    "refresh": "refresh",
-    "search": "search",
-    "filter": "filter_alt",
-    "settings": "settings",
-    "add": "add",
-    "remove": "remove",
-    "close": "close",
-    "menu": "menu",
-
-    # Analytics & Data
-    "analytics": "analytics",
-    "chart": "bar_chart",
-    "pie_chart": "pie_chart",
-    "line_chart": "show_chart",
-    "table": "table_chart",
-    "data": "data_usage",
-    "database": "storage",
-    "insights": "insights",
-    "trending": "trending_up",
-    "correlation": "scatter_plot",
-    "distribution": "stacked_bar_chart",
-
-    # Types de variables
-    "numerical": "123",
-    "categorical": "category",
-    "datetime": "calendar_today",
-    "text": "text_fields",
-    "boolean": "check_box",
-    "target": "track_changes",
-    "feature": "token",
-    "id": "badge",
-
-    # Qualité des données
-    "quality": "verified",
-    "score": "stars",
-    "excellent": "star",
-    "good": "thumb_up",
-    "average": "remove",
-    "poor": "warning",
-    "missing": "highlight_off",
-    "duplicate": "content_copy",
-    "outlier": "emergency",
-    "error": "error",
-    "warning": "warning",
-    "info": "info",
-    "success": "check_circle",
-
-    # Actions de traitement
-    "clean": "cleaning_services",
-    "transform": "transform",
-    "normalize": "straighten",
-    "scale": "straighten",
-    "encode": "code",
-    "impute": "healing",
-    "drop": "delete_sweep",
-    "merge": "merge",
-    "split": "split",
-    "sort": "sort",
-    "group": "group_work",
-
-    # Machine Learning
-    "ml": "smart_toy",
-    "train": "fitness_center",
-    "predict": "preview",
-    "evaluate": "fact_check",
-    "pca": "scatter_plot",
-    "cluster": "bubble_chart",
-    "classification": "category",
-    "regression": "show_chart",
-
-    # Métriques
-    "rows": "table_rows",
-    "columns": "view_column",
-    "memory": "memory",
-    "percentage": "percent",
-    "count": "numbers",
-
-    # Statuts
-    "pending": "pending",
-    "processing": "autorenew",
-    "completed": "task_alt",
-    "failed": "error",
-    "paused": "pause_circle",
-
-    # UI Elements
-    "expand": "expand_more",
-    "collapse": "expand_less",
-    "more": "more_vert",
-    "fullscreen": "fullscreen",
-    "exit_fullscreen": "fullscreen_exit",
-    "home": "home",
-    "back": "arrow_back",
-    "forward": "arrow_forward",
-    "up": "arrow_upward",
-    "down": "arrow_downward",
-
-    # Fichiers
-    "file": "description",
-    "folder": "folder",
-    "csv": "table_chart",
-    "excel": "table_chart",
-    "json": "data_object",
-    "report": "summarize",
-    "export": "file_upload",
-    "import": "file_download",
-
-    # Divers
-    "calendar": "calendar_today",
-    "clock": "schedule",
-    "flag": "flag",
-    "pin": "push_pin",
-    "link": "link",
-    "lock": "lock",
-    "key": "key",
-    "email": "email",
-    "phone": "phone",
-    "location": "location_on",
-    "star": "star",
-    "favorite": "favorite",
-    "award": "emoji_events",
-}
-
-# --- STYLE CSS AMÉLIORÉ AVEC SUPPORT DES ICÔNES GOOGLE ---
-st.markdown("""
     <style>
-    /* Import des polices */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-
-    /* Style des icônes Google Material */
+    /* Style de base pour les icônes */
     .material-icons, .material-icons-outlined, .material-icons-round, .material-icons-sharp {
-        font-family: 'Material Icons';
+        font-family: 'Material Icons' !important;
         font-weight: normal;
         font-style: normal;
         font-size: 24px;
@@ -204,86 +41,24 @@ st.markdown("""
         text-rendering: optimizeLegibility;
         font-feature-settings: 'liga';
         vertical-align: middle;
-        transition: all 0.3s ease;
     }
 
-    .material-icons-outlined { font-family: 'Material Icons Outlined'; }
-    .material-icons-round { font-family: 'Material Icons Round'; }
-    .material-icons-sharp { font-family: 'Material Icons Sharp'; }
+    .material-icons-outlined { font-family: 'Material Icons Outlined' !important; }
+    .material-icons-round { font-family: 'Material Icons Round' !important; }
+    .material-icons-sharp { font-family: 'Material Icons Sharp' !important; }
 
-    /* Effet de gradient pour les icônes */
-    .gradient-icon {
-        background: linear-gradient(135deg, #667eea, #764ba2, #9f7aea);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        background-size: 200% 200%;
-        animation: gradientFlow 3s ease infinite;
-    }
-
-    @keyframes gradientFlow {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Animations pour les icônes */
-    .icon-pulse {
-        animation: iconPulse 2s ease infinite;
-    }
-
-    @keyframes iconPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-
-    .icon-rotate {
-        animation: iconRotate 2s linear infinite;
-    }
-
-    @keyframes iconRotate {
+    /* Animation pour le chargement */
+    @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
 
-    .icon-bounce {
-        animation: iconBounce 1s ease infinite;
+    .spin {
+        animation: spin 2s linear infinite;
+        display: inline-block;
     }
 
-    @keyframes iconBounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-    }
-
-    .icon-shake {
-        animation: iconShake 0.5s ease infinite;
-    }
-
-    @keyframes iconShake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-3px); }
-        75% { transform: translateX(3px); }
-    }
-
-    /* Style des icônes dans les cartes */
-    .metric-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 48px;
-        height: 48px;
-        border-radius: 24px;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-        margin-bottom: 12px;
-        transition: all 0.3s ease;
-    }
-
-    .metric-icon:hover {
-        transform: scale(1.1) rotate(5deg);
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-    }
-
-    /* Style général avec dégradé élégant */
+    /* Style général */
     .main {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #9f7aea 100%);
         background-size: 200% 200%;
@@ -297,7 +72,7 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* En-tête principal avec effet glassmorphisme */
+    /* En-tête principal */
     .main-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
@@ -305,7 +80,7 @@ st.markdown("""
         padding: 2rem 2.5rem;
         border-radius: 30px;
         margin-bottom: 2rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.3);
         position: relative;
         overflow: hidden;
@@ -329,17 +104,6 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    .main-header::after {
-        content: 'analytics';
-        font-family: 'Material Icons';
-        position: absolute;
-        bottom: -20px;
-        right: -20px;
-        font-size: 8rem;
-        opacity: 0.05;
-        transform: rotate(-15deg);
-    }
-
     .main-title {
         font-size: 2.8rem;
         font-weight: 800;
@@ -349,8 +113,6 @@ st.markdown("""
         margin: 0;
         letter-spacing: -0.02em;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        position: relative;
-        z-index: 1;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -361,14 +123,12 @@ st.markdown("""
         font-size: 1.1rem;
         margin-top: 0.5rem;
         font-weight: 300;
-        position: relative;
-        z-index: 1;
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
-    /* Sidebar blanche stylisée */
+    /* Sidebar */
     section[data-testid="stSidebar"] {
         background: white !important;
         border-right: 1px solid rgba(102, 126, 234, 0.2);
@@ -379,169 +139,8 @@ st.markdown("""
         background: white;
     }
 
-    .sidebar-header {
-        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-        padding: 2rem 1.5rem;
-        border-radius: 0 0 30px 30px;
-        margin-bottom: 1.5rem;
-        color: #2d3748;
-        text-align: center;
-        border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .sidebar-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
-    }
-
-    .sidebar-header::after {
-        content: 'folder';
-        font-family: 'Material Icons';
-        position: absolute;
-        bottom: -10px;
-        right: -10px;
-        font-size: 4rem;
-        opacity: 0.1;
-        transform: rotate(10deg);
-    }
-
-    .sidebar-header h3 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .sidebar-header p {
-        opacity: 0.8;
-        font-size: 0.95rem;
-        margin: 0.5rem 0 0 0;
-        color: #718096;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Style des widgets dans la sidebar */
-    section[data-testid="stSidebar"] .stMarkdown h3 {
-        color: #2d3748;
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #edf2f7;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    section[data-testid="stSidebar"] .stFileUploader {
-        border: 2px dashed #e2e8f0;
-        border-radius: 15px;
-        padding: 0.5rem;
-        background: #f8fafc;
-        transition: all 0.3s ease;
-    }
-
-    section[data-testid="stSidebar"] .stFileUploader:hover {
-        border-color: #667eea;
-        background: white;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
-    }
-
-    section[data-testid="stSidebar"] .stSelectbox > div > div {
-        border-radius: 12px !important;
-        border: 2px solid #edf2f7 !important;
-        transition: all 0.3s ease;
-    }
-
-    section[data-testid="stSidebar"] .stSelectbox > div > div:hover {
-        border-color: #667eea !important;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    section[data-testid="stSidebar"] .stSlider > div > div > div > div {
-        background: linear-gradient(90deg, #667eea, #764ba2) !important;
-    }
-
-    section[data-testid="stSidebar"] .stCheckbox > div {
-        border-radius: 8px !important;
-        transition: all 0.3s ease;
-    }
-
-    section[data-testid="stSidebar"] .stCheckbox > div:hover {
-        transform: translateX(5px);
-        background: #f7fafc;
-    }
-
-    /* Cartes de qualité avec design moderne */
-    .quality-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 25px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(102, 126, 234, 0.1);
-        margin-bottom: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .quality-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        transition: width 0.3s ease;
-    }
-
-    .quality-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15), 0 0 0 1px #667eea;
-    }
-
-    .quality-card:hover::before {
-        width: 6px;
-    }
-
-    .quality-score {
-        font-size: 3rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        line-height: 1;
-        filter: drop-shadow(0 5px 10px rgba(102, 126, 234, 0.2));
-    }
-
-    .quality-label {
-        color: #718096;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 600;
-    }
-
-    /* Badges de qualité avec design premium */
-    .quality-badge {
+    /* Badges */
+    .badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -550,151 +149,30 @@ st.markdown("""
         font-weight: 600;
         font-size: 0.9rem;
         margin-right: 0.5rem;
-        transition: all 0.3s ease;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .badge-excellent {
         background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
     }
 
     .badge-good {
         background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .badge-fair {
         background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3);
     }
 
     .badge-poor {
         background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
     }
 
-    /* Badges pour types de variables */
-    .badge-quantitative {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(72, 187, 120, 0.2);
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .badge-qualitative {
-        background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .badge-date {
-        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(237, 137, 54, 0.2);
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .badge-target {
-        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.2);
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    /* Cartes métriques */
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 20px;
-        text-align: center;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        height: 100%;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .metric-card::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .metric-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.1), 0 0 0 1px #667eea;
-    }
-
-    .metric-card:hover::after {
-        opacity: 1;
-    }
-
-    .metric-icon-large {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        color: #667eea;
-    }
-
-    .metric-value-sm {
-        font-size: 2rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        line-height: 1;
-    }
-
-    .metric-label-sm {
-        color: #718096;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-top: 0.5rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-    }
-
-    /* Timeline avec design moderne */
+    /* Timeline */
     .timeline-item {
         display: flex;
         align-items: center;
@@ -723,17 +201,48 @@ st.markdown("""
         align-items: center;
         justify-content: center;
         margin-right: 1.2rem;
-        font-size: 1.3rem;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         flex-shrink: 0;
     }
 
-    .timeline-icon .material-icons-outlined {
-        color: white;
-        font-size: 24px;
+    /* Variable item */
+    .variable-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 14px;
+        border: 1px solid #edf2f7;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
     }
 
-    /* Progress bars */
+    .variable-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.1);
+        border-color: #667eea;
+    }
+
+    .variable-name {
+        font-weight: 600;
+        color: #2d3748;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .variable-stats {
+        font-size: 0.8rem;
+        color: #718096;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* Progress bar */
     .progress-container {
         background: #edf2f7;
         height: 8px;
@@ -758,60 +267,7 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* Variables grid */
-    .variable-item {
-        background: white;
-        padding: 1rem;
-        border-radius: 14px;
-        border: 1px solid #edf2f7;
-        display: flex;
-        flex-direction: column;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .variable-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .variable-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.1);
-        border-color: #667eea;
-    }
-
-    .variable-item:hover::before {
-        opacity: 1;
-    }
-
-    .variable-name {
-        font-weight: 600;
-        color: #2d3748;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .variable-stats {
-        font-size: 0.8rem;
-        color: #718096;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    /* Tabs avec design premium */
+    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.8rem;
         background: white;
@@ -819,7 +275,6 @@ st.markdown("""
         border-radius: 60px;
         border: 1px solid rgba(102, 126, 234, 0.2);
         margin-bottom: 2rem;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
     }
 
     .stTabs [data-baseweb="tab"] {
@@ -828,78 +283,16 @@ st.markdown("""
         font-weight: 500;
         color: #4a5568;
         transition: all 0.3s ease;
-        border: 1px solid transparent;
         font-size: 0.95rem;
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
-    .stTabs [data-baseweb="tab"]:hover {
-        background: rgba(102, 126, 234, 0.05);
-        border-color: rgba(102, 126, 234, 0.3);
-        transform: translateY(-2px);
-    }
-
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-        border: none;
-    }
-
-    .stTabs [aria-selected="true"] .material-icons-outlined {
-        color: white;
-    }
-
-    /* Boutons */
-    .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 40px;
-        padding: 0.7rem 2rem;
-        font-weight: 500;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
-        width: 100%;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .stButton > button::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .stButton > button:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
-    }
-
-    /* Download button */
-    .stDownloadButton > button {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        box-shadow: 0 8px 16px rgba(72, 187, 120, 0.2);
     }
 
     /* Footer */
@@ -928,176 +321,34 @@ st.markdown("""
         background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
     }
 
-    /* Animations */
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0px); }
-    }
-
-    .floating {
-        animation: float 4s ease-in-out infinite;
-    }
-
-    /* Info boxes */
-    .info-box {
-        background: #f8fafc;
-        padding: 1.2rem;
-        border-radius: 16px;
-        border-left: 5px solid #667eea;
-        margin: 1rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .info-box:hover {
-        background: white;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1);
-    }
-
-    /* Expanders */
-    .streamlit-expanderHeader {
-        background: white !important;
-        border-radius: 16px !important;
-        border: 1px solid #edf2f7 !important;
-        padding: 1rem 1.5rem !important;
-        font-weight: 600 !important;
-        color: #2d3748 !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .streamlit-expanderHeader:hover {
-        border-color: #667eea !important;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1) !important;
-        transform: translateX(5px);
-    }
-
-    /* Dataframe */
-    .stDataFrame {
-        border-radius: 16px !important;
-        border: 1px solid #edf2f7 !important;
-        overflow: hidden !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02) !important;
-    }
-
-    /* Messages */
-    .stAlert {
-        border-radius: 16px !important;
-        border: none !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
         .main-title {
             font-size: 2.2rem;
         }
-
         .main-subtitle {
             font-size: 1rem;
         }
-
-        .metric-value-sm {
-            font-size: 1.5rem;
-        }
-
-        .quality-score {
-            font-size: 2.5rem;
-        }
-
-        .stTabs [data-baseweb="tab"] {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
     }
-
-    @media (max-width: 480px) {
-        .main-header {
-            padding: 1.5rem;
-        }
-
-        .main-title {
-            font-size: 1.8rem;
-        }
-
-        .sidebar-header {
-            padding: 1.5rem 1rem;
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.5rem;
-        }
-    }
-
-    /* Effet de brillance */
-    .shine {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .shine::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -60%;
-        width: 20%;
-        height: 200%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: rotate(25deg);
-        animation: shine 8s ease-in-out infinite;
-        pointer-events: none;
-    }
-
-    @keyframes shine {
-        0% { left: -60%; }
-        20% { left: 120%; }
-        100% { left: 120%; }
-    }
-
-    /* Tooltips personnalisés */
-    .custom-tooltip {
-        position: relative;
-        display: inline-block;
-        border-bottom: 2px dotted #667eea;
-        cursor: help;
-    }
-
-    .custom-tooltip .tooltip-text {
-        visibility: hidden;
-        width: 200px;
-        background: #2d3748;
-        color: white;
-        text-align: center;
-        border-radius: 10px;
-        padding: 0.5rem;
-        position: absolute;
-        z-index: 1000;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -100px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 0.8rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .custom-tooltip:hover .tooltip-text {
-        visibility: visible;
-        opacity: 1;
-    }
-
     </style>
 """, unsafe_allow_html=True)
 
 
-# --- FONCTIONS D'ANALYSE DE DONNÉES (inchangées) ---
+# --- FONCTION POUR LES ICÔNES ---
+def icon(name, variant="outlined", size=24, color=None, spin=False):
+    """Génère une icône Google Material"""
+    classes = f"material-icons-{variant}"
+    if spin:
+        classes += " spin"
+
+    style = f"font-size: {size}px; line-height: 1; vertical-align: middle;"
+    if color:
+        style += f" color: {color};"
+
+    return f"<i class='{classes}' style='{style}'>{name}</i>"
+
+
+# --- FONCTIONS D'ANALYSE DE DONNÉES ---
 def detecter_type_fichier(nom_fichier):
     ext = nom_fichier.split('.')[-1].lower() if '.' in nom_fichier else ''
     types = {
@@ -1493,104 +744,97 @@ def generer_recommandations_qualite(analyse):
     return recommandations
 
 
-# --- EN-TÊTE PRINCIPAL AVEC ICÔNES GOOGLE ---
+# --- EN-TÊTE PRINCIPAL ---
 st.markdown(f"""
-    <div class="main-header floating shine">
+    <div class="main-header">
         <h1 class="main-title">
-            {google_icon('analytics', variant='sharp', size=40, gradient=True)}
-            Data Quality Analyzer
+            {icon('analytics', variant='sharp', size=40)} Data Quality Analyzer
         </h1>
         <p class="main-subtitle">
-            {google_icon('insights', size=20, color='#667eea')}
-            Analyse intelligente de la qualité des données · Nettoyage & Optimisation · Feature Engineering
+            {icon('insights', size=20, color='#667eea')} Analyse intelligente de la qualité des données · Nettoyage & Optimisation · Feature Engineering
         </p>
         <div style='display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;'>
-            <span class='badge-excellent quality-badge'>
-                {google_icon('category', size=16)} Classification auto
-            </span>
-            <span class='badge-good quality-badge'>
-                {google_icon('build', size=16)} Feature engineering
-            </span>
-            <span class='badge-fair quality-badge'>
-                {google_icon('scatter_plot', size=16)} Préparation ACP
-            </span>
-            <span class='badge-poor quality-badge'>
-                {google_icon('lightbulb', size=16)} Recommandations ML
-            </span>
+            <span class='badge badge-excellent'>{icon('category', size=16)} Classification auto</span>
+            <span class='badge badge-good'>{icon('build', size=16)} Feature engineering</span>
+            <span class='badge badge-fair'>{icon('scatter_plot', size=16)} Préparation ACP</span>
+            <span class='badge badge-poor'>{icon('lightbulb', size=16)} Recommandations ML</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR AVEC ICÔNES GOOGLE ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.markdown(f"""
-        <div class="sidebar-header">
-            <h3>
-                {google_icon('folder_open', variant='sharp', size=32, gradient=True)}
-                Chargement
+        <div style='background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); 
+                    padding: 2rem 1.5rem; border-radius: 0 0 30px 30px; 
+                    margin-bottom: 1.5rem; text-align: center;'>
+            <h3 style='font-size: 1.8rem; font-weight: 700; margin: 0; 
+                       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                       display: flex; align-items: center; justify-content: center; gap: 8px;'>
+                {icon('folder_open', variant='sharp', size=32)} Chargement
             </h3>
-            <p>Importez vos datasets</p>
+            <p style='opacity: 0.8; font-size: 0.95rem; color: #718096;'>Importez vos datasets</p>
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"{google_icon('cloud_upload', size=20)} **Dataset original**", unsafe_allow_html=True)
+    st.markdown(
+        f"<h3 style='display: flex; align-items: center; gap: 8px;'>{icon('cloud_upload', size=20)} Dataset original</h3>",
+        unsafe_allow_html=True)
     file_avant = st.file_uploader(
-        "Charger le fichier original (obligatoire)",
+        "Charger le fichier original",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_avant",
-        help="Dataset avant nettoyage",
         label_visibility="collapsed"
     )
 
     if file_avant:
         type_fichier = detecter_type_fichier(file_avant.name)
-        icon_name = 'table_chart' if type_fichier in ['CSV',
-                                                      'Excel'] else 'data_object' if type_fichier == 'JSON' else 'description'
-        st.info(f"{google_icon(icon_name, size=18)} Original : {type_fichier}", icon="📄")
+        st.info(f"{icon('table_chart', size=18)} Original : {type_fichier}")
 
     st.markdown("---")
 
-    st.markdown(f"{google_icon('auto_awesome', size=20)} **Dataset nettoyé**", unsafe_allow_html=True)
+    st.markdown(
+        f"<h3 style='display: flex; align-items: center; gap: 8px;'>{icon('auto_awesome', size=20)} Dataset nettoyé</h3>",
+        unsafe_allow_html=True)
     file_apres = st.file_uploader(
-        "Charger la version nettoyée (optionnel)",
+        "Charger la version nettoyée",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_apres",
-        help="Version nettoyée à comparer avec l'original",
         label_visibility="collapsed"
     )
 
     if file_apres:
         type_fichier = detecter_type_fichier(file_apres.name)
-        icon_name = 'table_chart' if type_fichier in ['CSV',
-                                                      'Excel'] else 'data_object' if type_fichier == 'JSON' else 'description'
-        st.info(f"{google_icon(icon_name, size=18)} Nettoyé : {type_fichier}", icon="✨")
+        st.info(f"{icon('table_chart', size=18)} Nettoyé : {type_fichier}")
 
     st.markdown("---")
 
-    st.markdown(f"{google_icon('settings', size=20)} **Options**", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='display: flex; align-items: center; gap: 8px;'>{icon('settings', size=20)} Options</h3>",
+                unsafe_allow_html=True)
     show_details = st.checkbox("Afficher les détails par colonne", value=True)
     threshold_missing = st.slider("Seuil d'alerte valeurs manquantes (%)", 0, 50, 10)
     show_problem_details = st.checkbox("Afficher les détails des problèmes", value=True)
 
+# --- CORPS PRINCIPAL ---
 if file_avant:
     df_avant, error_avant = charger_fichier(file_avant)
 
     if error_avant:
-        st.error(f"{google_icon('error', size=20)} Erreur chargement original : {error_avant}", icon="🚨")
+        st.error(f"{icon('error', size=20)} Erreur chargement original : {error_avant}")
     else:
-        with st.spinner(f"{google_icon('autorenew', size=20, className='icon-rotate')} Analyse du dataset original..."):
+        with st.spinner(f"Analyse du dataset original..."):
             analyse_avant = analyser_qualite_dataset(df_avant, "Original")
 
         if file_apres:
             df_apres, error_apres = charger_fichier(file_apres)
             if error_apres:
-                st.error(f"{google_icon('error', size=20)} Erreur chargement nettoyé : {error_apres}", icon="🚨")
+                st.error(f"{icon('error', size=20)} Erreur chargement nettoyé : {error_apres}")
                 df_apres = None
                 analyse_apres = None
                 comparaison = None
             else:
-                with st.spinner(
-                        f"{google_icon('autorenew', size=20, className='icon-rotate')} Analyse du dataset nettoyé..."):
+                with st.spinner(f"Analyse du dataset nettoyé..."):
                     analyse_apres = analyser_qualite_dataset(df_apres, "Nettoyé")
                 comparaison = comparer_datasets(analyse_avant, analyse_apres)
         else:
@@ -1598,24 +842,34 @@ if file_avant:
             analyse_apres = None
             comparaison = None
 
-        st.markdown(f"## {google_icon('dashboard', size=28)} Dataset Original - Tableau de bord qualité",
+        st.markdown(f"## {icon('dashboard', size=28)} Dataset Original - Tableau de bord qualité",
                     unsafe_allow_html=True)
 
+        # Métriques principales
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
             st.markdown(f"""
-                <div class='quality-card'>
+                <div style='background: white; padding: 1.5rem; border-radius: 25px; 
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
                     <div style='display: flex; align-items: center; gap: 16px;'>
-                        <div class='metric-icon'>{google_icon('stars', size=32, gradient=True)}</div>
+                        <div style='width: 48px; height: 48px; border-radius: 24px; 
+                                    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+                                    display: flex; align-items: center; justify-content: center;'>
+                            {icon('stars', variant='sharp', size=32, color='#667eea')}
+                        </div>
                         <div>
-                            <div class='quality-score'>{analyse_avant['quality_score']:.1f}</div>
-                            <div class='quality-label'>Score qualité</div>
+                            <div style='font-size: 3rem; font-weight: 800; 
+                                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                        -webkit-background-clip: text; -webkit-text-fill-color: transparent;'>
+                                {analyse_avant['quality_score']:.1f}
+                            </div>
+                            <div style='color: #718096; font-size: 0.9rem; text-transform: uppercase;'>Score qualité</div>
                         </div>
                     </div>
-                    <div style='margin-top:1rem;'>
-                        <span class='quality-badge {analyse_avant['quality_badge']}'>
-                            {google_icon('check', size=16)} {analyse_avant['quality_category']}
+                    <div style='margin-top: 1rem;'>
+                        <span class='badge {analyse_avant['quality_badge']}'>
+                            {icon('check', size=16)} {analyse_avant['quality_category']}
                         </span>
                     </div>
                 </div>
@@ -1623,75 +877,91 @@ if file_avant:
 
         with col2:
             st.markdown(f"""
-                <div class='metric-card'>
-                    <div class='metric-icon-large'>{google_icon('table_rows', size=40, color='#667eea')}</div>
-                    <div class='metric-value-sm'>{analyse_avant['total_lignes']:,}</div>
-                    <div class='metric-label-sm'>{google_icon('table_rows', size=16)} Lignes</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
+                <div style='background: white; padding: 1.5rem; border-radius: 20px; text-align: center;
+                            box-shadow: 0 8px 20px rgba(0,0,0,0.03); height: 100%;'>
+                    <div style='font-size: 2.5rem; margin-bottom: 0.5rem; color: #667eea;'>
+                        {icon('table_rows', size=40, color='#667eea')}
+                    </div>
+                    <div style='font-size: 2rem; font-weight: 700; color: #2d3748;'>{analyse_avant['total_lignes']:,}</div>
+                    <div style='color: #718096; font-size: 0.8rem; text-transform: uppercase; 
+                                display: flex; align-items: center; justify-content: center; gap: 4px;'>
+                        {icon('table_rows', size=16)} Lignes
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col3:
             st.markdown(f"""
-                <div class='metric-card'>
-                    <div class='metric-icon-large'>{google_icon('view_column', size=40, color='#667eea')}</div>
-                    <div class='metric-value-sm'>{analyse_avant['total_colonnes']}</div>
-                    <div class='metric-label-sm'>{google_icon('view_column', size=16)} Colonnes</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
+                <div style='background: white; padding: 1.5rem; border-radius: 20px; text-align: center;
+                            box-shadow: 0 8px 20px rgba(0,0,0,0.03); height: 100%;'>
+                    <div style='font-size: 2.5rem; margin-bottom: 0.5rem; color: #667eea;'>
+                        {icon('view_column', size=40, color='#667eea')}
+                    </div>
+                    <div style='font-size: 2rem; font-weight: 700; color: #2d3748;'>{analyse_avant['total_colonnes']}</div>
+                    <div style='color: #718096; font-size: 0.8rem; text-transform: uppercase;
+                                display: flex; align-items: center; justify-content: center; gap: 4px;'>
+                        {icon('view_column', size=16)} Colonnes
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col4:
             st.markdown(f"""
-                <div class='metric-card'>
-                    <div class='metric-icon-large'>{google_icon('memory', size=40, color='#667eea')}</div>
-                    <div class='metric-value-sm'>{analyse_avant['memoire']:.2f}</div>
-                    <div class='metric-label-sm'>{google_icon('memory', size=16)} MB</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:{min(100, analyse_avant['memoire'])}%'></div></div>
+                <div style='background: white; padding: 1.5rem; border-radius: 20px; text-align: center;
+                            box-shadow: 0 8px 20px rgba(0,0,0,0.03); height: 100%;'>
+                    <div style='font-size: 2.5rem; margin-bottom: 0.5rem; color: #667eea;'>
+                        {icon('memory', size=40, color='#667eea')}
+                    </div>
+                    <div style='font-size: 2rem; font-weight: 700; color: #2d3748;'>{analyse_avant['memoire']:.2f}</div>
+                    <div style='color: #718096; font-size: 0.8rem; text-transform: uppercase;
+                                display: flex; align-items: center; justify-content: center; gap: 4px;'>
+                        {icon('memory', size=16)} MB
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
 
-        # Création des onglets avec icônes
+        # Onglets
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-            f"{google_icon('table_view', size=18)} Aperçu général",
-            f"{google_icon('category', size=18)} Classification",
-            f"{google_icon('view_column', size=18)} Détails",
-            f"{google_icon('warning', size=18)} Problèmes",
-            f"{google_icon('insights', size=18)} Visualisations",
-            f"{google_icon('lightbulb', size=18)} Recommandations"
+            f"{icon('table_view', size=18)} Aperçu général",
+            f"{icon('category', size=18)} Classification",
+            f"{icon('view_column', size=18)} Détails",
+            f"{icon('warning', size=18)} Problèmes",
+            f"{icon('insights', size=18)} Visualisations",
+            f"{icon('lightbulb', size=18)} Recommandations"
         ])
 
         with tab1:
-            st.markdown('<div class="quality-card">', unsafe_allow_html=True)
+            st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px;">',
+                        unsafe_allow_html=True)
             col_stat1, col_stat2 = st.columns(2)
 
             with col_stat1:
-                st.markdown(f"### {google_icon('analytics', size=24)} Statistiques globales", unsafe_allow_html=True)
+                st.markdown(f"### {icon('analytics', size=24)} Statistiques globales", unsafe_allow_html=True)
                 st.markdown(f"""
-                    * {google_icon('table_rows', size=16)} **Lignes :** {analyse_avant['total_lignes']:,}
-                    * {google_icon('view_column', size=16)} **Colonnes :** {analyse_avant['total_colonnes']}
-                    * {google_icon('memory', size=16)} **Mémoire :** {analyse_avant['memoire']:.2f} MB
-                    * {google_icon('highlight_off', size=16)} **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
-                    * {google_icon('content_copy', size=16)} **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
+                    * {icon('table_rows', size=16)} **Lignes :** {analyse_avant['total_lignes']:,}
+                    * {icon('view_column', size=16)} **Colonnes :** {analyse_avant['total_colonnes']}
+                    * {icon('memory', size=16)} **Mémoire :** {analyse_avant['memoire']:.2f} MB
+                    * {icon('highlight_off', size=16)} **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
+                    * {icon('content_copy', size=16)} **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
                 """, unsafe_allow_html=True)
 
             with col_stat2:
-                st.markdown(f"### {google_icon('data_usage', size=24)} Types de données", unsafe_allow_html=True)
+                st.markdown(f"### {icon('data_usage', size=24)} Types de données", unsafe_allow_html=True)
                 for dtype, count in analyse_avant['dtypes_summary'].items():
                     pct = (count / analyse_avant['total_colonnes']) * 100
                     st.markdown(f"""
-                        * {google_icon('code', size=16)} **{dtype} :** {count} ({pct:.1f}%)
+                        * {icon('code', size=16)} **{dtype} :** {count} ({pct:.1f}%)
                         <div class='progress-container'><div class='progress-bar' style='width:{pct}%'></div></div>
                     """, unsafe_allow_html=True)
 
             if analyse_avant['missing_cols']:
-                st.markdown(f"### {google_icon('warning', size=24, color='#e53e3e')} Colonnes avec valeurs manquantes",
+                st.markdown(f"### {icon('warning', size=24, color='#e53e3e')} Colonnes avec valeurs manquantes",
                             unsafe_allow_html=True)
                 for col, count in list(analyse_avant['missing_cols'].items())[:10]:
                     pct = (count / analyse_avant['total_lignes']) * 100
                     color = "#e53e3e" if pct > threshold_missing else "#ed8936"
                     st.markdown(f"""
-                        * {google_icon('highlight_off', size=16, color=color)} **{col} :** {count:,} ({pct:.1f}%)
+                        * {icon('highlight_off', size=16, color=color)} **{col} :** {count:,} ({pct:.1f}%)
                         <div class='progress-container'><div class='progress-bar' style='width:{pct}%; background:{color};'></div></div>
                     """, unsafe_allow_html=True)
 
@@ -1701,8 +971,9 @@ if file_avant:
             col_var1, col_var2 = st.columns(2)
 
             with col_var1:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown(f"### {google_icon('123', size=24)} Variables Quantitatives", unsafe_allow_html=True)
+                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px;">',
+                            unsafe_allow_html=True)
+                st.markdown(f"### {icon('123', size=24)} Variables Quantitatives", unsafe_allow_html=True)
                 if analyse_avant['classification']['quantitative']:
                     st.markdown(f"**{len(analyse_avant['classification']['quantitative'])} variables**")
                     for col in analyse_avant['classification']['quantitative'][:10]:
@@ -1711,8 +982,12 @@ if file_avant:
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
-                                    {google_icon('123', size=16, color='#48bb78')} {col}
-                                    <span class='badge-quantitative'>{google_icon('123', size=12)} QN</span>
+                                    {icon('123', size=16, color='#48bb78')} {col}
+                                    <span style='background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+                                                color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
+                                                font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
+                                        {icon('123', size=12)} QN
+                                    </span>
                                 </div>
                                 <div class='variable-stats'>
                                     {stats['uniques']} valeurs · min={stats['min']:.1f} · max={stats['max']:.1f}{outliers}
@@ -1726,8 +1001,9 @@ if file_avant:
                 st.markdown('</div>', unsafe_allow_html=True)
 
             with col_var2:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown(f"### {google_icon('category', size=24)} Variables Qualitatives", unsafe_allow_html=True)
+                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px;">',
+                            unsafe_allow_html=True)
+                st.markdown(f"### {icon('category', size=24)} Variables Qualitatives", unsafe_allow_html=True)
                 if analyse_avant['classification']['qualitative']:
                     st.markdown(f"**{len(analyse_avant['classification']['qualitative'])} variables**")
                     for col in analyse_avant['classification']['qualitative'][:10]:
@@ -1735,8 +1011,12 @@ if file_avant:
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
-                                    {google_icon('category', size=16, color='#667eea')} {col}
-                                    <span class='badge-qualitative'>{google_icon('category', size=12)} QL</span>
+                                    {icon('category', size=16, color='#667eea')} {col}
+                                    <span style='background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+                                                color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
+                                                font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
+                                        {icon('category', size=12)} QL
+                                    </span>
                                 </div>
                                 <div class='variable-stats'>
                                     {stats['uniques']} catégories · {stats['non_nulles']} non-nulles
@@ -1750,29 +1030,38 @@ if file_avant:
                 st.markdown('</div>', unsafe_allow_html=True)
 
             if analyse_avant['classification']['dates']:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown(f"### {google_icon('calendar_today', size=24)} Variables Date", unsafe_allow_html=True)
+                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px; margin-top: 1rem;">',
+                            unsafe_allow_html=True)
+                st.markdown(f"### {icon('calendar_today', size=24)} Variables Date", unsafe_allow_html=True)
                 for col in analyse_avant['classification']['dates']:
                     st.markdown(f"""
                         <div class='variable-item'>
                             <div class='variable-name'>
-                                {google_icon('calendar_today', size=16, color='#ed8936')} {col}
-                                <span class='badge-date'>{google_icon('calendar_today', size=12)} Date</span>
+                                {icon('calendar_today', size=16, color='#ed8936')} {col}
+                                <span style='background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+                                            color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
+                                            font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
+                                    {icon('calendar_today', size=12)} Date
+                                </span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
 
             if analyse_avant['classification']['target_potential']:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown(f"### {google_icon('track_changes', size=24)} Cibles potentielles ML",
+                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px; margin-top: 1rem;">',
                             unsafe_allow_html=True)
+                st.markdown(f"### {icon('track_changes', size=24)} Cibles potentielles ML", unsafe_allow_html=True)
                 for target in analyse_avant['classification']['target_potential']:
                     st.markdown(f"""
                         <div class='variable-item'>
                             <div class='variable-name'>
-                                {google_icon('track_changes', size=16, color='#e53e3e')} {target['colonne']}
-                                <span class='badge-target'>{google_icon('flag', size=12)} {target['type']}</span>
+                                {icon('track_changes', size=16, color='#e53e3e')} {target['colonne']}
+                                <span style='background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+                                            color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
+                                            font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
+                                    {icon('flag', size=12)} {target['type']}
+                                </span>
                             </div>
                             <div class='variable-stats'>{target['raison']}</div>
                         </div>
@@ -1784,7 +1073,7 @@ if file_avant:
                 for stats in analyse_avant['col_stats'][:20]:
                     icon_name = '123' if stats['classification'] == 'quantitative' else 'category' if stats[
                                                                                                           'classification'] == 'qualitative' else 'calendar_today'
-                    with st.expander(f"{google_icon(icon_name, size=20)} {stats['nom']} ({stats['type']})"):
+                    with st.expander(f"{icon(icon_name, size=20)} {stats['nom']} ({stats['type']})"):
                         col_d1, col_d2, col_d3 = st.columns(3)
 
                         with col_d1:
@@ -1810,7 +1099,7 @@ if file_avant:
                         color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
                         st.markdown(f"""
                             <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>{google_icon('warning', size=24, color='white')}</div>
+                                <div class='timeline-icon'>{icon('warning', size=24, color='white')}</div>
                                 <div>
                                     <strong style='color:{color};'>{prob['colonne']}</strong>
                                     <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
@@ -1819,10 +1108,9 @@ if file_avant:
                         """, unsafe_allow_html=True)
                 else:
                     st.info(
-                        f"{google_icon('info', size=20)} {len(analyse_avant['problem_columns'])} problèmes détectés (masqués)",
-                        icon="ℹ️")
+                        f"{icon('info', size=20)} {len(analyse_avant['problem_columns'])} problèmes détectés (masqués)")
             else:
-                st.success(f"{google_icon('check_circle', size=20)} Aucun problème détecté !", icon="✅")
+                st.success(f"{icon('check_circle', size=20)} Aucun problème détecté !")
 
         with tab5:
             col_v1, col_v2 = st.columns(2)
@@ -1836,7 +1124,7 @@ if file_avant:
                 fig = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
                              title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
                 fig.update_layout(height=350)
-                st.plotly_chart(fig, width='stretch', key="plot_types")
+                st.plotly_chart(fig, use_container_width=True)
 
             with col_v2:
                 if analyse_avant['missing_cols']:
@@ -1848,7 +1136,7 @@ if file_avant:
                                  title="Top 10 valeurs manquantes", color='Manquantes',
                                  color_continuous_scale='Reds')
                     fig.update_layout(height=350)
-                    st.plotly_chart(fig, width='stretch', key="plot_missing")
+                    st.plotly_chart(fig, use_container_width=True)
                 else:
                     st.info("Aucune valeur manquante")
 
@@ -1857,10 +1145,10 @@ if file_avant:
                 fig = px.imshow(corr_matrix, text_auto='.2f', aspect="auto",
                                 title="Matrice de corrélation", color_continuous_scale='RdBu')
                 fig.update_layout(height=500)
-                st.plotly_chart(fig, width='stretch', key="plot_corr")
+                st.plotly_chart(fig, use_container_width=True)
 
         with tab6:
-            st.markdown(f"### {google_icon('cleaning_services', size=24)} Recommandations de nettoyage",
+            st.markdown(f"### {icon('cleaning_services', size=24)} Recommandations de nettoyage",
                         unsafe_allow_html=True)
             recs_qualite = generer_recommandations_qualite(analyse_avant)
             if recs_qualite:
@@ -1869,54 +1157,53 @@ if file_avant:
                                                                                           'priority'] == 'MOYENNE' else "#667eea"
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:{color};'>
-                            <div class='timeline-icon'>{google_icon(rec['icon'], size=24, color='white')}</div>
+                            <div class='timeline-icon'>{icon(rec['icon'], size=24, color='white')}</div>
                             <div>
                                 <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;'>
-                                    {google_icon('priority_high', size=12)} {rec['priority']}
+                                    {icon('priority_high', size=12)} {rec['priority']}
                                 </span>
                                 <br><strong>{rec['categorie']}</strong>
                                 <br><span style='color:#4a5568;'>{rec['message']}</span>
                                 <br><span style='color:#667eea; display:flex; align-items:center; gap:4px;'>
-                                    {google_icon('lightbulb', size=16)} {rec['action']}
+                                    {icon('lightbulb', size=16)} {rec['action']}
                                 </span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
             else:
-                st.success(f"{google_icon('check_circle', size=20)} Dataset déjà propre !", icon="✅")
+                st.success(f"{icon('check_circle', size=20)} Dataset déjà propre !")
 
-            st.markdown(f"### {google_icon('build', size=24)} Feature Engineering recommandé", unsafe_allow_html=True)
+            st.markdown(f"### {icon('build', size=24)} Feature Engineering recommandé", unsafe_allow_html=True)
             recs_fe = generer_recommandations_feature_engineering(analyse_avant)
             if recs_fe:
                 for rec in recs_fe:
                     color = "#e53e3e" if rec['priority'] == 'HAUTE' else "#ed8936"
-                    acp_badge = f"{google_icon('check_circle', size=12)} Compatible ACP" if rec.get('pour_ACP',
-                                                                                                    False) else f"{google_icon('warning', size=12)} Non ACP"
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:{color};'>
-                            <div class='timeline-icon'>{google_icon(rec.get('icon', 'build'), size=24, color='white')}</div>
+                            <div class='timeline-icon'>{icon(rec.get('icon', 'build'), size=24, color='white')}</div>
                             <div>
                                 <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;'>
-                                    {google_icon('priority_high', size=12)} {rec['priority']}
+                                    {icon('priority_high', size=12)} {rec['priority']}
                                 </span>
                                 <span style='margin-left:0.5rem; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;'>
-                                    {google_icon('check_circle' if rec.get('pour_ACP', False) else 'warning', size=12)} {acp_badge}
+                                    {icon('check_circle' if rec.get('pour_ACP', False) else 'warning', size=12)} 
+                                    {'Compatible ACP' if rec.get('pour_ACP', False) else 'Non ACP'}
                                 </span>
                                 <br><strong>{rec['categorie']} - {rec.get('colonne', 'Général')}</strong>
                                 <br><span style='color:#4a5568;'>{rec['raison']}</span>
                                 <br><span style='color:#667eea; display:flex; align-items:center; gap:4px;'>
-                                    {google_icon('lightbulb', size=16)} {rec['technique']}
+                                    {icon('lightbulb', size=16)} {rec['technique']}
                                 </span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
             if analyse_avant['classification']['a_convertir']:
-                st.markdown(f"### {google_icon('transform', size=24)} Conversions suggérées", unsafe_allow_html=True)
+                st.markdown(f"### {icon('transform', size=24)} Conversions suggérées", unsafe_allow_html=True)
                 for conv in analyse_avant['classification']['a_convertir']:
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:#ed8936;'>
-                            <div class='timeline-icon'>{google_icon('transform', size=24, color='white')}</div>
+                            <div class='timeline-icon'>{icon('transform', size=24, color='white')}</div>
                             <div>
                                 <strong>{conv['colonne']}</strong>
                                 <br><span style='color:#4a5568;'>{conv['type_actuel']} → {conv['type_suggere']}</span>
@@ -1927,8 +1214,7 @@ if file_avant:
 
         if analyse_apres:
             st.markdown("---")
-            st.markdown(f"## {google_icon('compare_arrows', size=28)} Comparaison Original vs Nettoyé",
-                        unsafe_allow_html=True)
+            st.markdown(f"## {icon('compare_arrows', size=28)} Comparaison Original vs Nettoyé", unsafe_allow_html=True)
 
             col_c1, col_c2, col_c3, col_c4 = st.columns(4)
 
@@ -1960,27 +1246,26 @@ if file_avant:
                           delta_value,
                           delta_color="green" if delta > 0 else "red" if delta < 0 else "gray")
 
-            with st.expander(f"{google_icon('summarize', size=20)} Voir le bilan détaillé du nettoyage",
-                             expanded=False):
+            with st.expander(f"{icon('summarize', size=20)} Voir le bilan détaillé du nettoyage"):
                 messages = verifier_nettoyage(comparaison)
                 for icon_name, color, msg in messages:
                     st.markdown(f"""
                         <div style='background:white; padding:1rem; border-radius:12px; border-left:4px solid {color}; margin-bottom:0.5rem;'>
                             <div style='display:flex; align-items:center; gap:0.5rem;'>
-                                {google_icon(icon_name, size=24, color=color)}
+                                {icon(icon_name, size=24, color=color)}
                                 <span style='color:#4a5568; font-size:0.9rem;'>{msg}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
                 if show_problem_details and analyse_apres['problem_columns']:
-                    st.markdown(f"### {google_icon('warning', size=20)} Problèmes restants dans le dataset nettoyé",
+                    st.markdown(f"### {icon('warning', size=20)} Problèmes restants dans le dataset nettoyé",
                                 unsafe_allow_html=True)
                     for prob in analyse_apres['problem_columns'][:5]:
                         color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
                         st.markdown(f"""
                             <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>{google_icon('warning', size=24, color='white')}</div>
+                                <div class='timeline-icon'>{icon('warning', size=24, color='white')}</div>
                                 <div>
                                     <strong style='color:{color};'>{prob['colonne']}</strong>
                                     <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
@@ -1991,8 +1276,7 @@ if file_avant:
                     if len(analyse_apres['problem_columns']) > 5:
                         st.info(f"... et {len(analyse_apres['problem_columns']) - 5} autres problèmes")
 
-            st.markdown(f"### {google_icon('insights', size=24)} Visualisation de la progression",
-                        unsafe_allow_html=True)
+            st.markdown(f"### {icon('insights', size=24)} Visualisation de la progression", unsafe_allow_html=True)
 
             fig_progress = go.Figure()
 
@@ -2046,34 +1330,35 @@ if file_avant:
                 height=400
             )
 
-            st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
+            st.plotly_chart(fig_progress, use_container_width=True)
 
 else:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown(f"""
             <div style='text-align:center; padding:3rem; background:white; border-radius:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);'>
-                <div style='font-size:5rem; margin-bottom:1rem;'>{google_icon('analytics', size=80, gradient=True)}</div>
+                <div style='font-size:5rem; margin-bottom:1rem;'>{icon('analytics', size=80, color='#667eea')}</div>
                 <h2>Chargez un dataset pour commencer</h2>
                 <p style='color:#666;'>Analyse complète · Nettoyage · Feature Engineering · ML</p>
                 <div style='display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; text-align:left;'>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Statistiques globales</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Types de données</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Variables manquantes</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Classification auto</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Comparaison avant/après</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Feature engineering</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Recommandations ACP</div>
-                    <div>{google_icon('check_circle', size=16, color='#48bb78')} Préparation ML</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Statistiques globales</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Types de données</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Variables manquantes</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Classification auto</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Comparaison avant/après</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Feature engineering</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Recommandations ACP</div>
+                    <div>{icon('check_circle', size=16, color='#48bb78')} Préparation ML</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
+# --- FOOTER ---
 st.markdown(f"""
     <div class='footer'>
         <strong>Data Quality Analyzer v2.0</strong> · Analyse complète pour Machine Learning · Feature Engineering · Préparation ACP<br>
         <span style='opacity: 0.6; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 4px;'>
-            {google_icon('code', size=14)} Développé pour l'optimisation des pipelines de données
+            {icon('code', size=14)} Développé pour l'optimisation des pipelines de données
         </span>
     </div>
 """, unsafe_allow_html=True)
