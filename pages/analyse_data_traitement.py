@@ -165,6 +165,95 @@ st.markdown("""
         z-index: 1;
     }
 
+    /* Style pour les éléments de navigation */
+    .nav-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        padding: 1.2rem 1rem;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    .nav-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #edf2f7;
+    }
+
+    .nav-section-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 10px rgba(102,126,234,0.3);
+    }
+
+    .nav-section-title-text {
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1rem;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.6rem 0.8rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        margin-bottom: 0.2rem;
+    }
+
+    .nav-item:hover {
+        transform: translateX(5px);
+        border-left-color: #667eea;
+        background: linear-gradient(135deg, #667eea10, #764ba210);
+    }
+
+    .nav-item.active {
+        background: linear-gradient(135deg, #667eea15, #764ba215);
+        border-left: 3px solid #667eea;
+    }
+
+    .nav-icon {
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    .nav-text {
+        font-weight: 500;
+        color: #4a5568;
+    }
+
+    .nav-badge {
+        margin-left: auto;
+        background: #f59e0b;
+        color: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .nav-highlight {
+        background: linear-gradient(135deg, #f59e0b10, #d9770610);
+        border-radius: 12px;
+        border: 1px dashed #f59e0b40;
+        margin-top: 0.5rem;
+    }
+
     /* Style des widgets dans la sidebar */
     section[data-testid="stSidebar"] .stMarkdown h3 {
         color: #2d3748;
@@ -1179,12 +1268,48 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
+# --- SIDEBAR AVEC NAVIGATION STYLISÉE ---
 with st.sidebar:
     st.markdown("""
         <div class="sidebar-header">
-            <h3>📁 Chargement</h3>
-            <p>Importez vos datasets</p>
+            <h3>📊 Data Quality Analyzer</h3>
+            <p>Analyse et nettoyage de données</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Section Navigation avec style
+    st.markdown("""
+        <div class='nav-section'>
+            <div class='nav-section-title'>
+                <span class='nav-section-icon'>📍</span>
+                <span class='nav-section-title-text'>NAVIGATION</span>
+            </div>
+
+            <div style='display: flex; flex-direction: column; gap: 0.3rem;'>
+                <div class='nav-item' onmouseover="this.classList.add('active')" onmouseout="this.classList.remove('active')">
+                    <span class='nav-icon'>🏠</span>
+                    <span class='nav-text'>Home App</span>
+                </div>
+
+                <div class='nav-item active' onmouseover="this.classList.add('active')" onmouseout="this.classList.remove('active')">
+                    <span class='nav-icon'>📊</span>
+                    <span class='nav-text'>Analyse Data Traitement</span>
+                </div>
+
+                <div class='nav-item' onmouseover="this.classList.add('active')" onmouseout="this.classList.remove('active')">
+                    <span class='nav-icon'>🔬</span>
+                    <span class='nav-text'>App ACP V2</span>
+                </div>
+
+                <div class='nav-item' style='background: linear-gradient(135deg, #f59e0b10, #d9770610);
+                                            border: 1px dashed #f59e0b40; margin-top: 0.5rem;'
+                     onmouseover="this.style.background='linear-gradient(135deg, #f59e0b20, #d9770620)'"
+                     onmouseout="this.style.background='linear-gradient(135deg, #f59e0b10, #d9770610)'">
+                    <span class='nav-icon'>⛏️</span>
+                    <span class='nav-text' style='font-weight: 600; color: #b45309;'>Data Mining</span>
+                    <span class='nav-badge'>Nouveau</span>
+                </div>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -1193,7 +1318,8 @@ with st.sidebar:
         "Charger le fichier original (obligatoire)",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_avant",
-        help="Dataset avant nettoyage"
+        help="Dataset avant nettoyage",
+        label_visibility="collapsed"
     )
 
     if file_avant:
@@ -1207,7 +1333,8 @@ with st.sidebar:
         "Charger la version nettoyée (optionnel)",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_apres",
-        help="Version nettoyée à comparer avec l'original"
+        help="Version nettoyée à comparer avec l'original",
+        label_visibility="collapsed"
     )
 
     if file_apres:
