@@ -490,20 +490,7 @@ st.markdown("""
         <h2 class="author-name">Gana Faye</h2>
         <p class="author-title">Data Scientist & Passionné par l'IA</p>
 
-        <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-number">02</div>
-                <div class="stat-label">APPLICATIONS</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">20+</div>
-                <div class="stat-label">FONCTIONNALITÉS</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">10+</div>
-                <div class="stat-label">TYPES DE FICHIERS</div>
-            </div>
-        </div>
+       
     </div>
 """, unsafe_allow_html=True)
 
