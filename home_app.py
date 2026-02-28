@@ -813,32 +813,39 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown("""
     <style>
-    /* 1. Masquer le bouton "Manage app" en bas de la sidebar */
-    /* On cible l'élément de barre d'état spécifique à Streamlit Cloud */
-    [data-testid="stStatusWidget"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
+    /* 1. Masquer TOUT le contenu du Header à DROITE (Deploy, GitHub, Menu) */
+    /* On garde l'icône de gauche car on ne cible que le div de droite */
+    header[data-testid="stHeader"] > div:first-child > div:nth-child(2) {
+        display: none !important;
+        visibility: hidden !important;
     }
 
-    /* 2. Masquer le groupe de boutons en haut à droite (Deploy, GitHub, etc.) */
-    .stAppDeployButton {
+    /* 2. Masquer le bouton "Manage app" en bas de la sidebar (Sélecteur de classe) */
+    /* On cible la barre d'outils de statut qui contient le bouton */
+    div[class^="st-emotion-cache-"] > div[data-testid="stStatusWidget"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* 3. Sécurité supplémentaire pour le badge "Manage app" */
+    /* On cherche le lien qui contient le texte spécifique */
+    a[href*="streamlit.io/cloud"] {
         display: none !important;
     }
 
-    /* 3. Masquer le menu "Hamburger" (les 3 petits points) */
-    #MainMenu {
-        visibility: hidden;
+    /* 4. Masquer le footer "Made with Streamlit" */
+    footer {
+        display: none !important;
     }
 
-    /* 4. Nettoyer les bordures résiduelles en haut */
-    header[data-testid="stHeader"] {
-        background: none !important;
-    }
-
-    /* On s'assure que le contenu ne soit pas cliquable même s'il est caché */
-    .stAppDeployButton, #MainMenu, [data-testid="stStatusWidget"] {
-        pointer-events: none;
+    /* 5. Garder le bouton Sidebar joli (Ton icône) */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 12px !important;
+        color: white !important;
+        visibility: visible !important; /* On force la visibilité ici */
     }
     </style>
 """, unsafe_allow_html=True)
