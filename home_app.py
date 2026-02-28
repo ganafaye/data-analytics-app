@@ -859,6 +859,40 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    /* 1. Masquer le bouton de déploiement (image 1 - Share/GitHub/Star) */
+    .stAppDeployButton {
+        display: none !important;
+    }
+
+    /* 2. Masquer le badge "Manage app" en bas à gauche (image 2) */
+    /* Ce badge est souvent contenu dans un élément de barre d'état Streamlit Cloud */
+    [data-testid="stStatusWidget"] {
+        display: none !important;
+    }
+
+    /* Ciblage alternatif pour le badge "Manage app" selon la version */
+    div[data-testid="stToolbar"] {
+        display: none !important;
+    }
+
+    /* 3. Masquer le menu hamburger (les 3 points verticaux) */
+    #MainMenu {
+        visibility: hidden;
+    }
+
+    /* 4. Rappel : Garder l'icône sidebar visible mais isolée */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+
+    /* On masque tout le contenu du header SAUF le bouton de la sidebar */
+    header[data-testid="stHeader"] > div:first-child > div:nth-child(2) {
+        display: none !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 # --- SIDEBAR HARMONISÉE ---
 with st.sidebar:
     st.markdown("""
