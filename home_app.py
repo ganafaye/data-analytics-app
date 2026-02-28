@@ -786,7 +786,43 @@ st.markdown("""
             font-size: 1.4rem;
         }
     }
+/* SOLUTION DE MASQUAGE SÉCURISÉ */
+/* Masque l'en-tête Dataset Original sur toutes les pages */
+.stMarkdown h2 {
+    all: unset !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background: transparent !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    position: absolute !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
 
+/* Alternative : masquer spécifiquement le conteneur */
+div:has(> h2:contains("Dataset Original")) {
+    display: none !important;
+}
     </style>
 """, unsafe_allow_html=True)
 
