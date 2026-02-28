@@ -6,87 +6,10 @@ from datetime import datetime
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
     page_title="Data & Image Analytics Hub | Gana Faye",
-    page_icon="✨",
+    page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# --- INTÉGRATION DES GOOGLE MATERIAL ICONS ---
-st.markdown("""
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
-
-    <style>
-    /* Style de base pour les icônes */
-    .material-icons, .material-icons-outlined, .material-icons-round, .material-icons-sharp {
-        font-family: 'Material Icons' !important;
-        font-weight: normal;
-        font-style: normal;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
-        display: inline-block;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        font-feature-settings: 'liga';
-        vertical-align: middle;
-    }
-
-    .material-icons-outlined { font-family: 'Material Icons Outlined' !important; }
-    .material-icons-round { font-family: 'Material Icons Round' !important; }
-    .material-icons-sharp { font-family: 'Material Icons Sharp' !important; }
-
-    /* Animation pour les icônes */
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .spin {
-        animation: spin 2s linear infinite;
-        display: inline-block;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-
-    .pulse {
-        animation: pulse 2s ease infinite;
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-    }
-
-    .bounce {
-        animation: bounce 1s ease infinite;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-
-# --- FONCTION POUR LES ICÔNES ---
-def icon(name, variant="outlined", size=24, color=None, animation=None):
-    """Génère une icône Google Material"""
-    classes = f"material-icons-{variant}"
-    if animation:
-        classes += f" {animation}"
-
-    style = f"font-size: {size}px; line-height: 1; vertical-align: middle;"
-    if color:
-        style += f" color: {color};"
-
-    return f"<i class='{classes}' style='{style}'>{name}</i>"
-
 
 # --- STYLE CSS AVEC CARTES REDIMENSIONNÉES ---
 st.markdown("""
@@ -168,8 +91,7 @@ st.markdown("""
     }
 
     .sidebar-header::after {
-        content: 'dashboard';
-        font-family: 'Material Icons';
+        content: '🚀';
         position: absolute;
         bottom: -15px;
         right: -15px;
@@ -185,10 +107,6 @@ st.markdown("""
         margin: 0;
         font-family: 'Space Grotesk', sans-serif;
         text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
     }
 
     .sidebar-header p {
@@ -315,10 +233,6 @@ st.markdown("""
         transition: all 0.3s ease;
         border: 1px solid rgba(255, 255, 255, 0.2);
         box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
     }
 
     section[data-testid="stSidebar"] .stButton > button:hover {
@@ -363,17 +277,6 @@ st.markdown("""
         background: var(--gradient-primary);
     }
 
-    .hero-section::after {
-        content: 'analytics';
-        font-family: 'Material Icons';
-        position: absolute;
-        bottom: -30px;
-        right: -30px;
-        font-size: 10rem;
-        opacity: 0.02;
-        transform: rotate(-15deg);
-    }
-
     .hero-title {
         font-size: 2.8rem;
         font-weight: 800;
@@ -382,20 +285,12 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         margin: 0;
         font-family: 'Space Grotesk', sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
     }
 
     .hero-subtitle {
         color: var(--gray);
         font-size: 1rem;
         margin: 0.8rem 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
     }
 
     /* ===== BADGES TECHNOLOGIQUES ===== */
@@ -457,7 +352,9 @@ st.markdown("""
     .app-icon {
         font-size: 2.2rem;
         margin-bottom: 0.8rem;
-        color: var(--primary);
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     .app-title {
@@ -466,9 +363,6 @@ st.markdown("""
         color: var(--dark);
         margin-bottom: 0.6rem;
         font-family: 'Space Grotesk', sans-serif;
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .app-description {
@@ -498,10 +392,14 @@ st.markdown("""
         border-bottom: none;
     }
 
+    .feature-list li::before {
+        content: "✨";
+        color: var(--primary);
+        font-size: 0.8rem;
+    }
+
     .app-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        display: inline-block;
         padding: 0.3rem 1rem;
         border-radius: 30px;
         font-size: 0.7rem;
@@ -604,10 +502,6 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         margin: 0.2rem 0 0.1rem 0;
         font-family: 'Space Grotesk', sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
     }
 
     .author-title {
@@ -660,10 +554,6 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-top: 0.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
     }
 
     .skills-container {
@@ -683,9 +573,6 @@ st.markdown("""
         font-weight: 500;
         border: 1px solid #e2e8f0;
         transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
     }
 
     .skill-tag:hover {
@@ -746,9 +633,6 @@ st.markdown("""
         font-size: 0.8rem;
         line-height: 1.5;
         position: relative;
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .quote-mark {
@@ -756,6 +640,7 @@ st.markdown("""
         font-size: 1rem;
         font-weight: 700;
         opacity: 0.5;
+        margin: 0 0.2rem;
     }
 
     .author-footer {
@@ -782,6 +667,27 @@ st.markdown("""
 
     .promo {
         font-weight: 400;
+    }
+
+    /* Responsive pour la section auteur */
+    @media (max-width: 768px) {
+        .author-avatar {
+            width: 70px;
+            height: 70px;
+        }
+
+        .author-avatar-icon {
+            font-size: 2.5rem;
+        }
+
+        .author-name {
+            font-size: 1.4rem;
+        }
+
+        .social-link {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+        }
     }
 
     /* ===== STATS CARDS REDIMENSIONNÉES ===== */
@@ -813,10 +719,6 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-top: 0.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
     }
 
     /* ===== FOOTER ===== */
@@ -843,17 +745,6 @@ st.markdown("""
         background: var(--gradient-primary);
     }
 
-    .footer::after {
-        content: 'code';
-        font-family: 'Material Icons';
-        position: absolute;
-        bottom: -10px;
-        right: -10px;
-        font-size: 3rem;
-        opacity: 0.03;
-        transform: rotate(10deg);
-    }
-
     /* ===== BOUTONS PRINCIPAUX ===== */
     .stButton > button {
         background: var(--gradient-primary);
@@ -866,10 +757,6 @@ st.markdown("""
         transition: all 0.3s ease;
         width: 100%;
         box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
     }
 
     .stButton > button:hover {
@@ -898,24 +785,6 @@ st.markdown("""
         .stat-number {
             font-size: 1.4rem;
         }
-
-        .author-avatar {
-            width: 70px;
-            height: 70px;
-        }
-
-        .author-avatar-icon {
-            font-size: 2.5rem;
-        }
-
-        .author-name {
-            font-size: 1.4rem;
-        }
-
-        .social-link {
-            padding: 0.3rem 0.8rem;
-            font-size: 0.7rem;
-        }
     }
 
     </style>
@@ -923,57 +792,55 @@ st.markdown("""
 
 # --- SIDEBAR HARMONISÉE ---
 with st.sidebar:
-    st.markdown(f"""
+    st.markdown("""
         <div class="sidebar-header">
-            <h3>
-                {icon('dashboard', variant='sharp', size=28)} Menu
-            </h3>
+            <h3>🚀 Menu</h3>
             <p>Navigation et paramètres</p>
         </div>
     """, unsafe_allow_html=True)
 
     # Section Navigation
-    st.markdown(f"""
+    st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>{icon('explore', size=16, color='white')}</span> Navigation
+                <span>📍</span> Navigation
             </div>
             <div class="sidebar-item">
-                <span class="sidebar-item-icon">{icon('home', size=18)}</span>
+                <span class="sidebar-item-icon">🏠</span>
                 <span>Accueil</span>
             </div>
             <div class="sidebar-item">
-                <span class="sidebar-item-icon">{icon('bar_chart', size=18)}</span>
+                <span class="sidebar-item-icon">📊</span>
                 <span>Data Quality Analyzer</span>
             </div>
             <div class="sidebar-item">
-                <span class="sidebar-item-icon">{icon('scatter_plot', size=18)}</span>
+                <span class="sidebar-item-icon">🔬</span>
                 <span>PCA Vision Pro</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
     # Section Applications
-    st.markdown(f"""
+    st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>{icon('apps', size=16, color='white')}</span> Applications
+                <span>🚀</span> Applications
             </div>
     """, unsafe_allow_html=True)
 
-    if st.button(f"{icon('bar_chart', size=16)} Lancer Data Quality", use_container_width=True, key="sidebar_data"):
+    if st.button("📊 Lancer Data Quality", use_container_width=True, key="sidebar_data"):
         st.switch_page("pages/analyse_data_traitement.py")
 
-    if st.button(f"{icon('scatter_plot', size=16)} Lancer PCA Vision", use_container_width=True, key="sidebar_pca"):
+    if st.button("🔬 Lancer PCA Vision", use_container_width=True, key="sidebar_pca"):
         st.switch_page("pages/app_acp_v2.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
     # Section Paramètres
-    st.markdown(f"""
+    st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>{icon('settings', size=16, color='white')}</span> Paramètres
+                <span>⚙️</span> Paramètres
             </div>
     """, unsafe_allow_html=True)
 
@@ -984,10 +851,10 @@ with st.sidebar:
     st.markdown("</div>", unsafe_allow_html=True)
 
     # Section Informations
-    st.markdown(f"""
+    st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>{icon('info', size=16, color='white')}</span> Informations
+                <span>ℹ️</span> Informations
             </div>
             <div style='padding: 0.4rem 0; color: #334155; font-size: 0.85rem;'>
                 <p><strong>Version:</strong> 4.0</p>
@@ -995,20 +862,18 @@ with st.sidebar:
                 <p><strong>Auteur:</strong> Gana Faye</p>
             </div>
             <div style='display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem;'>
-                <span class='sidebar-badge'>{icon('code', size=12)} Python</span>
-                <span class='sidebar-badge'>{icon('dashboard', size=12)} Streamlit</span>
-                <span class='sidebar-badge'>{icon('smart_toy', size=12)} ML</span>
+                <span class='sidebar-badge'>Python</span>
+                <span class='sidebar-badge'>Streamlit</span>
+                <span class='sidebar-badge'>ML</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
     # Footer de la sidebar
-    st.markdown(f"""
+    st.markdown("""
         <div class="sidebar-footer">
             <strong>Data & Image Hub</strong><br>
-            <span style='font-size: 0.6rem; display: flex; align-items: center; justify-content: center; gap: 4px;'>
-                {icon('copyright', size=12)} 2026 Gana Faye
-            </span>
+            <span style='font-size: 0.6rem;'>© 2026 Gana Faye</span>
         </div>
     """, unsafe_allow_html=True)
 
@@ -1019,149 +884,92 @@ if 'image_grise' not in st.session_state:
     st.session_state.image_grise = None
 
 # --- BANNIÈRE PRINCIPALE ---
-st.markdown(f"""
+st.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">
-            {icon('analytics', variant='sharp', size=48)} Data & Image Analytics Hub
-        </h1>
-        <p class="hero-subtitle">
-            {icon('insights', size=20, color='#64748b')} La plateforme ultime pour l'analyse de données et d'images
-        </p>
+        <h1 class="hero-title">🚀 Data & Image Analytics Hub</h1>
+        <p class="hero-subtitle">La plateforme ultime pour l'analyse de données et d'images</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
-            <span class='tech-badge'>{icon('code', size=16)} Python 3.12</span>
-            <span class='tech-badge'>{icon('dashboard', size=16)} Streamlit</span>
-            <span class='tech-badge'>{icon('smart_toy', size=16)} Scikit-learn</span>
-            <span class='tech-badge'>{icon('table_chart', size=16)} Pandas</span>
-            <span class='tech-badge'>{icon('image', size=16)} OpenCV</span>
-            <span class='tech-badge'>{icon('show_chart', size=16)} Plotly</span>
+            <span class='tech-badge'>🐍 Python 3.12</span>
+            <span class='tech-badge'>📊 Streamlit</span>
+            <span class='tech-badge'>🤖 Scikit-learn</span>
+            <span class='tech-badge'>📈 Pandas</span>
+            <span class='tech-badge'>🔬 OpenCV</span>
+            <span class='tech-badge'>🎨 Plotly</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
 
 # --- SECTION DES APPLICATIONS ---
-st.markdown(f"## {icon('apps', size=28)} Nos Applications", unsafe_allow_html=True)
+st.markdown("## ✨ Nos Applications")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown(f"""
+    st.markdown("""
         <div class='app-card'>
-            <div class='app-icon'>{icon('bar_chart', variant='sharp', size=40, color='#4361ee')}</div>
-            <h2 class='app-title'>
-                {icon('bar_chart', size=24)} Data Quality Analyzer
-            </h2>
+            <div class='app-icon'>📊</div>
+            <h2 class='app-title'>Data Quality Analyzer</h2>
             <p class='app-description'>Analyse intelligente de la qualité des données avec recommandations ML.</p>
             <ul class='feature-list'>
-                <li>{icon('category', size=16)} Classification automatique</li>
-                <li>{icon('emergency', size=16)} Détection des outliers</li>
-                <li>{icon('build', size=16)} Feature engineering</li>
-                <li>{icon('download', size=16)} Export de rapports</li>
+                <li>Classification automatique</li>
+                <li>Détection des outliers</li>
+                <li>Feature engineering</li>
+                <li>Export de rapports</li>
             </ul>
-            <span class='app-badge badge-primary'>
-                {icon('smart_toy', size=14)} Machine Learning
-            </span>
+            <span class='app-badge badge-primary'>🤖 Machine Learning</span>
         </div>
     """, unsafe_allow_html=True)
 
-    if st.button(f"{icon('rocket_launch', size=16)} Lancer Data Quality Analyzer", key="btn_data",
-                 use_container_width=True):
+    if st.button("🚀 Lancer Data Quality Analyzer", key="btn_data", use_container_width=True):
         st.switch_page("pages/analyse_data_traitement.py")
 
 with col2:
-    st.markdown(f"""
+    st.markdown("""
         <div class='app-card'>
-            <div class='app-icon'>{icon('scatter_plot', variant='sharp', size=40, color='#4361ee')}</div>
-            <h2 class='app-title'>
-                {icon('scatter_plot', size=24)} PCA Vision Pro
-            </h2>
+            <div class='app-icon'>🔬</div>
+            <h2 class='app-title'>PCA Vision Pro</h2>
             <p class='app-description'>Analyse d'images par décomposition en composantes principales.</p>
             <ul class='feature-list'>
-                <li>{icon('compress', size=16)} Compression intelligente</li>
-                <li>{icon('analytics', size=16)} Analyse de variance</li>
-                <li>{icon('layers', size=16)} Tests multi-niveaux</li>
-                <li>{icon('table_chart', size=16)} Matrice comparative</li>
+                <li>Compression intelligente</li>
+                <li>Analyse de variance</li>
+                <li>Tests multi-niveaux</li>
+                <li>Matrice comparative</li>
             </ul>
-            <span class='app-badge badge-success'>
-                {icon('image', size=14)} Traitement d'images
-            </span>
+            <span class='app-badge badge-success'>🔬 Traitement d'images</span>
         </div>
     """, unsafe_allow_html=True)
 
-    if st.button(f"{icon('rocket_launch', size=16)} Lancer PCA Vision Pro", key="btn_pca", use_container_width=True):
+    if st.button("🔬 Lancer PCA Vision Pro", key="btn_pca", use_container_width=True):
         st.switch_page("pages/app_acp_v2.py")
 
 # --- SECTION RÉALISATEUR COMPLÈTE ---
-st.markdown(f"""
+st.markdown("""
     <div class='author-section'>
         <div class='author-avatar'>
-            <span class='author-avatar-icon'>{icon('school', variant='sharp', size=48)}</span>
+            <span class='author-avatar-icon'>👨‍🎓</span>
         </div>
         <div class='author-badge-container'>
-            <span class='author-badge'>{icon('school', size=12)} Master 1 - Système d'Information</span>
+            <span class='author-badge'>Master 1 - Système d'Information</span>
         </div>
-        <h2 class='author-name'>
-            {icon('person', size=28)} Gana Faye
-        </h2>
+        <h2 class='author-name'>Gana Faye</h2>
         <div class='author-title'>Data Scientist & Passionné par l'IA</div>
+
 """, unsafe_allow_html=True)
 
 # --- STATISTIQUES RAPIDES ---
-st.markdown(f"""
+st.markdown("""
     <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0;'>
         <div class='stat-card'>
             <div class='stat-number'>2</div>
-            <div class='stat-label'>{icon('apps', size=14)} Applications</div>
+            <div class='stat-label'>Applications</div>
         </div>
         <div class='stat-card'>
             <div class='stat-number'>20+</div>
-            <div class='stat-label'>{icon('stars', size=14)} Fonctionnalités</div>
+            <div class='stat-label'>Fonctionnalités</div>
         </div>
         <div class='stat-card'>
             <div class='stat-number'>10+</div>
-            <div class='stat-label'>{icon('description', size=14)} Types de fichiers</div>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
-
-# --- COMPLÉMENT SECTION RÉALISATEUR ---
-st.markdown(f"""
-        <div class='skills-container'>
-            <span class='skill-tag'>{icon('code', size=12)} Python</span>
-            <span class='skill-tag'>{icon('dashboard', size=12)} Streamlit</span>
-            <span class='skill-tag'>{icon('data_usage', size=12)} Pandas</span>
-            <span class='skill-tag'>{icon('smart_toy', size=12)} Scikit-learn</span>
-            <span class='skill-tag'>{icon('image', size=12)} OpenCV</span>
-            <span class='skill-tag'>{icon('show_chart', size=12)} Plotly</span>
-            <span class='skill-tag'>{icon('storage', size=12)} SQL</span>
-            <span class='skill-tag'>{icon('insights', size=12)} DataViz</span>
-        </div>
-
-        <div class='social-links'>
-            <a href='https://github.com' target='_blank' class='social-link'>
-                <span class='social-icon'>{icon('code', size=18)}</span>
-                <span class='social-text'>GitHub</span>
-            </a>
-            <a href='https://linkedin.com' target='_blank' class='social-link'>
-                <span class='social-icon'>{icon('work', size=18)}</span>
-                <span class='social-text'>LinkedIn</span>
-            </a>
-            <a href='mailto:contact@example.com' class='social-link'>
-                <span class='social-icon'>{icon('email', size=18)}</span>
-                <span class='social-text'>Email</span>
-            </a>
-        </div>
-
-        <div class='author-quote'>
-            <span class='quote-mark'>{icon('format_quote', size=24)}</span>
-            "Transformer les données en insights, une ligne à la fois"
-        </div>
-
-        <div class='author-footer'>
-            <span class='institution'>{icon('school', size=12)} UCAD</span>
-            <span class='separator'>•</span>
-            <span class='promo'>{icon('calendar_today', size=12)} Promo 2026</span>
-            <span class='separator'>•</span>
-            <span class='promo'>{icon('emoji_events', size=12)} Data Scientist</span>
+            <div class='stat-label'>Types de fichiers</div>
         </div>
     </div>
 """, unsafe_allow_html=True)
@@ -1170,9 +978,7 @@ st.markdown(f"""
 current_year = datetime.now().year
 st.markdown(f"""
     <div class='footer'>
-        <strong>{icon('rocket_launch', size=16)} Data & Image Analytics Hub</strong> · Conçu avec passion par Gana Faye<br>
-        <span style='opacity: 0.7; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 4px;'>
-            {icon('copyright', size=12)} {current_year} - Tous droits réservés · Version 4.0
-        </span>
+        <strong>🚀 Data & Image Analytics Hub</strong> · Conçu avec passion par Gana Faye<br>
+        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 4.0</span>
     </div>
 """, unsafe_allow_html=True)
