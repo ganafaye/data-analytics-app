@@ -15,7 +15,76 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+st.markdown("""
+    <style>
+    /* 1. Cibler le bouton de la Sidebar (Ouverture/Fermeture) */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 12px !important;
+        color: white !important;
+        width: 45px !important;
+        height: 45px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        margin-left: 10px !important;
+        margin-top: 5px !important;
+    }
 
+    /* 2. Effet au survol (Hover) */
+    button[data-testid="stBaseButton-headerNoPadding"]:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid #60a5fa !important; /* Bordure bleue comme ton titre */
+        transform: scale(1.1) rotate(5deg) !important;
+        box-shadow: 0 0 20px rgba(96, 165, 250, 0.4) !important;
+    }
+
+    /* 3. Style de l'icône à l'intérieur du bouton */
+    button[data-testid="stBaseButton-headerNoPadding"] svg {
+        fill: white !important;
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    /* 4. Ajustement pour que l'icône reste visible même si le header est transparent */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+
+    /* Optionnel : Animation d'apparition douce */
+    @keyframes fadeInIcon {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        animation: fadeInIcon 0.8s ease-out;
+    }
+    /* 1. On garde le header mais on le rend invisible (transparent) */
+    header[data-testid="stHeader"] {
+        background-color: rgba(0,0,0,0) !important;
+        color: transparent !important;
+    }
+
+    /* 2. On masque spécifiquement les boutons de droite (Deploy, Menu, etc.) */
+    header[data-testid="stHeader"] div:first-child > div:nth-child(2) {
+        display: none !important;
+    }
+
+    /* 3. On s'assure que le bouton de la sidebar reste visible et blanc/couleur voulue */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        color: white !important; /* Change en 'black' si ton fond est clair */
+    }
+
+    /* 4. On réduit la marge pour que le contenu remonte */
+    .main .block-container {
+        padding-top: 2rem !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 # --- STYLE CSS PERSONNALISÉ ---
 st.markdown("""
     <style>
