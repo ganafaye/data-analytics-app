@@ -11,54 +11,19 @@ from datetime import datetime
 # Configuration de la page
 st.set_page_config(
     page_title="Data Quality Analyzer | Analyse de données",
-    page_icon="✨",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- INTÉGRATION DES GOOGLE MATERIAL ICONS ---
+# --- STYLE CSS AMÉLIORÉ AVEC SIDEBAR BLANC STYLISÉE ---
 st.markdown("""
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
-
     <style>
-    /* Style de base pour les icônes */
-    .material-icons, .material-icons-outlined, .material-icons-round, .material-icons-sharp {
-        font-family: 'Material Icons' !important;
-        font-weight: normal;
-        font-style: normal;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
-        display: inline-block;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        font-feature-settings: 'liga';
-        vertical-align: middle;
-    }
+    /* Import des polices */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-    .material-icons-outlined { font-family: 'Material Icons Outlined' !important; }
-    .material-icons-round { font-family: 'Material Icons Round' !important; }
-    .material-icons-sharp { font-family: 'Material Icons Sharp' !important; }
-
-    /* Animation pour le chargement */
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .spin {
-        animation: spin 2s linear infinite;
-        display: inline-block;
-    }
-
-    /* Style général */
+    /* Style général avec dégradé élégant */
     .main {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #9f7aea 100%);
         background-size: 200% 200%;
@@ -72,7 +37,7 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* En-tête principal */
+    /* En-tête principal avec effet glassmorphisme */
     .main-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
@@ -80,7 +45,7 @@ st.markdown("""
         padding: 2rem 2.5rem;
         border-radius: 30px;
         margin-bottom: 2rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.3);
         position: relative;
         overflow: hidden;
@@ -104,6 +69,16 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
+    .main-header::after {
+        content: '📊';
+        position: absolute;
+        bottom: -20px;
+        right: -20px;
+        font-size: 8rem;
+        opacity: 0.05;
+        transform: rotate(-15deg);
+    }
+
     .main-title {
         font-size: 2.8rem;
         font-weight: 800;
@@ -113,9 +88,8 @@ st.markdown("""
         margin: 0;
         letter-spacing: -0.02em;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        position: relative;
+        z-index: 1;
     }
 
     .main-subtitle {
@@ -123,12 +97,11 @@ st.markdown("""
         font-size: 1.1rem;
         margin-top: 0.5rem;
         font-weight: 300;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        position: relative;
+        z-index: 1;
     }
 
-    /* Sidebar */
+    /* Sidebar blanche stylisée */
     section[data-testid="stSidebar"] {
         background: white !important;
         border-right: 1px solid rgba(102, 126, 234, 0.2);
@@ -139,40 +112,290 @@ st.markdown("""
         background: white;
     }
 
-    /* Badges */
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+    .sidebar-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        padding: 2rem 1.5rem;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 1.5rem;
+        color: #2d3748;
+        text-align: center;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sidebar-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
+    }
+
+    .sidebar-header::after {
+        content: '📊';
+        position: absolute;
+        bottom: -10px;
+        right: -10px;
+        font-size: 4rem;
+        opacity: 0.1;
+        transform: rotate(10deg);
+    }
+
+    .sidebar-header h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        position: relative;
+        z-index: 1;
+    }
+
+    .sidebar-header p {
+        opacity: 0.8;
+        font-size: 0.95rem;
+        margin: 0.5rem 0 0 0;
+        color: #718096;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Style des widgets dans la sidebar */
+    section[data-testid="stSidebar"] .stMarkdown h3 {
+        color: #2d3748;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #edf2f7;
+    }
+
+    section[data-testid="stSidebar"] .stFileUploader {
+        border: 2px dashed #e2e8f0;
+        border-radius: 15px;
+        padding: 0.5rem;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+    }
+
+    section[data-testid="stSidebar"] .stFileUploader:hover {
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    section[data-testid="stSidebar"] .stSelectbox > div > div {
+        border-radius: 12px !important;
+        border: 2px solid #edf2f7 !important;
+        transition: all 0.3s ease;
+    }
+
+    section[data-testid="stSidebar"] .stSelectbox > div > div:hover {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    section[data-testid="stSidebar"] .stSlider > div > div > div > div {
+        background: linear-gradient(90deg, #667eea, #764ba2) !important;
+    }
+
+    section[data-testid="stSidebar"] .stCheckbox > div {
+        border-radius: 8px !important;
+        transition: all 0.3s ease;
+    }
+
+    section[data-testid="stSidebar"] .stCheckbox > div:hover {
+        transform: translateX(5px);
+        background: #f7fafc;
+    }
+
+    /* Cartes de qualité avec design moderne */
+    .quality-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(102, 126, 234, 0.1);
+        margin-bottom: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quality-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+    }
+
+    .quality-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15), 0 0 0 1px #667eea;
+    }
+
+    .quality-card:hover::before {
+        width: 6px;
+    }
+
+    .quality-score {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        filter: drop-shadow(0 5px 10px rgba(102, 126, 234, 0.2));
+    }
+
+    .quality-label {
+        color: #718096;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+    }
+
+    /* Badges de qualité avec design premium */
+    .quality-badge {
+        display: inline-block;
         padding: 0.5rem 1.5rem;
         border-radius: 50px;
         font-weight: 600;
         font-size: 0.9rem;
         margin-right: 0.5rem;
+        transition: all 0.3s ease;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .badge-excellent {
         background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
         color: white;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
     }
 
     .badge-good {
         background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
         color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .badge-fair {
         background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
         color: white;
+        box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3);
     }
 
     .badge-poor {
         background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
         color: white;
+        box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
     }
 
-    /* Timeline */
+    /* Badges pour types de variables */
+    .badge-quantitative {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(72, 187, 120, 0.2);
+    }
+
+    .badge-qualitative {
+        background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    .badge-date {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(237, 137, 54, 0.2);
+    }
+
+    .badge-target {
+        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.2);
+    }
+
+    /* Cartes métriques */
+    .metric-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .metric-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.1), 0 0 0 1px #667eea;
+    }
+
+    .metric-card:hover::after {
+        opacity: 1;
+    }
+
+    .metric-value-sm {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+    }
+
+    .metric-label-sm {
+        color: #718096;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.5rem;
+        font-weight: 600;
+    }
+
+    /* Timeline avec design moderne */
     .timeline-item {
         display: flex;
         align-items: center;
@@ -201,48 +424,12 @@ st.markdown("""
         align-items: center;
         justify-content: center;
         margin-right: 1.2rem;
+        font-size: 1.3rem;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         flex-shrink: 0;
     }
 
-    /* Variable item */
-    .variable-item {
-        background: white;
-        padding: 1rem;
-        border-radius: 14px;
-        border: 1px solid #edf2f7;
-        display: flex;
-        flex-direction: column;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 0.5rem;
-    }
-
-    .variable-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.1);
-        border-color: #667eea;
-    }
-
-    .variable-name {
-        font-weight: 600;
-        color: #2d3748;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .variable-stats {
-        font-size: 0.8rem;
-        color: #718096;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    /* Progress bar */
+    /* Progress bars */
     .progress-container {
         background: #edf2f7;
         height: 8px;
@@ -267,7 +454,60 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
 
-    /* Tabs */
+    /* Variables grid */
+    .variable-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 14px;
+        border: 1px solid #edf2f7;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .variable-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .variable-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.1);
+        border-color: #667eea;
+    }
+
+    .variable-item:hover::before {
+        opacity: 1;
+    }
+
+    .variable-name {
+        font-weight: 600;
+        color: #2d3748;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .variable-stats {
+        font-size: 0.8rem;
+        color: #718096;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* Tabs avec design premium */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.8rem;
         background: white;
@@ -275,6 +515,7 @@ st.markdown("""
         border-radius: 60px;
         border: 1px solid rgba(102, 126, 234, 0.2);
         margin-bottom: 2rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
     }
 
     .stTabs [data-baseweb="tab"] {
@@ -283,16 +524,67 @@ st.markdown("""
         font-weight: 500;
         color: #4a5568;
         transition: all 0.3s ease;
+        border: 1px solid transparent;
         font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    }
+
+    .stTabs [data-baseweb="tab"]:hover {
+        background: rgba(102, 126, 234, 0.05);
+        border-color: rgba(102, 126, 234, 0.3);
+        transform: translateY(-2px);
     }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        border: none;
+    }
+
+    /* Boutons */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.7rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .stButton > button:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Download button */
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        box-shadow: 0 8px 16px rgba(72, 187, 120, 0.2);
     }
 
     /* Footer */
@@ -321,34 +613,170 @@ st.markdown("""
         background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
     }
 
+    /* Animations */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .floating {
+        animation: float 4s ease-in-out infinite;
+    }
+
+    /* Info boxes */
+    .info-box {
+        background: #f8fafc;
+        padding: 1.2rem;
+        border-radius: 16px;
+        border-left: 5px solid #667eea;
+        margin: 1rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
+    }
+
+    .info-box:hover {
+        background: white;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Expanders */
+    .streamlit-expanderHeader {
+        background: white !important;
+        border-radius: 16px !important;
+        border: 1px solid #edf2f7 !important;
+        padding: 1rem 1.5rem !important;
+        font-weight: 600 !important;
+        color: #2d3748 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    }
+
+    .streamlit-expanderHeader:hover {
+        border-color: #667eea !important;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1) !important;
+        transform: translateX(5px);
+    }
+
+    /* Dataframe */
+    .stDataFrame {
+        border-radius: 16px !important;
+        border: 1px solid #edf2f7 !important;
+        overflow: hidden !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02) !important;
+    }
+
+    /* Messages */
+    .stAlert {
+        border-radius: 16px !important;
+        border: none !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .main-title {
             font-size: 2.2rem;
         }
+
         .main-subtitle {
             font-size: 1rem;
         }
+
+        .metric-value-sm {
+            font-size: 1.5rem;
+        }
+
+        .quality-score {
+            font-size: 2.5rem;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
     }
+
+    @media (max-width: 480px) {
+        .main-header {
+            padding: 1.5rem;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Effet de brillance */
+    .shine {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shine::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 20%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(25deg);
+        animation: shine 8s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes shine {
+        0% { left: -60%; }
+        20% { left: 120%; }
+        100% { left: 120%; }
+    }
+
+    /* Tooltips personnalisés */
+    .custom-tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 2px dotted #667eea;
+        cursor: help;
+    }
+
+    .custom-tooltip .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background: #2d3748;
+        color: white;
+        text-align: center;
+        border-radius: 10px;
+        padding: 0.5rem;
+        position: absolute;
+        z-index: 1000;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.8rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .custom-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+
     </style>
 """, unsafe_allow_html=True)
 
 
-# --- FONCTION POUR LES ICÔNES ---
-def icon(name, variant="outlined", size=24, color=None, spin=False):
-    """Génère une icône Google Material"""
-    classes = f"material-icons-{variant}"
-    if spin:
-        classes += " spin"
-
-    style = f"font-size: {size}px; line-height: 1; vertical-align: middle;"
-    if color:
-        style += f" color: {color};"
-
-    return f"<i class='{classes}' style='{style}'>{name}</i>"
-
-
-# --- FONCTIONS D'ANALYSE DE DONNÉES ---
+# --- FONCTIONS D'ANALYSE DE DONNÉES (inchangées) ---
 def detecter_type_fichier(nom_fichier):
     ext = nom_fichier.split('.')[-1].lower() if '.' in nom_fichier else ''
     types = {
@@ -601,25 +1029,22 @@ def comparer_datasets(avant, apres):
 def verifier_nettoyage(comparaison):
     messages = []
     if comparaison['amelioration_score'] > 0:
-        messages.append(
-            ("check_circle", "#10b981", f"Score qualité amélioré de {comparaison['amelioration_score']:.1f} points"))
+        messages.append(("✅", "green", f"Score qualité amélioré de {comparaison['amelioration_score']:.1f} points"))
     else:
-        messages.append(("error", "#ef4444", "Le score qualité n'a pas augmenté"))
+        messages.append(("❌", "red", "Le score qualité n'a pas augmenté"))
 
     if comparaison['reduction_missing'] > 0:
-        messages.append(
-            ("check_circle", "#10b981", f"Valeurs manquantes réduites de {comparaison['reduction_missing']}"))
+        messages.append(("✅", "green", f"Valeurs manquantes réduites de {comparaison['reduction_missing']}"))
     elif comparaison['reduction_missing'] < 0:
-        messages.append(
-            ("warning", "#f59e0b", f"Nouvelles valeurs manquantes: {abs(comparaison['reduction_missing'])}"))
+        messages.append(("⚠️", "orange", f"Nouvelles valeurs manquantes: {abs(comparaison['reduction_missing'])}"))
 
     if comparaison['reduction_duplicates'] > 0:
-        messages.append(("check_circle", "#10b981", f"Doublons réduits de {comparaison['reduction_duplicates']}"))
+        messages.append(("✅", "green", f"Doublons réduits de {comparaison['reduction_duplicates']}"))
 
     if comparaison['reduction_problemes'] > 0:
-        messages.append(("check_circle", "#10b981", f"Problèmes résolus: {comparaison['reduction_problemes']}"))
+        messages.append(("✅", "green", f"Problèmes résolus: {comparaison['reduction_problemes']}"))
     elif comparaison['reduction_problemes'] < 0:
-        messages.append(("error", "#ef4444", f"Nouveaux problèmes: {abs(comparaison['reduction_problemes'])}"))
+        messages.append(("❌", "red", f"Nouveaux problèmes: {abs(comparaison['reduction_problemes'])}"))
 
     return messages
 
@@ -639,8 +1064,7 @@ def generer_recommandations_feature_engineering(analyse):
                         'raison': f"Grande échelle (std={stats['std']:.2f})",
                         'impact': 'Améliore la convergence des modèles',
                         'pour_ACP': True,
-                        'priority': 'MOYENNE',
-                        'icon': 'straighten'
+                        'priority': 'MOYENNE'
                     })
 
                 if 'pct_outliers' in stats and stats['pct_outliers'] > 5:
@@ -652,8 +1076,7 @@ def generer_recommandations_feature_engineering(analyse):
                         'raison': f"{stats['pct_outliers']:.1f}% d'outliers",
                         'impact': 'Réduit l\'influence des valeurs extrêmes',
                         'pour_ACP': True,
-                        'priority': 'MOYENNE',
-                        'icon': 'emergency'
+                        'priority': 'MOYENNE'
                     })
 
                 if 'skew' in stats and abs(stats['skew']) > 1:
@@ -666,8 +1089,7 @@ def generer_recommandations_feature_engineering(analyse):
                         'raison': f"Asymétrie = {stats['skew']:.2f}",
                         'impact': 'Rend la distribution plus normale',
                         'pour_ACP': True,
-                        'priority': 'MOYENNE',
-                        'icon': 'show_chart'
+                        'priority': 'MOYENNE'
                     })
 
     if len(analyse['classification']['quantitative']) >= 3:
@@ -678,8 +1100,7 @@ def generer_recommandations_feature_engineering(analyse):
             'raison': f"{len(analyse['classification']['quantitative'])} variables quantitatives",
             'impact': 'Réduit la dimension et décorrèle les variables',
             'variables': analyse['classification']['quantitative'][:5],
-            'priority': 'HAUTE',
-            'icon': 'scatter_plot'
+            'priority': 'HAUTE'
         })
 
     return recommandations
@@ -694,7 +1115,7 @@ def generer_recommandations_qualite(analyse):
             'categorie': 'Valeurs manquantes',
             'message': f"{analyse['pct_missing']:.1f}% de valeurs manquantes",
             'action': "Imputer ou supprimer les colonnes/lignes concernées",
-            'icon': 'highlight_off'
+            'icon': '🔍'
         })
 
     if analyse['pct_duplicates'] > 1:
@@ -703,7 +1124,7 @@ def generer_recommandations_qualite(analyse):
             'categorie': 'Doublons',
             'message': f"{analyse['duplicates']} lignes dupliquées ({analyse['pct_duplicates']:.1f}%)",
             'action': "Supprimer les lignes dupliquées",
-            'icon': 'content_copy'
+            'icon': '🔄'
         })
 
     for prob in analyse['problem_columns']:
@@ -714,7 +1135,7 @@ def generer_recommandations_qualite(analyse):
                     'categorie': f"Colonne '{prob['colonne']}'",
                     'message': issue,
                     'action': f"Traiter les valeurs manquantes",
-                    'icon': 'warning'
+                    'icon': '📌'
                 })
             elif 'Constante' in issue:
                 recommandations.append({
@@ -722,7 +1143,7 @@ def generer_recommandations_qualite(analyse):
                     'categorie': f"Colonne '{prob['colonne']}'",
                     'message': "Colonne constante",
                     'action': f"Envisager de supprimer",
-                    'icon': 'remove'
+                    'icon': '📊'
                 })
             elif 'outliers' in issue:
                 recommandations.append({
@@ -730,7 +1151,7 @@ def generer_recommandations_qualite(analyse):
                     'categorie': f"Colonne '{prob['colonne']}'",
                     'message': issue,
                     'action': "Appliquer une transformation ou winsorisation",
-                    'icon': 'emergency'
+                    'icon': '📈'
                 })
             elif 'Asymétrie' in issue:
                 recommandations.append({
@@ -738,103 +1159,86 @@ def generer_recommandations_qualite(analyse):
                     'categorie': f"Colonne '{prob['colonne']}'",
                     'message': issue,
                     'action': "Appliquer une transformation logarithmique",
-                    'icon': 'show_chart'
+                    'icon': '📉'
                 })
 
     return recommandations
 
 
 # --- EN-TÊTE PRINCIPAL ---
-st.markdown(f"""
-    <div class="main-header">
-        <h1 class="main-title">
-            {icon('analytics', variant='sharp', size=40)} Data Quality Analyzer
-        </h1>
-        <p class="main-subtitle">
-            {icon('insights', size=20, color='#667eea')} Analyse intelligente de la qualité des données · Nettoyage & Optimisation · Feature Engineering
-        </p>
+st.markdown("""
+    <div class="main-header floating shine">
+        <h1 class="main-title">📊 Data Quality Analyzer</h1>
+        <p class="main-subtitle">Analyse intelligente de la qualité des données · Nettoyage & Optimisation · Feature Engineering</p>
         <div style='display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;'>
-            <span class='badge badge-excellent'>{icon('category', size=16)} Classification auto</span>
-            <span class='badge badge-good'>{icon('build', size=16)} Feature engineering</span>
-            <span class='badge badge-fair'>{icon('scatter_plot', size=16)} Préparation ACP</span>
-            <span class='badge badge-poor'>{icon('lightbulb', size=16)} Recommandations ML</span>
+            <span class='badge-excellent quality-badge'>🎯 Classification auto</span>
+            <span class='badge-good quality-badge'>📊 Feature engineering</span>
+            <span class='badge-fair quality-badge'>🔬 Préparation ACP</span>
+            <span class='badge-poor quality-badge'>💡 Recommandations ML</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); 
-                    padding: 2rem 1.5rem; border-radius: 0 0 30px 30px; 
-                    margin-bottom: 1.5rem; text-align: center;'>
-            <h3 style='font-size: 1.8rem; font-weight: 700; margin: 0; 
-                       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                       display: flex; align-items: center; justify-content: center; gap: 8px;'>
-                {icon('folder_open', variant='sharp', size=32)} Chargement
-            </h3>
-            <p style='opacity: 0.8; font-size: 0.95rem; color: #718096;'>Importez vos datasets</p>
+    st.markdown("""
+        <div class="sidebar-header">
+            <h3>📁 Chargement</h3>
+            <p>Importez vos datasets</p>
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(
-        f"<h3 style='display: flex; align-items: center; gap: 8px;'>{icon('cloud_upload', size=20)} Dataset original</h3>",
-        unsafe_allow_html=True)
+    st.markdown("### 📥 Dataset original")
     file_avant = st.file_uploader(
-        "Charger le fichier original",
+        "Charger le fichier original (obligatoire)",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_avant",
-        label_visibility="collapsed"
+        help="Dataset avant nettoyage"
     )
 
     if file_avant:
         type_fichier = detecter_type_fichier(file_avant.name)
-        st.info(f"{icon('table_chart', size=18)} Original : {type_fichier}")
+        st.info(f"📄 Original : {type_fichier}")
 
     st.markdown("---")
 
-    st.markdown(
-        f"<h3 style='display: flex; align-items: center; gap: 8px;'>{icon('auto_awesome', size=20)} Dataset nettoyé</h3>",
-        unsafe_allow_html=True)
+    st.markdown("### ✨ Dataset nettoyé")
     file_apres = st.file_uploader(
-        "Charger la version nettoyée",
+        "Charger la version nettoyée (optionnel)",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_apres",
-        label_visibility="collapsed"
+        help="Version nettoyée à comparer avec l'original"
     )
 
     if file_apres:
         type_fichier = detecter_type_fichier(file_apres.name)
-        st.info(f"{icon('table_chart', size=18)} Nettoyé : {type_fichier}")
+        st.info(f"📄 Nettoyé : {type_fichier}")
 
     st.markdown("---")
 
-    st.markdown(f"<h3 style='display: flex; align-items: center; gap: 8px;'>{icon('settings', size=20)} Options</h3>",
-                unsafe_allow_html=True)
+    st.markdown("### ⚙️ Options")
     show_details = st.checkbox("Afficher les détails par colonne", value=True)
     threshold_missing = st.slider("Seuil d'alerte valeurs manquantes (%)", 0, 50, 10)
     show_problem_details = st.checkbox("Afficher les détails des problèmes", value=True)
 
-# --- CORPS PRINCIPAL ---
 if file_avant:
     df_avant, error_avant = charger_fichier(file_avant)
 
     if error_avant:
-        st.error(f"{icon('error', size=20)} Erreur chargement original : {error_avant}")
+        st.error(f"Erreur chargement original : {error_avant}")
     else:
-        with st.spinner(f"Analyse du dataset original..."):
+        with st.spinner("🔍 Analyse du dataset original..."):
             analyse_avant = analyser_qualite_dataset(df_avant, "Original")
 
         if file_apres:
             df_apres, error_apres = charger_fichier(file_apres)
             if error_apres:
-                st.error(f"{icon('error', size=20)} Erreur chargement nettoyé : {error_apres}")
+                st.error(f"Erreur chargement nettoyé : {error_apres}")
                 df_apres = None
                 analyse_apres = None
                 comparaison = None
             else:
-                with st.spinner(f"Analyse du dataset nettoyé..."):
+                with st.spinner("🔍 Analyse du dataset nettoyé..."):
                     analyse_apres = analyser_qualite_dataset(df_apres, "Nettoyé")
                 comparaison = comparer_datasets(analyse_avant, analyse_apres)
         else:
@@ -842,34 +1246,18 @@ if file_avant:
             analyse_apres = None
             comparaison = None
 
-        st.markdown(f"## {icon('dashboard', size=28)} Dataset Original - Tableau de bord qualité",
-                    unsafe_allow_html=True)
+        st.markdown("## 📊 Dataset Original - Tableau de bord qualité")
 
-        # Métriques principales
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
             st.markdown(f"""
-                <div style='background: white; padding: 1.5rem; border-radius: 25px; 
-                            box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
-                    <div style='display: flex; align-items: center; gap: 16px;'>
-                        <div style='width: 48px; height: 48px; border-radius: 24px; 
-                                    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
-                                    display: flex; align-items: center; justify-content: center;'>
-                            {icon('stars', variant='sharp', size=32, color='#667eea')}
-                        </div>
-                        <div>
-                            <div style='font-size: 3rem; font-weight: 800; 
-                                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                        -webkit-background-clip: text; -webkit-text-fill-color: transparent;'>
-                                {analyse_avant['quality_score']:.1f}
-                            </div>
-                            <div style='color: #718096; font-size: 0.9rem; text-transform: uppercase;'>Score qualité</div>
-                        </div>
-                    </div>
-                    <div style='margin-top: 1rem;'>
-                        <span class='badge {analyse_avant['quality_badge']}'>
-                            {icon('check', size=16)} {analyse_avant['quality_category']}
+                <div class='quality-card'>
+                    <div class='quality-score'>{analyse_avant['quality_score']:.1f}</div>
+                    <div class='quality-label'>Score qualité</div>
+                    <div style='margin-top:0.5rem;'>
+                        <span class='quality-badge {analyse_avant['quality_badge']}'>
+                            {analyse_avant['quality_category']}
                         </span>
                     </div>
                 </div>
@@ -877,91 +1265,70 @@ if file_avant:
 
         with col2:
             st.markdown(f"""
-                <div style='background: white; padding: 1.5rem; border-radius: 20px; text-align: center;
-                            box-shadow: 0 8px 20px rgba(0,0,0,0.03); height: 100%;'>
-                    <div style='font-size: 2.5rem; margin-bottom: 0.5rem; color: #667eea;'>
-                        {icon('table_rows', size=40, color='#667eea')}
-                    </div>
-                    <div style='font-size: 2rem; font-weight: 700; color: #2d3748;'>{analyse_avant['total_lignes']:,}</div>
-                    <div style='color: #718096; font-size: 0.8rem; text-transform: uppercase; 
-                                display: flex; align-items: center; justify-content: center; gap: 4px;'>
-                        {icon('table_rows', size=16)} Lignes
-                    </div>
+                <div class='metric-card'>
+                    <div class='metric-value-sm'>{analyse_avant['total_lignes']:,}</div>
+                    <div class='metric-label-sm'>Lignes</div>
+                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col3:
             st.markdown(f"""
-                <div style='background: white; padding: 1.5rem; border-radius: 20px; text-align: center;
-                            box-shadow: 0 8px 20px rgba(0,0,0,0.03); height: 100%;'>
-                    <div style='font-size: 2.5rem; margin-bottom: 0.5rem; color: #667eea;'>
-                        {icon('view_column', size=40, color='#667eea')}
-                    </div>
-                    <div style='font-size: 2rem; font-weight: 700; color: #2d3748;'>{analyse_avant['total_colonnes']}</div>
-                    <div style='color: #718096; font-size: 0.8rem; text-transform: uppercase;
-                                display: flex; align-items: center; justify-content: center; gap: 4px;'>
-                        {icon('view_column', size=16)} Colonnes
-                    </div>
+                <div class='metric-card'>
+                    <div class='metric-value-sm'>{analyse_avant['total_colonnes']}</div>
+                    <div class='metric-label-sm'>Colonnes</div>
+                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col4:
             st.markdown(f"""
-                <div style='background: white; padding: 1.5rem; border-radius: 20px; text-align: center;
-                            box-shadow: 0 8px 20px rgba(0,0,0,0.03); height: 100%;'>
-                    <div style='font-size: 2.5rem; margin-bottom: 0.5rem; color: #667eea;'>
-                        {icon('memory', size=40, color='#667eea')}
-                    </div>
-                    <div style='font-size: 2rem; font-weight: 700; color: #2d3748;'>{analyse_avant['memoire']:.2f}</div>
-                    <div style='color: #718096; font-size: 0.8rem; text-transform: uppercase;
-                                display: flex; align-items: center; justify-content: center; gap: 4px;'>
-                        {icon('memory', size=16)} MB
-                    </div>
+                <div class='metric-card'>
+                    <div class='metric-value-sm'>{analyse_avant['memoire']:.2f}</div>
+                    <div class='metric-label-sm'>MB</div>
+                    <div class='progress-container'><div class='progress-bar' style='width:{min(100, analyse_avant['memoire'])}%'></div></div>
                 </div>
             """, unsafe_allow_html=True)
 
-        # Onglets
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-            f"{icon('table_view', size=18)} Aperçu général",
-            f"{icon('category', size=18)} Classification",
-            f"{icon('view_column', size=18)} Détails",
-            f"{icon('warning', size=18)} Problèmes",
-            f"{icon('insights', size=18)} Visualisations",
-            f"{icon('lightbulb', size=18)} Recommandations"
+            "📋 Aperçu général",
+            "🔢 Classification variables",
+            "🔍 Détails colonnes",
+            "⚠️ Problèmes détectés",
+            "📈 Visualisations",
+            "💡 Recommandations ML"
         ])
 
         with tab1:
-            st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px;">',
-                        unsafe_allow_html=True)
+            st.markdown('<div class="quality-card">', unsafe_allow_html=True)
             col_stat1, col_stat2 = st.columns(2)
 
             with col_stat1:
-                st.markdown(f"### {icon('analytics', size=24)} Statistiques globales", unsafe_allow_html=True)
+                st.markdown("### 📊 Statistiques globales")
                 st.markdown(f"""
-                    * {icon('table_rows', size=16)} **Lignes :** {analyse_avant['total_lignes']:,}
-                    * {icon('view_column', size=16)} **Colonnes :** {analyse_avant['total_colonnes']}
-                    * {icon('memory', size=16)} **Mémoire :** {analyse_avant['memoire']:.2f} MB
-                    * {icon('highlight_off', size=16)} **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
-                    * {icon('content_copy', size=16)} **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
-                """, unsafe_allow_html=True)
+                    * **Lignes :** {analyse_avant['total_lignes']:,}
+                    * **Colonnes :** {analyse_avant['total_colonnes']}
+                    * **Mémoire :** {analyse_avant['memoire']:.2f} MB
+                    * **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
+                    * **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
+                """)
 
             with col_stat2:
-                st.markdown(f"### {icon('data_usage', size=24)} Types de données", unsafe_allow_html=True)
+                st.markdown("### 📊 Types de données")
                 for dtype, count in analyse_avant['dtypes_summary'].items():
                     pct = (count / analyse_avant['total_colonnes']) * 100
                     st.markdown(f"""
-                        * {icon('code', size=16)} **{dtype} :** {count} ({pct:.1f}%)
+                        * **{dtype} :** {count} ({pct:.1f}%)
                         <div class='progress-container'><div class='progress-bar' style='width:{pct}%'></div></div>
                     """, unsafe_allow_html=True)
 
             if analyse_avant['missing_cols']:
-                st.markdown(f"### {icon('warning', size=24, color='#e53e3e')} Colonnes avec valeurs manquantes",
-                            unsafe_allow_html=True)
+                st.markdown("### ⚠️ Colonnes avec valeurs manquantes")
                 for col, count in list(analyse_avant['missing_cols'].items())[:10]:
                     pct = (count / analyse_avant['total_lignes']) * 100
                     color = "#e53e3e" if pct > threshold_missing else "#ed8936"
                     st.markdown(f"""
-                        * {icon('highlight_off', size=16, color=color)} **{col} :** {count:,} ({pct:.1f}%)
+                        * **{col} :** {count:,} ({pct:.1f}%)
                         <div class='progress-container'><div class='progress-bar' style='width:{pct}%; background:{color};'></div></div>
                     """, unsafe_allow_html=True)
 
@@ -971,9 +1338,8 @@ if file_avant:
             col_var1, col_var2 = st.columns(2)
 
             with col_var1:
-                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px;">',
-                            unsafe_allow_html=True)
-                st.markdown(f"### {icon('123', size=24)} Variables Quantitatives", unsafe_allow_html=True)
+                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
+                st.markdown("### 📊 Variables Quantitatives")
                 if analyse_avant['classification']['quantitative']:
                     st.markdown(f"**{len(analyse_avant['classification']['quantitative'])} variables**")
                     for col in analyse_avant['classification']['quantitative'][:10]:
@@ -982,12 +1348,8 @@ if file_avant:
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
-                                    {icon('123', size=16, color='#48bb78')} {col}
-                                    <span style='background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-                                                color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
-                                                font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
-                                        {icon('123', size=12)} QN
-                                    </span>
+                                    {col}
+                                    <span class='badge-quantitative'>QN</span>
                                 </div>
                                 <div class='variable-stats'>
                                     {stats['uniques']} valeurs · min={stats['min']:.1f} · max={stats['max']:.1f}{outliers}
@@ -1001,9 +1363,8 @@ if file_avant:
                 st.markdown('</div>', unsafe_allow_html=True)
 
             with col_var2:
-                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px;">',
-                            unsafe_allow_html=True)
-                st.markdown(f"### {icon('category', size=24)} Variables Qualitatives", unsafe_allow_html=True)
+                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
+                st.markdown("### 🏷️ Variables Qualitatives")
                 if analyse_avant['classification']['qualitative']:
                     st.markdown(f"**{len(analyse_avant['classification']['qualitative'])} variables**")
                     for col in analyse_avant['classification']['qualitative'][:10]:
@@ -1011,12 +1372,8 @@ if file_avant:
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
-                                    {icon('category', size=16, color='#667eea')} {col}
-                                    <span style='background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
-                                                color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
-                                                font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
-                                        {icon('category', size=12)} QL
-                                    </span>
+                                    {col}
+                                    <span class='badge-qualitative'>QL</span>
                                 </div>
                                 <div class='variable-stats'>
                                     {stats['uniques']} catégories · {stats['non_nulles']} non-nulles
@@ -1030,38 +1387,28 @@ if file_avant:
                 st.markdown('</div>', unsafe_allow_html=True)
 
             if analyse_avant['classification']['dates']:
-                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px; margin-top: 1rem;">',
-                            unsafe_allow_html=True)
-                st.markdown(f"### {icon('calendar_today', size=24)} Variables Date", unsafe_allow_html=True)
+                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
+                st.markdown("### 📅 Variables Date")
                 for col in analyse_avant['classification']['dates']:
                     st.markdown(f"""
                         <div class='variable-item'>
                             <div class='variable-name'>
-                                {icon('calendar_today', size=16, color='#ed8936')} {col}
-                                <span style='background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
-                                            color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
-                                            font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
-                                    {icon('calendar_today', size=12)} Date
-                                </span>
+                                {col}
+                                <span class='badge-date'>Date</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
 
             if analyse_avant['classification']['target_potential']:
-                st.markdown('<div style="background: white; padding: 1.5rem; border-radius: 25px; margin-top: 1rem;">',
-                            unsafe_allow_html=True)
-                st.markdown(f"### {icon('track_changes', size=24)} Cibles potentielles ML", unsafe_allow_html=True)
+                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
+                st.markdown("### 🎯 Cibles potentielles ML")
                 for target in analyse_avant['classification']['target_potential']:
                     st.markdown(f"""
                         <div class='variable-item'>
                             <div class='variable-name'>
-                                {icon('track_changes', size=16, color='#e53e3e')} {target['colonne']}
-                                <span style='background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-                                            color: white; padding: 0.3rem 0.8rem; border-radius: 30px;
-                                            font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;'>
-                                    {icon('flag', size=12)} {target['type']}
-                                </span>
+                                {target['colonne']}
+                                <span class='badge-target'>{target['type']}</span>
                             </div>
                             <div class='variable-stats'>{target['raison']}</div>
                         </div>
@@ -1071,9 +1418,7 @@ if file_avant:
         with tab3:
             if show_details:
                 for stats in analyse_avant['col_stats'][:20]:
-                    icon_name = '123' if stats['classification'] == 'quantitative' else 'category' if stats[
-                                                                                                          'classification'] == 'qualitative' else 'calendar_today'
-                    with st.expander(f"{icon(icon_name, size=20)} {stats['nom']} ({stats['type']})"):
+                    with st.expander(f"📊 {stats['nom']} ({stats['type']})"):
                         col_d1, col_d2, col_d3 = st.columns(3)
 
                         with col_d1:
@@ -1099,7 +1444,7 @@ if file_avant:
                         color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
                         st.markdown(f"""
                             <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>{icon('warning', size=24, color='white')}</div>
+                                <div class='timeline-icon'>⚠️</div>
                                 <div>
                                     <strong style='color:{color};'>{prob['colonne']}</strong>
                                     <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
@@ -1107,10 +1452,9 @@ if file_avant:
                             </div>
                         """, unsafe_allow_html=True)
                 else:
-                    st.info(
-                        f"{icon('info', size=20)} {len(analyse_avant['problem_columns'])} problèmes détectés (masqués)")
+                    st.info(f"🔍 {len(analyse_avant['problem_columns'])} problèmes détectés (masqués)")
             else:
-                st.success(f"{icon('check_circle', size=20)} Aucun problème détecté !")
+                st.success("✅ Aucun problème détecté !")
 
         with tab5:
             col_v1, col_v2 = st.columns(2)
@@ -1124,7 +1468,7 @@ if file_avant:
                 fig = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
                              title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
                 fig.update_layout(height=350)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch', key="plot_types")
 
             with col_v2:
                 if analyse_avant['missing_cols']:
@@ -1136,7 +1480,7 @@ if file_avant:
                                  title="Top 10 valeurs manquantes", color='Manquantes',
                                  color_continuous_scale='Reds')
                     fig.update_layout(height=350)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch', key="plot_missing")
                 else:
                     st.info("Aucune valeur manquante")
 
@@ -1145,11 +1489,10 @@ if file_avant:
                 fig = px.imshow(corr_matrix, text_auto='.2f', aspect="auto",
                                 title="Matrice de corrélation", color_continuous_scale='RdBu')
                 fig.update_layout(height=500)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch', key="plot_corr")
 
         with tab6:
-            st.markdown(f"### {icon('cleaning_services', size=24)} Recommandations de nettoyage",
-                        unsafe_allow_html=True)
+            st.markdown("### 🔧 Recommandations de nettoyage")
             recs_qualite = generer_recommandations_qualite(analyse_avant)
             if recs_qualite:
                 for rec in recs_qualite:
@@ -1157,53 +1500,43 @@ if file_avant:
                                                                                           'priority'] == 'MOYENNE' else "#667eea"
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:{color};'>
-                            <div class='timeline-icon'>{icon(rec['icon'], size=24, color='white')}</div>
+                            <div class='timeline-icon'>{rec['icon']}</div>
                             <div>
-                                <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;'>
-                                    {icon('priority_high', size=12)} {rec['priority']}
-                                </span>
+                                <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem;'>{rec['priority']}</span>
                                 <br><strong>{rec['categorie']}</strong>
                                 <br><span style='color:#4a5568;'>{rec['message']}</span>
-                                <br><span style='color:#667eea; display:flex; align-items:center; gap:4px;'>
-                                    {icon('lightbulb', size=16)} {rec['action']}
-                                </span>
+                                <br><span style='color:#667eea;'>💡 {rec['action']}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
             else:
-                st.success(f"{icon('check_circle', size=20)} Dataset déjà propre !")
+                st.success("✅ Dataset déjà propre !")
 
-            st.markdown(f"### {icon('build', size=24)} Feature Engineering recommandé", unsafe_allow_html=True)
+            st.markdown("### 🛠️ Feature Engineering recommandé")
             recs_fe = generer_recommandations_feature_engineering(analyse_avant)
             if recs_fe:
                 for rec in recs_fe:
                     color = "#e53e3e" if rec['priority'] == 'HAUTE' else "#ed8936"
+                    acp_badge = "✅ Compatible ACP" if rec.get('pour_ACP', False) else "⚠️ Non ACP"
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:{color};'>
-                            <div class='timeline-icon'>{icon(rec.get('icon', 'build'), size=24, color='white')}</div>
+                            <div class='timeline-icon'>🔧</div>
                             <div>
-                                <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;'>
-                                    {icon('priority_high', size=12)} {rec['priority']}
-                                </span>
-                                <span style='margin-left:0.5rem; font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;'>
-                                    {icon('check_circle' if rec.get('pour_ACP', False) else 'warning', size=12)} 
-                                    {'Compatible ACP' if rec.get('pour_ACP', False) else 'Non ACP'}
-                                </span>
+                                <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem;'>{rec['priority']}</span>
+                                <span style='margin-left:0.5rem; font-size:0.7rem;'>{acp_badge}</span>
                                 <br><strong>{rec['categorie']} - {rec.get('colonne', 'Général')}</strong>
                                 <br><span style='color:#4a5568;'>{rec['raison']}</span>
-                                <br><span style='color:#667eea; display:flex; align-items:center; gap:4px;'>
-                                    {icon('lightbulb', size=16)} {rec['technique']}
-                                </span>
+                                <br><span style='color:#667eea;'>💡 {rec['technique']}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
             if analyse_avant['classification']['a_convertir']:
-                st.markdown(f"### {icon('transform', size=24)} Conversions suggérées", unsafe_allow_html=True)
+                st.markdown("### 🔄 Conversions suggérées")
                 for conv in analyse_avant['classification']['a_convertir']:
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:#ed8936;'>
-                            <div class='timeline-icon'>{icon('transform', size=24, color='white')}</div>
+                            <div class='timeline-icon'>🔄</div>
                             <div>
                                 <strong>{conv['colonne']}</strong>
                                 <br><span style='color:#4a5568;'>{conv['type_actuel']} → {conv['type_suggere']}</span>
@@ -1214,7 +1547,7 @@ if file_avant:
 
         if analyse_apres:
             st.markdown("---")
-            st.markdown(f"## {icon('compare_arrows', size=28)} Comparaison Original vs Nettoyé", unsafe_allow_html=True)
+            st.markdown("## 🔄 Comparaison Original vs Nettoyé")
 
             col_c1, col_c2, col_c3, col_c4 = st.columns(4)
 
@@ -1246,26 +1579,25 @@ if file_avant:
                           delta_value,
                           delta_color="green" if delta > 0 else "red" if delta < 0 else "gray")
 
-            with st.expander(f"{icon('summarize', size=20)} Voir le bilan détaillé du nettoyage"):
+            with st.expander("📋 Voir le bilan détaillé du nettoyage", expanded=False):
                 messages = verifier_nettoyage(comparaison)
-                for icon_name, color, msg in messages:
+                for icon, color, msg in messages:
                     st.markdown(f"""
                         <div style='background:white; padding:1rem; border-radius:12px; border-left:4px solid {color}; margin-bottom:0.5rem;'>
                             <div style='display:flex; align-items:center; gap:0.5rem;'>
-                                {icon(icon_name, size=24, color=color)}
+                                <span style='font-size:1.5rem;'>{icon}</span>
                                 <span style='color:#4a5568; font-size:0.9rem;'>{msg}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
                 if show_problem_details and analyse_apres['problem_columns']:
-                    st.markdown(f"### {icon('warning', size=20)} Problèmes restants dans le dataset nettoyé",
-                                unsafe_allow_html=True)
+                    st.markdown("### ⚠️ Problèmes restants dans le dataset nettoyé")
                     for prob in analyse_apres['problem_columns'][:5]:
                         color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
                         st.markdown(f"""
                             <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>{icon('warning', size=24, color='white')}</div>
+                                <div class='timeline-icon'>⚠️</div>
                                 <div>
                                     <strong style='color:{color};'>{prob['colonne']}</strong>
                                     <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
@@ -1276,7 +1608,7 @@ if file_avant:
                     if len(analyse_apres['problem_columns']) > 5:
                         st.info(f"... et {len(analyse_apres['problem_columns']) - 5} autres problèmes")
 
-            st.markdown(f"### {icon('insights', size=24)} Visualisation de la progression", unsafe_allow_html=True)
+            st.markdown("### 📈 Visualisation de la progression")
 
             fig_progress = go.Figure()
 
@@ -1330,35 +1662,28 @@ if file_avant:
                 height=400
             )
 
-            st.plotly_chart(fig_progress, use_container_width=True)
+            st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
 
 else:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.markdown(f"""
+        st.markdown("""
             <div style='text-align:center; padding:3rem; background:white; border-radius:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);'>
-                <div style='font-size:5rem; margin-bottom:1rem;'>{icon('analytics', size=80, color='#667eea')}</div>
+                <span style='font-size:5rem;'>📊</span>
                 <h2>Chargez un dataset pour commencer</h2>
                 <p style='color:#666;'>Analyse complète · Nettoyage · Feature Engineering · ML</p>
                 <div style='display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; text-align:left;'>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Statistiques globales</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Types de données</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Variables manquantes</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Classification auto</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Comparaison avant/après</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Feature engineering</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Recommandations ACP</div>
-                    <div>{icon('check_circle', size=16, color='#48bb78')} Préparation ML</div>
+                    <div>✅ Statistiques globales</div><div>✅ Types de données</div>
+                    <div>✅ Variables manquantes</div><div>✅ Classification auto</div>
+                    <div>✅ Comparaison avant/après</div><div>✅ Feature engineering</div>
+                    <div>✅ Recommandations ACP</div><div>✅ Préparation ML</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
-# --- FOOTER ---
-st.markdown(f"""
+st.markdown("""
     <div class='footer'>
         <strong>Data Quality Analyzer v2.0</strong> · Analyse complète pour Machine Learning · Feature Engineering · Préparation ACP<br>
-        <span style='opacity: 0.6; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 4px;'>
-            {icon('code', size=14)} Développé pour l'optimisation des pipelines de données
-        </span>
+        <span style='opacity: 0.6; font-size: 0.8rem;'>Développé pour l'optimisation des pipelines de données</span>
     </div>
 """, unsafe_allow_html=True)
