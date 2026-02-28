@@ -859,24 +859,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-# --- MASQUER LE MENU "MANAGE APP" ET LE FOOTER ---
-st.markdown("""
-    <style>
-    /* Masquer le bouton Manage App en haut à droite */
-    #MainMenu {visibility: hidden;}
-
-    /* Masquer le bouton de déploiement/gestion pour les users */
-    .stAppDeployButton {
-        display: none;
-    }
-
-    /* Masquer le footer "Made with Streamlit" */
-    footer {visibility: hidden;}
-
-    /* Optionnel : Masquer le header coloré en haut */
-    header {visibility: hidden;}
-    </style>
-""", unsafe_allow_html=True)
 
 # --- SIDEBAR HARMONISÉE ---
 with st.sidebar:
