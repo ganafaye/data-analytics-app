@@ -1169,7 +1169,7 @@ def generer_recommandations_qualite(analyse):
 st.markdown("""
     <div class="main-header floating shine">
         <h1 class="main-title">📊 Data Quality Analyzer</h1>
-        <p class="main-subtitle">Analyse intelligente de la qualité des données · Nettoyage & Optimisation · Feature Engineering</p>
+        <p class="main-subtitle">Analyse intelligente de la qualité des données · Comparaison aprés Nettoyage & Optimisation · Feature Engineering</p>
         <div style='display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;'>
             <span class='badge-excellent quality-badge'>🎯 Classification auto</span>
             <span class='badge-good quality-badge'>📊 Feature engineering</span>
