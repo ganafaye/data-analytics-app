@@ -813,6 +813,37 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown("""
     <style>
+    /* 1. Masquer le bouton "Manage app" en bas de la sidebar */
+    /* On cible l'élément de barre d'état spécifique à Streamlit Cloud */
+    [data-testid="stStatusWidget"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
+
+    /* 2. Masquer le groupe de boutons en haut à droite (Deploy, GitHub, etc.) */
+    .stAppDeployButton {
+        display: none !important;
+    }
+
+    /* 3. Masquer le menu "Hamburger" (les 3 petits points) */
+    #MainMenu {
+        visibility: hidden;
+    }
+
+    /* 4. Nettoyer les bordures résiduelles en haut */
+    header[data-testid="stHeader"] {
+        background: none !important;
+    }
+
+    /* On s'assure que le contenu ne soit pas cliquable même s'il est caché */
+    .stAppDeployButton, #MainMenu, [data-testid="stStatusWidget"] {
+        pointer-events: none;
+    }
+    </style>
+""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
     /* 1. Cibler le bouton de la Sidebar (Ouverture/Fermeture) */
     button[data-testid="stBaseButton-headerNoPadding"] {
         background: rgba(255, 255, 255, 0.1) !important;
