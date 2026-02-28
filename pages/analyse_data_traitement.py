@@ -16,762 +16,382 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- STYLE CSS AMÉLIORÉ AVEC SIDEBAR BLANC STYLISÉE ---
+# --- STYLE CSS MINIMALISTE ---
 st.markdown("""
     <style>
     /* Import des polices */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-    /* Style général avec dégradé élégant */
+    /* Style général */
     .main {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #9f7aea 100%);
-        background-size: 200% 200%;
-        animation: gradientBG 15s ease infinite;
+        background: #f8fafc;
         font-family: 'Inter', sans-serif;
     }
 
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* En-tête principal avec effet glassmorphisme */
+    /* En-tête principal minimaliste */
     .main-header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: white;
         padding: 2rem 2.5rem;
-        border-radius: 30px;
+        border-radius: 20px;
         margin-bottom: 2rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .main-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-        background-size: 300% 100%;
-        animation: rainbow 6s ease infinite;
-    }
-
-    @keyframes rainbow {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    .main-header::after {
-        content: '📊';
-        position: absolute;
-        bottom: -20px;
-        right: -20px;
-        font-size: 8rem;
-        opacity: 0.05;
-        transform: rotate(-15deg);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        border: 1px solid #e2e8f0;
     }
 
     .main-title {
-        font-size: 2.8rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1e293b;
         margin: 0;
-        letter-spacing: -0.02em;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        position: relative;
-        z-index: 1;
     }
 
     .main-subtitle {
-        color: #4a5568;
-        font-size: 1.1rem;
+        color: #64748b;
+        font-size: 1rem;
         margin-top: 0.5rem;
-        font-weight: 300;
-        position: relative;
-        z-index: 1;
+        font-weight: 400;
     }
 
-    /* Sidebar blanche stylisée */
+    /* Badges minimalistes */
+    .badge {
+        display: inline-block;
+        padding: 0.4rem 1.2rem;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #e2e8f0;
+        margin-right: 0.5rem;
+    }
+
+    /* Sidebar minimaliste */
     section[data-testid="stSidebar"] {
         background: white !important;
-        border-right: 1px solid rgba(102, 126, 234, 0.2);
-        box-shadow: 5px 0 30px rgba(0, 0, 0, 0.03);
-    }
-
-    section[data-testid="stSidebar"] > div {
-        background: white;
+        border-right: 1px solid #e2e8f0;
     }
 
     .sidebar-header {
-        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-        padding: 2rem 1.5rem;
-        border-radius: 0 0 30px 30px;
-        margin-bottom: 1.5rem;
-        color: #2d3748;
-        text-align: center;
-        border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .sidebar-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
-    }
-
-    .sidebar-header::after {
-        content: '📊';
-        position: absolute;
-        bottom: -10px;
-        right: -10px;
-        font-size: 4rem;
-        opacity: 0.1;
-        transform: rotate(10deg);
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 1rem;
     }
 
     .sidebar-header h3 {
-        font-size: 1.8rem;
-        font-weight: 700;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
         margin: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        position: relative;
-        z-index: 1;
     }
 
     .sidebar-header p {
-        opacity: 0.8;
-        font-size: 0.95rem;
-        margin: 0.5rem 0 0 0;
-        color: #718096;
-        position: relative;
-        z-index: 1;
+        color: #64748b;
+        font-size: 0.85rem;
+        margin: 0.2rem 0 0 0;
     }
 
-    /* Style des widgets dans la sidebar */
-    section[data-testid="stSidebar"] .stMarkdown h3 {
-        color: #2d3748;
-        font-size: 1.2rem;
+    .sidebar-section {
+        padding: 0 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .sidebar-section-title {
+        font-size: 0.9rem;
         font-weight: 600;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #edf2f7;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.8rem;
     }
 
-    section[data-testid="stSidebar"] .stFileUploader {
-        border: 2px dashed #e2e8f0;
-        border-radius: 15px;
+    /* File uploader minimaliste */
+    .stFileUploader {
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
         padding: 0.5rem;
         background: #f8fafc;
-        transition: all 0.3s ease;
     }
 
-    section[data-testid="stSidebar"] .stFileUploader:hover {
-        border-color: #667eea;
-        background: white;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    .stFileUploader:hover {
+        border-color: #4361ee;
     }
 
-    section[data-testid="stSidebar"] .stSelectbox > div > div {
-        border-radius: 12px !important;
-        border: 2px solid #edf2f7 !important;
-        transition: all 0.3s ease;
-    }
-
-    section[data-testid="stSidebar"] .stSelectbox > div > div:hover {
-        border-color: #667eea !important;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    section[data-testid="stSidebar"] .stSlider > div > div > div > div {
-        background: linear-gradient(90deg, #667eea, #764ba2) !important;
-    }
-
-    section[data-testid="stSidebar"] .stCheckbox > div {
-        border-radius: 8px !important;
-        transition: all 0.3s ease;
-    }
-
-    section[data-testid="stSidebar"] .stCheckbox > div:hover {
-        transform: translateX(5px);
-        background: #f7fafc;
-    }
-
-    /* Cartes de qualité avec design moderne */
+    /* Cartes minimalistes */
     .quality-card {
         background: white;
         padding: 1.5rem;
-        border-radius: 25px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(102, 126, 234, 0.1);
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
         margin-bottom: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .quality-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        transition: width 0.3s ease;
-    }
-
-    .quality-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15), 0 0 0 1px #667eea;
-    }
-
-    .quality-card:hover::before {
-        width: 6px;
     }
 
     .quality-score {
-        font-size: 3rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
         line-height: 1;
-        filter: drop-shadow(0 5px 10px rgba(102, 126, 234, 0.2));
     }
 
     .quality-label {
-        color: #718096;
-        font-size: 0.9rem;
+        color: #64748b;
+        font-size: 0.85rem;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 600;
+        letter-spacing: 0.05em;
     }
 
-    /* Badges de qualité avec design premium */
+    /* Badges qualité */
     .quality-badge {
         display: inline-block;
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-right: 0.5rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 0.3rem 1rem;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 500;
     }
 
     .badge-excellent {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        background: #10b981;
         color: white;
-        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
     }
 
     .badge-good {
-        background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+        background: #4361ee;
         color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .badge-fair {
-        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        background: #f97316;
         color: white;
-        box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3);
     }
 
     .badge-poor {
-        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        background: #ef4444;
         color: white;
-        box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
     }
 
     /* Badges pour types de variables */
     .badge-quantitative {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        background: #10b981;
         color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
         font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(72, 187, 120, 0.2);
     }
 
     .badge-qualitative {
-        background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+        background: #4361ee;
         color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
         font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
     }
 
     .badge-date {
-        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        background: #f97316;
         color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
         font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(237, 137, 54, 0.2);
     }
 
     .badge-target {
-        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        background: #ef4444;
         color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
         font-size: 0.7rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.2);
     }
 
     /* Cartes métriques */
     .metric-card {
         background: white;
-        padding: 1.5rem;
-        border-radius: 20px;
+        padding: 1.2rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
         text-align: center;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        height: 100%;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
     }
 
-    .metric-card::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
+    .metric-value {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1e293b;
     }
 
-    .metric-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.1), 0 0 0 1px #667eea;
-    }
-
-    .metric-card:hover::after {
-        opacity: 1;
-    }
-
-    .metric-value-sm {
-        font-size: 2rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        line-height: 1;
-    }
-
-    .metric-label-sm {
-        color: #718096;
+    .metric-label {
+        color: #64748b;
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-top: 0.5rem;
-        font-weight: 600;
+        margin-top: 0.3rem;
     }
 
-    /* Timeline avec design moderne */
+    /* Timeline minimaliste */
     .timeline-item {
         display: flex;
         align-items: center;
-        padding: 1.2rem;
+        padding: 1rem;
         background: #f8fafc;
-        border-radius: 16px;
+        border-radius: 12px;
         margin-bottom: 0.8rem;
-        border-left: 5px solid #667eea;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-    }
-
-    .timeline-item:hover {
-        transform: translateX(8px);
-        background: white;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1);
+        border-left: 3px solid #4361ee;
     }
 
     .timeline-icon {
-        width: 45px;
-        height: 45px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: #e2e8f0;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 1.2rem;
-        font-size: 1.3rem;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        flex-shrink: 0;
+        margin-right: 1rem;
+        font-size: 1rem;
+        color: #4361ee;
     }
 
     /* Progress bars */
     .progress-container {
-        background: #edf2f7;
-        height: 8px;
-        border-radius: 20px;
+        background: #e2e8f0;
+        height: 6px;
+        border-radius: 10px;
         overflow: hidden;
         margin: 0.5rem 0;
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .progress-bar {
         height: 100%;
-        background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
-        background-size: 200% 200%;
-        animation: gradientMove 3s ease infinite;
-        border-radius: 20px;
-        transition: width 0.3s ease;
-    }
-
-    @keyframes gradientMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+        background: #4361ee;
+        border-radius: 10px;
     }
 
     /* Variables grid */
     .variable-item {
         background: white;
         padding: 1rem;
-        border-radius: 14px;
-        border: 1px solid #edf2f7;
-        display: flex;
-        flex-direction: column;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .variable-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .variable-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.1);
-        border-color: #667eea;
-    }
-
-    .variable-item:hover::before {
-        opacity: 1;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 0.5rem;
     }
 
     .variable-name {
         font-weight: 600;
-        color: #2d3748;
+        color: #1e293b;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
     }
 
     .variable-stats {
         font-size: 0.8rem;
-        color: #718096;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
+        color: #64748b;
     }
 
-    /* Tabs avec design premium */
+    /* Tabs minimalistes */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 0.8rem;
-        background: white;
-        padding: 0.8rem;
-        border-radius: 60px;
-        border: 1px solid rgba(102, 126, 234, 0.2);
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+        gap: 0.5rem;
+        background: transparent;
+        padding: 0;
+        border-bottom: 1px solid #e2e8f0;
+        border-radius: 0;
     }
 
     .stTabs [data-baseweb="tab"] {
-        border-radius: 40px;
-        padding: 0.7rem 1.8rem;
+        padding: 0.7rem 1.2rem;
         font-weight: 500;
-        color: #4a5568;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
-        font-size: 0.95rem;
-    }
-
-    .stTabs [data-baseweb="tab"]:hover {
-        background: rgba(102, 126, 234, 0.05);
-        border-color: rgba(102, 126, 234, 0.3);
-        transform: translateY(-2px);
+        color: #64748b;
+        border-bottom: 2px solid transparent;
     }
 
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-        border: none;
+        color: #4361ee;
+        border-bottom: 2px solid #4361ee;
     }
 
-    /* Boutons */
+    /* Boutons minimalistes */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 40px;
-        padding: 0.7rem 2rem;
+        background: white;
+        color: #4361ee;
+        border: 1px solid #4361ee;
+        border-radius: 30px;
+        padding: 0.5rem 1.5rem;
         font-weight: 500;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
-        width: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stButton > button::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .stButton > button:hover::before {
-        width: 300px;
-        height: 300px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
     }
 
     .stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+        background: #4361ee;
+        color: white;
     }
 
-    /* Download button */
-    .stDownloadButton > button {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        box-shadow: 0 8px 16px rgba(72, 187, 120, 0.2);
-    }
-
-    /* Footer */
+    /* Footer minimaliste */
     .footer {
         text-align: center;
-        padding: 2rem;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 40px 40px 0 0;
-        margin-top: 3rem;
-        color: #4a5568;
-        font-size: 0.95rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05);
-        position: relative;
-        overflow: hidden;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        color: #64748b;
+        font-size: 0.85rem;
+        border-top: 1px solid #e2e8f0;
     }
 
-    .footer::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
-    }
-
-    /* Animations */
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0px); }
-    }
-
-    .floating {
-        animation: float 4s ease-in-out infinite;
-    }
-
-    /* Info boxes */
-    .info-box {
-        background: #f8fafc;
-        padding: 1.2rem;
-        border-radius: 16px;
-        border-left: 5px solid #667eea;
-        margin: 1rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-        transition: all 0.3s ease;
-    }
-
-    .info-box:hover {
+    /* Page de chargement */
+    .upload-prompt {
+        text-align: center;
+        padding: 3rem;
         background: white;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1);
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
     }
 
-    /* Expanders */
-    .streamlit-expanderHeader {
-        background: white !important;
-        border-radius: 16px !important;
-        border: 1px solid #edf2f7 !important;
-        padding: 1rem 1.5rem !important;
-        font-weight: 600 !important;
-        color: #2d3748 !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+    .upload-prompt h2 {
+        color: #1e293b;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 1rem 0 0.5rem 0;
     }
 
-    .streamlit-expanderHeader:hover {
-        border-color: #667eea !important;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.1) !important;
-        transform: translateX(5px);
+    .upload-prompt p {
+        color: #64748b;
+        font-size: 0.95rem;
     }
 
-    /* Dataframe */
-    .stDataFrame {
-        border-radius: 16px !important;
-        border: 1px solid #edf2f7 !important;
-        overflow: hidden !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02) !important;
+    .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+        margin-top: 2rem;
+        text-align: left;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    /* Messages */
-    .stAlert {
-        border-radius: 16px !important;
-        border: none !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+    .feature-item {
+        color: #1e293b;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .feature-item::before {
+        content: "✓";
+        color: #10b981;
+        font-weight: bold;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
         .main-title {
-            font-size: 2.2rem;
-        }
-
-        .main-subtitle {
-            font-size: 1rem;
-        }
-
-        .metric-value-sm {
-            font-size: 1.5rem;
-        }
-
-        .quality-score {
-            font-size: 2.5rem;
-        }
-
-        .stTabs [data-baseweb="tab"] {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .main-header {
-            padding: 1.5rem;
-        }
-
-        .main-title {
             font-size: 1.8rem;
         }
 
-        .sidebar-header {
-            padding: 1.5rem 1rem;
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.5rem;
+        .main-header {
+            padding: 1.5rem;
         }
     }
-
-    /* Effet de brillance */
-    .shine {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .shine::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -60%;
-        width: 20%;
-        height: 200%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: rotate(25deg);
-        animation: shine 8s ease-in-out infinite;
-        pointer-events: none;
-    }
-
-    @keyframes shine {
-        0% { left: -60%; }
-        20% { left: 120%; }
-        100% { left: 120%; }
-    }
-
-    /* Tooltips personnalisés */
-    .custom-tooltip {
-        position: relative;
-        display: inline-block;
-        border-bottom: 2px dotted #667eea;
-        cursor: help;
-    }
-
-    .custom-tooltip .tooltip-text {
-        visibility: hidden;
-        width: 200px;
-        background: #2d3748;
-        color: white;
-        text-align: center;
-        border-radius: 10px;
-        padding: 0.5rem;
-        position: absolute;
-        z-index: 1000;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -100px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 0.8rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .custom-tooltip:hover .tooltip-text {
-        visibility: visible;
-        opacity: 1;
-    }
-
     </style>
 """, unsafe_allow_html=True)
 
@@ -970,19 +590,19 @@ def analyser_qualite_dataset(df, nom_dataset="Dataset"):
 
     if quality_score >= 90:
         quality_category = "EXCELLENT"
-        quality_color = "#48bb78"
+        quality_color = "#10b981"
         quality_badge = "badge-excellent"
     elif quality_score >= 75:
         quality_category = "BON"
-        quality_color = "#667eea"
+        quality_color = "#4361ee"
         quality_badge = "badge-good"
     elif quality_score >= 50:
         quality_category = "MOYEN"
-        quality_color = "#ed8936"
+        quality_color = "#f97316"
         quality_badge = "badge-fair"
     else:
         quality_category = "FAIBLE"
-        quality_color = "#e53e3e"
+        quality_color = "#ef4444"
         quality_badge = "badge-poor"
 
     return {
@@ -1165,80 +785,101 @@ def generer_recommandations_qualite(analyse):
     return recommandations
 
 
-# --- EN-TÊTE PRINCIPAL ---
+# --- EN-TÊTE PRINCIPAL MINIMALISTE ---
 st.markdown("""
-    <div class="main-header floating shine">
-        <h1 class="main-title">📊 Data Quality Analyzer</h1>
-        <p class="main-subtitle">Analyse intelligente de la qualité des données · Nettoyage & Optimisation · Feature Engineering</p>
+    <div class="main-header">
+        <h1 class="main-title">Data Quality Analyzer</h1>
+        <p class="main-subtitle">Analyse intelligente de la qualité des données • Nettoyage & Optimisation</p>
         <div style='display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;'>
-            <span class='badge-excellent quality-badge'>🎯 Classification auto</span>
-            <span class='badge-good quality-badge'>📊 Feature engineering</span>
-            <span class='badge-fair quality-badge'>🔬 Préparation ACP</span>
-            <span class='badge-poor quality-badge'>💡 Recommandations ML</span>
+            <span class='badge'>🎯 Classification auto</span>
+            <span class='badge'>📊 Feature engineering</span>
+            <span class='badge'>🔬 Préparation ACP</span>
+            <span class='badge'>💡 Recommandations ML</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
+# --- SIDEBAR MINIMALISTE ---
 with st.sidebar:
     st.markdown("""
         <div class="sidebar-header">
-            <h3>📁 Chargement</h3>
-            <p>Importez vos datasets</p>
+            <h3>Analytics Hub</h3>
+            <p>Navigation et chargement</p>
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("### 📥 Dataset original")
+    st.markdown("""
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">NAVIGATION</div>
+    """, unsafe_allow_html=True)
+
+    if st.button("🏠 Accueil", use_container_width=True):
+        st.switch_page("home_page.py")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("""
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">CHARGEMENT</div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("##### Dataset original")
     file_avant = st.file_uploader(
-        "Charger le fichier original (obligatoire)",
+        "Charger le fichier original",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_avant",
-        help="Dataset avant nettoyage"
+        label_visibility="collapsed"
     )
 
     if file_avant:
         type_fichier = detecter_type_fichier(file_avant.name)
-        st.info(f"📄 Original : {type_fichier}")
+        st.caption(f"📄 {type_fichier} • {file_avant.size / 1024:.1f} KB")
 
-    st.markdown("---")
-
-    st.markdown("### ✨ Dataset nettoyé")
+    st.markdown("##### Dataset nettoyé")
     file_apres = st.file_uploader(
-        "Charger la version nettoyée (optionnel)",
+        "Charger la version nettoyée",
         type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
         key="file_apres",
-        help="Version nettoyée à comparer avec l'original"
+        label_visibility="collapsed"
     )
 
     if file_apres:
         type_fichier = detecter_type_fichier(file_apres.name)
-        st.info(f"📄 Nettoyé : {type_fichier}")
+        st.caption(f"📄 {type_fichier} • {file_apres.size / 1024:.1f} KB")
 
-    st.markdown("---")
+    st.markdown("Limit 200MB per file • CSV, XLSX", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("### ⚙️ Options")
+    st.markdown("""
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">OPTIONS</div>
+    """, unsafe_allow_html=True)
+
     show_details = st.checkbox("Afficher les détails par colonne", value=True)
-    threshold_missing = st.slider("Seuil d'alerte valeurs manquantes (%)", 0, 50, 10)
-    show_problem_details = st.checkbox("Afficher les détails des problèmes", value=True)
+    threshold_missing = st.slider("Seuil valeurs manquantes (%)", 0, 50, 10)
+    show_problem_details = st.checkbox("Afficher les problèmes", value=True)
 
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# --- CORPS PRINCIPAL ---
 if file_avant:
     df_avant, error_avant = charger_fichier(file_avant)
 
     if error_avant:
-        st.error(f"Erreur chargement original : {error_avant}")
+        st.error(f"Erreur : {error_avant}")
     else:
-        with st.spinner("🔍 Analyse du dataset original..."):
+        with st.spinner("Analyse en cours..."):
             analyse_avant = analyser_qualite_dataset(df_avant, "Original")
 
         if file_apres:
             df_apres, error_apres = charger_fichier(file_apres)
             if error_apres:
-                st.error(f"Erreur chargement nettoyé : {error_apres}")
+                st.error(f"Erreur : {error_apres}")
                 df_apres = None
                 analyse_apres = None
                 comparaison = None
             else:
-                with st.spinner("🔍 Analyse du dataset nettoyé..."):
+                with st.spinner("Analyse en cours..."):
                     analyse_apres = analyser_qualite_dataset(df_apres, "Nettoyé")
                 comparaison = comparer_datasets(analyse_avant, analyse_apres)
         else:
@@ -1246,8 +887,7 @@ if file_avant:
             analyse_apres = None
             comparaison = None
 
-        st.markdown("## 📊 Dataset Original - Tableau de bord qualité")
-
+        # Métriques principales
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
@@ -1255,7 +895,7 @@ if file_avant:
                 <div class='quality-card'>
                     <div class='quality-score'>{analyse_avant['quality_score']:.1f}</div>
                     <div class='quality-label'>Score qualité</div>
-                    <div style='margin-top:0.5rem;'>
+                    <div style='margin-top:0.8rem;'>
                         <span class='quality-badge {analyse_avant['quality_badge']}'>
                             {analyse_avant['quality_category']}
                         </span>
@@ -1266,69 +906,68 @@ if file_avant:
         with col2:
             st.markdown(f"""
                 <div class='metric-card'>
-                    <div class='metric-value-sm'>{analyse_avant['total_lignes']:,}</div>
-                    <div class='metric-label-sm'>Lignes</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
+                    <div class='metric-value'>{analyse_avant['total_lignes']:,}</div>
+                    <div class='metric-label'>Lignes</div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col3:
             st.markdown(f"""
                 <div class='metric-card'>
-                    <div class='metric-value-sm'>{analyse_avant['total_colonnes']}</div>
-                    <div class='metric-label-sm'>Colonnes</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
+                    <div class='metric-value'>{analyse_avant['total_colonnes']}</div>
+                    <div class='metric-label'>Colonnes</div>
                 </div>
             """, unsafe_allow_html=True)
 
         with col4:
             st.markdown(f"""
                 <div class='metric-card'>
-                    <div class='metric-value-sm'>{analyse_avant['memoire']:.2f}</div>
-                    <div class='metric-label-sm'>MB</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:{min(100, analyse_avant['memoire'])}%'></div></div>
+                    <div class='metric-value'>{analyse_avant['memoire']:.2f}</div>
+                    <div class='metric-label'>MB</div>
                 </div>
             """, unsafe_allow_html=True)
 
+        # Onglets
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-            "📋 Aperçu général",
-            "🔢 Classification variables",
-            "🔍 Détails colonnes",
-            "⚠️ Problèmes détectés",
+            "📋 Aperçu",
+            "🔢 Variables",
+            "🔍 Détails",
+            "⚠️ Problèmes",
             "📈 Visualisations",
-            "💡 Recommandations ML"
+            "💡 Recommandations"
         ])
 
         with tab1:
             st.markdown('<div class="quality-card">', unsafe_allow_html=True)
+
             col_stat1, col_stat2 = st.columns(2)
 
             with col_stat1:
-                st.markdown("### 📊 Statistiques globales")
+                st.markdown("##### Statistiques globales")
                 st.markdown(f"""
-                    * **Lignes :** {analyse_avant['total_lignes']:,}
-                    * **Colonnes :** {analyse_avant['total_colonnes']}
-                    * **Mémoire :** {analyse_avant['memoire']:.2f} MB
-                    * **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
-                    * **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
+                    • **Lignes :** {analyse_avant['total_lignes']:,}
+                    • **Colonnes :** {analyse_avant['total_colonnes']}
+                    • **Mémoire :** {analyse_avant['memoire']:.2f} MB
+                    • **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
+                    • **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
                 """)
 
             with col_stat2:
-                st.markdown("### 📊 Types de données")
+                st.markdown("##### Types de données")
                 for dtype, count in analyse_avant['dtypes_summary'].items():
                     pct = (count / analyse_avant['total_colonnes']) * 100
                     st.markdown(f"""
-                        * **{dtype} :** {count} ({pct:.1f}%)
+                        • **{dtype} :** {count} ({pct:.1f}%)
                         <div class='progress-container'><div class='progress-bar' style='width:{pct}%'></div></div>
                     """, unsafe_allow_html=True)
 
             if analyse_avant['missing_cols']:
-                st.markdown("### ⚠️ Colonnes avec valeurs manquantes")
+                st.markdown("##### Colonnes avec valeurs manquantes")
                 for col, count in list(analyse_avant['missing_cols'].items())[:10]:
                     pct = (count / analyse_avant['total_lignes']) * 100
-                    color = "#e53e3e" if pct > threshold_missing else "#ed8936"
+                    color = "#ef4444" if pct > threshold_missing else "#f97316"
                     st.markdown(f"""
-                        * **{col} :** {count:,} ({pct:.1f}%)
+                        • **{col} :** {count:,} ({pct:.1f}%)
                         <div class='progress-container'><div class='progress-bar' style='width:{pct}%; background:{color};'></div></div>
                     """, unsafe_allow_html=True)
 
@@ -1339,12 +978,11 @@ if file_avant:
 
             with col_var1:
                 st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 📊 Variables Quantitatives")
+                st.markdown("##### Variables Quantitatives")
                 if analyse_avant['classification']['quantitative']:
-                    st.markdown(f"**{len(analyse_avant['classification']['quantitative'])} variables**")
                     for col in analyse_avant['classification']['quantitative'][:10]:
                         stats = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
-                        outliers = f" · {stats['pct_outliers']:.1f}% outliers" if stats and 'pct_outliers' in stats else ""
+                        outliers = f" • {stats['pct_outliers']:.1f}% outliers" if stats and 'pct_outliers' in stats else ""
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
@@ -1352,21 +990,20 @@ if file_avant:
                                     <span class='badge-quantitative'>QN</span>
                                 </div>
                                 <div class='variable-stats'>
-                                    {stats['uniques']} valeurs · min={stats['min']:.1f} · max={stats['max']:.1f}{outliers}
+                                    {stats['uniques']} valeurs • min={stats['min']:.1f} • max={stats['max']:.1f}{outliers}
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
                     if len(analyse_avant['classification']['quantitative']) > 10:
-                        st.info(f"... et {len(analyse_avant['classification']['quantitative']) - 10} autres")
+                        st.caption(f"... et {len(analyse_avant['classification']['quantitative']) - 10} autres")
                 else:
-                    st.info("Aucune variable quantitative")
+                    st.caption("Aucune variable quantitative")
                 st.markdown('</div>', unsafe_allow_html=True)
 
             with col_var2:
                 st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 🏷️ Variables Qualitatives")
+                st.markdown("##### Variables Qualitatives")
                 if analyse_avant['classification']['qualitative']:
-                    st.markdown(f"**{len(analyse_avant['classification']['qualitative'])} variables**")
                     for col in analyse_avant['classification']['qualitative'][:10]:
                         stats = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
                         st.markdown(f"""
@@ -1376,19 +1013,19 @@ if file_avant:
                                     <span class='badge-qualitative'>QL</span>
                                 </div>
                                 <div class='variable-stats'>
-                                    {stats['uniques']} catégories · {stats['non_nulles']} non-nulles
+                                    {stats['uniques']} catégories • {stats['non_nulles']} non-nulles
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
                     if len(analyse_avant['classification']['qualitative']) > 10:
-                        st.info(f"... et {len(analyse_avant['classification']['qualitative']) - 10} autres")
+                        st.caption(f"... et {len(analyse_avant['classification']['qualitative']) - 10} autres")
                 else:
-                    st.info("Aucune variable qualitative")
+                    st.caption("Aucune variable qualitative")
                 st.markdown('</div>', unsafe_allow_html=True)
 
             if analyse_avant['classification']['dates']:
                 st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 📅 Variables Date")
+                st.markdown("##### Variables Date")
                 for col in analyse_avant['classification']['dates']:
                     st.markdown(f"""
                         <div class='variable-item'>
@@ -1402,7 +1039,7 @@ if file_avant:
 
             if analyse_avant['classification']['target_potential']:
                 st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 🎯 Cibles potentielles ML")
+                st.markdown("##### Cibles potentielles ML")
                 for target in analyse_avant['classification']['target_potential']:
                     st.markdown(f"""
                         <div class='variable-item'>
@@ -1441,20 +1078,20 @@ if file_avant:
             if analyse_avant['problem_columns']:
                 if show_problem_details:
                     for prob in analyse_avant['problem_columns']:
-                        color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
+                        color = "#ef4444" if prob['severity'] > 2 else "#f97316" if prob['severity'] > 1 else "#4361ee"
                         st.markdown(f"""
                             <div class='timeline-item' style='border-left-color:{color};'>
                                 <div class='timeline-icon'>⚠️</div>
                                 <div>
                                     <strong style='color:{color};'>{prob['colonne']}</strong>
-                                    <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
+                                    <br><span style='color:#64748b;'>{', '.join(prob['issues'])}</span>
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
                 else:
-                    st.info(f"🔍 {len(analyse_avant['problem_columns'])} problèmes détectés (masqués)")
+                    st.caption(f"🔍 {len(analyse_avant['problem_columns'])} problèmes détectés")
             else:
-                st.success("✅ Aucun problème détecté !")
+                st.success("✅ Aucun problème détecté")
 
         with tab5:
             col_v1, col_v2 = st.columns(2)
@@ -1466,9 +1103,9 @@ if file_avant:
                     'Dates': len(analyse_avant['classification']['dates'])
                 }
                 fig = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
-                             title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
+                             title="Types de variables", color_discrete_sequence=['#10b981', '#4361ee', '#f97316'])
                 fig.update_layout(height=350)
-                st.plotly_chart(fig, width='stretch', key="plot_types")
+                st.plotly_chart(fig, use_container_width=True)
 
             with col_v2:
                 if analyse_avant['missing_cols']:
@@ -1480,66 +1117,64 @@ if file_avant:
                                  title="Top 10 valeurs manquantes", color='Manquantes',
                                  color_continuous_scale='Reds')
                     fig.update_layout(height=350)
-                    st.plotly_chart(fig, width='stretch', key="plot_missing")
+                    st.plotly_chart(fig, use_container_width=True)
                 else:
-                    st.info("Aucune valeur manquante")
+                    st.caption("Aucune valeur manquante")
 
             if len(analyse_avant['classification']['quantitative']) > 1:
                 corr_matrix = df_avant[analyse_avant['classification']['quantitative']].corr()
                 fig = px.imshow(corr_matrix, text_auto='.2f', aspect="auto",
                                 title="Matrice de corrélation", color_continuous_scale='RdBu')
                 fig.update_layout(height=500)
-                st.plotly_chart(fig, width='stretch', key="plot_corr")
+                st.plotly_chart(fig, use_container_width=True)
 
         with tab6:
-            st.markdown("### 🔧 Recommandations de nettoyage")
+            st.markdown("##### Recommandations de nettoyage")
             recs_qualite = generer_recommandations_qualite(analyse_avant)
             if recs_qualite:
                 for rec in recs_qualite:
-                    color = "#e53e3e" if rec['priority'] == 'HAUTE' else "#ed8936" if rec[
-                                                                                          'priority'] == 'MOYENNE' else "#667eea"
+                    color = "#ef4444" if rec['priority'] == 'HAUTE' else "#f97316" if rec[
+                                                                                          'priority'] == 'MOYENNE' else "#4361ee"
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:{color};'>
                             <div class='timeline-icon'>{rec['icon']}</div>
                             <div>
                                 <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem;'>{rec['priority']}</span>
                                 <br><strong>{rec['categorie']}</strong>
-                                <br><span style='color:#4a5568;'>{rec['message']}</span>
-                                <br><span style='color:#667eea;'>💡 {rec['action']}</span>
+                                <br><span style='color:#64748b;'>{rec['message']}</span>
+                                <br><span style='color:#4361ee;'>💡 {rec['action']}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
             else:
-                st.success("✅ Dataset déjà propre !")
+                st.success("✅ Dataset déjà propre")
 
-            st.markdown("### 🛠️ Feature Engineering recommandé")
+            st.markdown("##### Feature Engineering recommandé")
             recs_fe = generer_recommandations_feature_engineering(analyse_avant)
             if recs_fe:
                 for rec in recs_fe:
-                    color = "#e53e3e" if rec['priority'] == 'HAUTE' else "#ed8936"
-                    acp_badge = "✅ Compatible ACP" if rec.get('pour_ACP', False) else "⚠️ Non ACP"
+                    color = "#ef4444" if rec['priority'] == 'HAUTE' else "#f97316"
                     st.markdown(f"""
                         <div class='timeline-item' style='border-left-color:{color};'>
                             <div class='timeline-icon'>🔧</div>
                             <div>
                                 <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem;'>{rec['priority']}</span>
-                                <span style='margin-left:0.5rem; font-size:0.7rem;'>{acp_badge}</span>
                                 <br><strong>{rec['categorie']} - {rec.get('colonne', 'Général')}</strong>
-                                <br><span style='color:#4a5568;'>{rec['raison']}</span>
-                                <br><span style='color:#667eea;'>💡 {rec['technique']}</span>
+                                <br><span style='color:#64748b;'>{rec['raison']}</span>
+                                <br><span style='color:#4361ee;'>💡 {rec['technique']}</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
             if analyse_avant['classification']['a_convertir']:
-                st.markdown("### 🔄 Conversions suggérées")
+                st.markdown("##### Conversions suggérées")
                 for conv in analyse_avant['classification']['a_convertir']:
                     st.markdown(f"""
-                        <div class='timeline-item' style='border-left-color:#ed8936;'>
+                        <div class='timeline-item' style='border-left-color:#f97316;'>
                             <div class='timeline-icon'>🔄</div>
                             <div>
                                 <strong>{conv['colonne']}</strong>
-                                <br><span style='color:#4a5568;'>{conv['type_actuel']} → {conv['type_suggere']}</span>
+                                <br><span style='color:#64748b;'>{conv['type_actuel']} → {conv['type_suggere']}</span>
                                 <br><small>{conv['raison']}</small>
                             </div>
                         </div>
@@ -1554,136 +1189,50 @@ if file_avant:
             with col_c1:
                 delta = comparaison['amelioration_score']
                 delta_color = "green" if delta > 0 else "red"
-                delta_symbol = "▲" if delta > 0 else "▼"
                 st.metric("Score qualité", f"{analyse_apres['quality_score']:.1f}",
-                          f"{delta_symbol} {abs(delta):.1f} ({comparaison['amelioration_score_pct']:.1f}%)",
+                          f"{'▲' if delta > 0 else '▼'} {abs(delta):.1f}",
                           delta_color=delta_color)
 
             with col_c2:
                 delta = comparaison['reduction_lignes']
                 st.metric("Lignes", f"{analyse_apres['total_lignes']:,}",
-                          f"▼ {delta} ({comparaison['pct_reduction_lignes']:.1f}%)",
-                          delta_color="green" if delta > 0 else "red")
+                          f"▼ {delta}", delta_color="green" if delta > 0 else "red")
 
             with col_c3:
                 delta = comparaison['reduction_missing']
-                st.metric("Valeurs manquantes", f"{analyse_apres['total_missing']:,}",
-                          f"▼ {delta} ({comparaison['pct_reduction_missing']:.1f}%)",
-                          delta_color="green" if delta > 0 else "red")
+                st.metric("Manquantes", f"{analyse_apres['total_missing']:,}",
+                          f"▼ {delta}", delta_color="green" if delta > 0 else "red")
 
             with col_c4:
                 delta = comparaison['reduction_problemes']
                 delta_symbol = "▼" if delta > 0 else "▲" if delta < 0 else "="
-                delta_value = f"{delta_symbol} {abs(delta)}" if delta != 0 else "="
                 st.metric("Problèmes", len(analyse_apres['problem_columns']),
-                          delta_value,
+                          f"{delta_symbol} {abs(delta)}" if delta != 0 else "=",
                           delta_color="green" if delta > 0 else "red" if delta < 0 else "gray")
-
-            with st.expander("📋 Voir le bilan détaillé du nettoyage", expanded=False):
-                messages = verifier_nettoyage(comparaison)
-                for icon, color, msg in messages:
-                    st.markdown(f"""
-                        <div style='background:white; padding:1rem; border-radius:12px; border-left:4px solid {color}; margin-bottom:0.5rem;'>
-                            <div style='display:flex; align-items:center; gap:0.5rem;'>
-                                <span style='font-size:1.5rem;'>{icon}</span>
-                                <span style='color:#4a5568; font-size:0.9rem;'>{msg}</span>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-                if show_problem_details and analyse_apres['problem_columns']:
-                    st.markdown("### ⚠️ Problèmes restants dans le dataset nettoyé")
-                    for prob in analyse_apres['problem_columns'][:5]:
-                        color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
-                        st.markdown(f"""
-                            <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>⚠️</div>
-                                <div>
-                                    <strong style='color:{color};'>{prob['colonne']}</strong>
-                                    <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
-                                </div>
-                            </div>
-                        """, unsafe_allow_html=True)
-
-                    if len(analyse_apres['problem_columns']) > 5:
-                        st.info(f"... et {len(analyse_apres['problem_columns']) - 5} autres problèmes")
-
-            st.markdown("### 📈 Visualisation de la progression")
-
-            fig_progress = go.Figure()
-
-            categories = ['Score qualité', 'Lignes', 'Manquantes', 'Doublons', 'Problèmes']
-
-            max_values = [
-                100,
-                max(analyse_avant['total_lignes'], analyse_apres['total_lignes']),
-                max(analyse_avant['total_missing'], analyse_apres['total_missing']),
-                max(analyse_avant['duplicates'], analyse_apres['duplicates']),
-                max(len(analyse_avant['problem_columns']), len(analyse_apres['problem_columns']))
-            ]
-
-            avant_values = [
-                analyse_avant['quality_score'],
-                analyse_avant['total_lignes'],
-                analyse_avant['total_missing'],
-                analyse_avant['duplicates'],
-                len(analyse_avant['problem_columns'])
-            ]
-            apres_values = [
-                analyse_apres['quality_score'],
-                analyse_apres['total_lignes'],
-                analyse_apres['total_missing'],
-                analyse_apres['duplicates'],
-                len(analyse_apres['problem_columns'])
-            ]
-
-            avant_norm = [v / max_values[i] * 100 for i, v in enumerate(avant_values)]
-            apres_norm = [v / max_values[i] * 100 for i, v in enumerate(apres_values)]
-
-            fig_progress.add_trace(go.Scatterpolar(
-                r=avant_norm,
-                theta=categories,
-                fill='toself',
-                name='Original',
-                line_color='#e53e3e'
-            ))
-
-            fig_progress.add_trace(go.Scatterpolar(
-                r=apres_norm,
-                theta=categories,
-                fill='toself',
-                name='Nettoyé',
-                line_color='#48bb78'
-            ))
-
-            fig_progress.update_layout(
-                polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-                showlegend=True,
-                height=400
-            )
-
-            st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
 
 else:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
-            <div style='text-align:center; padding:3rem; background:white; border-radius:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);'>
-                <span style='font-size:5rem;'>📊</span>
+            <div class='upload-prompt'>
+                <span style='font-size:4rem;'>📊</span>
                 <h2>Chargez un dataset pour commencer</h2>
-                <p style='color:#666;'>Analyse complète · Nettoyage · Feature Engineering · ML</p>
-                <div style='display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; text-align:left;'>
-                    <div>✅ Statistiques globales</div><div>✅ Types de données</div>
-                    <div>✅ Variables manquantes</div><div>✅ Classification auto</div>
-                    <div>✅ Comparaison avant/après</div><div>✅ Feature engineering</div>
-                    <div>✅ Recommandations ACP</div><div>✅ Préparation ML</div>
+                <p>Analyse complète • Nettoyage • Feature Engineering • ML</p>
+                <div class='feature-grid'>
+                    <div class='feature-item'>Statistiques globales</div>
+                    <div class='feature-item'>Types de données</div>
+                    <div class='feature-item'>Variables manquantes</div>
+                    <div class='feature-item'>Classification auto</div>
+                    <div class='feature-item'>Comparaison avant/après</div>
+                    <div class='feature-item'>Feature engineering</div>
+                    <div class='feature-item'>Recommandations ACP</div>
+                    <div class='feature-item'>Préparation ML</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
 st.markdown("""
     <div class='footer'>
-        <strong>Data Quality Analyzer v2.0</strong> · Analyse complète pour Machine Learning · Feature Engineering · Préparation ACP<br>
-        <span style='opacity: 0.6; font-size: 0.8rem;'>Développé pour l'optimisation des pipelines de données</span>
+        <strong>Data Quality Analyzer v2.0</strong> • Analyse complète pour Machine Learning
     </div>
 """, unsafe_allow_html=True)
