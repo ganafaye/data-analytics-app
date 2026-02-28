@@ -887,7 +887,7 @@ if 'image_grise' not in st.session_state:
 st.markdown("""
     <div class="hero-section">
         <h1 class="hero-title">🚀 Data & Image Analytics Hub</h1>
-        <p class="hero-subtitle">La plateforme ultime pour l'analyse de données et d'images</p>
+        <p class="hero-subtitle">La plateforme ultime pour l'analyse et comparaison de données aprés nettoyage et d'images</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
             <span class='tech-badge'>🐍 Python 3.12</span>
             <span class='tech-badge'>📊 Streamlit</span>
