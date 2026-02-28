@@ -1671,7 +1671,7 @@ else:
             <div style='text-align:center; padding:3rem; background:white; border-radius:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);'>
                 <span style='font-size:5rem;'>📊</span>
                 <h2>Chargez un dataset pour commencer</h2>
-                <p style='color:#666;'>Analyse complète · Nettoyage · Feature Engineering · ML</p>
+                <p style='color:#666;'>Analyse complète · Comparaison Avant et Apres Nettoyage · Feature Engineering · ML</p>
                 <div style='display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; text-align:left;'>
                     <div>✅ Statistiques globales</div><div>✅ Types de données</div>
                     <div>✅ Variables manquantes</div><div>✅ Classification auto</div>
