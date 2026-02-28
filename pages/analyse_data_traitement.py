@@ -1167,21 +1167,16 @@ def generer_recommandations_qualite(analyse):
 
 # --- EN-TÊTE PRINCIPAL ---
 st.markdown("""
-     <div class='upload-prompt'>
-                <span style='font-size:4rem;'>📊</span>
-                <h2>Chargez un dataset pour commencer</h2>
-                <p>Analyse complète • Nettoyage • Feature Engineering • ML</p>
-                <div class='feature-grid'>
-                    <div class='feature-item'>Statistiques globales</div>
-                    <div class='feature-item'>Types de données</div>
-                    <div class='feature-item'>Variables manquantes</div>
-                    <div class='feature-item'>Classification auto</div>
-                    <div class='feature-item'>Comparaison avant/après</div>
-                    <div class='feature-item'>Feature engineering</div>
-                    <div class='feature-item'>Recommandations ACP</div>
-                    <div class='feature-item'>Préparation ML</div>
-                </div>
-     </div>
+    <div class="main-header floating shine">
+        <h1 class="main-title">📊 Data Quality Analyzer</h1>
+        <p class="main-subtitle">Analyse intelligente de la qualité des données · Comparaison aprés Nettoyage & Optimisation · Feature Engineering</p>
+        <div style='display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;'>
+            <span class='badge-excellent quality-badge'>🎯 Classification auto</span>
+            <span class='badge-good quality-badge'>📊 Feature engineering</span>
+            <span class='badge-fair quality-badge'>🔬 Préparation ACP</span>
+            <span class='badge-poor quality-badge'>💡 Recommandations ML</span>
+        </div>
+    </div>
 """, unsafe_allow_html=True)
 
 # --- SIDEBAR ---
