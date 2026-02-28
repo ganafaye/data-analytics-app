@@ -245,6 +245,49 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    /* 1. SUPPRIMER LE HEADER À DROITE (Share, Star, GitHub, Menu) */
+    /* On cible le conteneur qui regroupe tous ces éléments */
+    [data-testid="stHeaderActionContainer"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* 2. SUPPRIMER LE BOUTON "MANAGE APP" (Bas de sidebar) */
+    /* On cible le widget de statut et on force sa disparition totale */
+    [data-testid="stStatusWidget"], 
+    .stStatusWidget, 
+    div[class*="stStatusWidget"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+    }
+
+    /* 3. MASQUER LE MENU HAMBURGER RÉSIIDUEL */
+    #MainMenu {
+        display: none !important;
+    }
+
+    /* 4. SÉCURITÉ : MASQUER TOUT LIEN VERS STREAMLIT CLOUD */
+    a[href*="streamlit.io"] {
+        display: none !important;
+    }
+
+    /* 5. GARDER L'ICÔNE SIDEBAR (À GAUCHE) */
+    /* On s'assure que le bouton de navigation reste cliquable */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    /* Supprimer la petite ligne grise en haut */
+    header {
+        background-color: transparent !important;
+        border: none !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- EN-TÊTE SPECTACULAIRE ---
 st.markdown("""
