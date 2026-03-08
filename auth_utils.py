@@ -33,7 +33,7 @@ def login_header():
     col1, col2 = st.columns([0.85, 0.15])
 
     with col1:
-        st.subheader("🚀 Gana's Datalab")
+        st.subheader("")
 
     with col2:
         if not is_authorized():
@@ -52,4 +52,4 @@ def login_header():
                 if st.button("Déconnexion", type="primary", use_container_width=True):
                     st.session_state["is_logged_in"] = False
                     st.rerun()
-    st.markdown("---")
+    st.markdown("")
