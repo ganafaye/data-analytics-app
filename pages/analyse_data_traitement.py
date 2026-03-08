@@ -1115,103 +1115,107 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
     """
     Génère un rapport HTML complet avec graphiques et comparaison
     """
-    # Créer les graphiques en base64 pour les inclure dans le HTML
     import io
     import base64
     import matplotlib.pyplot as plt
 
     # Fonction pour convertir un graphique Plotly en image base64
     def fig_to_base64(fig):
-        buf = io.BytesIO()
-        fig.write_image(buf, format='png', width=800, height=400)
-        buf.seek(0)
-        return base64.b64encode(buf.getvalue()).decode()
+        try:
+            buf = io.BytesIO()
+            fig.write_image(buf, format='png', width=800, height=400)
+            buf.seek(0)
+            return base64.b64encode(buf.getvalue()).decode()
+        except Exception as e:
+            return ""
 
     # Créer les graphiques avec Plotly
     # Graphique 1: Distribution des types de variables
-    type_counts = {
-        'Quantitatives': len(analyse['classification']['quantitative']),
-        'Qualitatives': len(analyse['classification']['qualitative']),
-        'Dates': len(analyse['classification']['dates'])
-    }
-    fig1 = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
-                  title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
-    fig1.update_layout(height=400)
+    try:
+        type_counts = {
+            'Quantitatives': len(analyse['classification']['quantitative']),
+            'Qualitatives': len(analyse['classification']['qualitative']),
+            'Dates': len(analyse['classification']['dates'])
+        }
+        fig1 = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
+                      title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
+        fig1.update_layout(height=400)
+        fig1_base64 = fig_to_base64(fig1)
+    except Exception:
+        fig1_base64 = ""
 
     # Graphique 2: Top valeurs manquantes
-    if analyse['missing_cols']:
-        missing_df = pd.DataFrame({
-            'Colonne': list(analyse['missing_cols'].keys()),
-            'Manquantes': list(analyse['missing_cols'].values())
-        }).sort_values('Manquantes', ascending=False).head(10)
-        fig2 = px.bar(missing_df, x='Manquantes', y='Colonne', orientation='h',
-                      title="Top 10 valeurs manquantes", color='Manquantes',
-                      color_continuous_scale='Reds')
-        fig2.update_layout(height=400)
-    else:
-        fig2 = None
-
-    # Graphique 3: Matrice de corrélation (si disponible)
-    if len(analyse['classification']['quantitative']) > 1:
-        # Reconstruire un DataFrame pour la corrélation (simplifié)
-        # Dans un cas réel, vous auriez besoin du DataFrame original
-        fig3 = None
-    else:
-        fig3 = None
+    fig2_base64 = ""
+    try:
+        if analyse.get('missing_cols') and len(analyse['missing_cols']) > 0:
+            missing_df = pd.DataFrame({
+                'Colonne': list(analyse['missing_cols'].keys()),
+                'Manquantes': list(analyse['missing_cols'].values())
+            }).sort_values('Manquantes', ascending=False).head(10)
+            fig2 = px.bar(missing_df, x='Manquantes', y='Colonne', orientation='h',
+                          title="Top 10 valeurs manquantes", color='Manquantes',
+                          color_continuous_scale='Reds')
+            fig2.update_layout(height=400)
+            fig2_base64 = fig_to_base64(fig2)
+    except Exception:
+        pass
 
     # Graphique 4: Évolution du score (si comparaison)
-    if comparaison:
-        fig4 = go.Figure()
-        categories = ['Score qualité', 'Complétude', 'Unicité']
-        avant_values = [
-            analyse['quality_score'],
-            100 - analyse['pct_missing'],
-            100 - analyse['pct_duplicates']
-        ]
-        apres_values = [
-            comparaison['apres']['quality_score'],
-            100 - comparaison['apres']['pct_missing'],
-            100 - comparaison['apres']['pct_duplicates']
-        ]
+    fig4_base64 = ""
+    if comparaison and isinstance(comparaison, dict):
+        try:
+            avant = comparaison.get('avant', {})
+            apres = comparaison.get('apres', {})
 
-        fig4.add_trace(go.Scatterpolar(
-            r=avant_values + [avant_values[0]],
-            theta=categories + [categories[0]],
-            fill='toself',
-            name='Avant',
-            line_color='#e53e3e'
-        ))
+            if avant and apres:
+                fig4 = go.Figure()
+                categories = ['Score qualité', 'Complétude', 'Unicité']
 
-        fig4.add_trace(go.Scatterpolar(
-            r=apres_values + [apres_values[0]],
-            theta=categories + [categories[0]],
-            fill='toself',
-            name='Après',
-            line_color='#48bb78'
-        ))
+                avant_values = [
+                    avant.get('quality_score', 0),
+                    100 - avant.get('pct_missing', 0),
+                    100 - avant.get('pct_duplicates', 0)
+                ]
+                apres_values = [
+                    apres.get('quality_score', 0),
+                    100 - apres.get('pct_missing', 0),
+                    100 - apres.get('pct_duplicates', 0)
+                ]
 
-        fig4.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-            showlegend=True,
-            height=400,
-            title="Comparaison Avant/Après"
-        )
-    else:
-        fig4 = None
+                fig4.add_trace(go.Scatterpolar(
+                    r=avant_values + [avant_values[0]],
+                    theta=categories + [categories[0]],
+                    fill='toself',
+                    name='Avant',
+                    line_color='#e53e3e'
+                ))
 
-    # Convertir les graphiques en base64
-    fig1_base64 = fig_to_base64(fig1) if fig1 else ""
-    fig2_base64 = fig_to_base64(fig2) if fig2 else ""
-    fig4_base64 = fig_to_base64(fig4) if fig4 else ""
+                fig4.add_trace(go.Scatterpolar(
+                    r=apres_values + [apres_values[0]],
+                    theta=categories + [categories[0]],
+                    fill='toself',
+                    name='Après',
+                    line_color='#48bb78'
+                ))
+
+                fig4.update_layout(
+                    polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+                    showlegend=True,
+                    height=400,
+                    title="Comparaison Avant/Après"
+                )
+                fig4_base64 = fig_to_base64(fig4)
+        except Exception:
+            pass
 
     # Déterminer la catégorie de qualité
-    quality_badge_class = analyse['quality_badge'].replace('badge-', '')
+    quality_badge_class = analyse.get('quality_badge', 'badge-poor').replace('badge-', '')
 
     html = f"""
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Rapport Data Quality - {analyse['nom']}</title>
+        <title>Rapport Data Quality - {analyse.get('nom', 'Dataset')}</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
@@ -1522,7 +1526,7 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
     <body>
         <div class="container">
             <div class="header">
-                <h1>📊 Rapport d'analyse - {analyse['nom']}</h1>
+                <h1>📊 Rapport d'analyse - {analyse.get('nom', 'Dataset')}</h1>
                 <p>Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
             </div>
 
@@ -1531,44 +1535,44 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
                     <span>📈</span> Score de qualité
                 </div>
                 <div class="score-container">
-                    <div class="score">{analyse['quality_score']:.1f}/100</div>
-                    <span class="badge badge-{quality_badge_class}">{analyse['quality_category']}</span>
+                    <div class="score">{analyse.get('quality_score', 0):.1f}/100</div>
+                    <span class="badge badge-{quality_badge_class}">{analyse.get('quality_category', 'INCONNU')}</span>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number">{analyse['total_lignes']:,}</div>
+                        <div class="stat-number">{analyse.get('total_lignes', 0):,}</div>
                         <div class="stat-label">Lignes</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">{analyse['total_colonnes']}</div>
+                        <div class="stat-number">{analyse.get('total_colonnes', 0)}</div>
                         <div class="stat-label">Colonnes</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">{analyse['memoire']:.2f}</div>
+                        <div class="stat-number">{analyse.get('memoire', 0):.2f}</div>
                         <div class="stat-label">MB</div>
                     </div>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number">{analyse['total_missing']:,}</div>
+                        <div class="stat-number">{analyse.get('total_missing', 0):,}</div>
                         <div class="stat-label">Valeurs manquantes</div>
                         <div class="progress-container">
-                            <div class="progress-bar" style="width:{analyse['pct_missing']}%"></div>
+                            <div class="progress-bar" style="width:{analyse.get('pct_missing', 0)}%"></div>
                         </div>
-                        <small>{analyse['pct_missing']:.1f}%</small>
+                        <small>{analyse.get('pct_missing', 0):.1f}%</small>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">{analyse['duplicates']:,}</div>
+                        <div class="stat-number">{analyse.get('duplicates', 0):,}</div>
                         <div class="stat-label">Doublons</div>
                         <div class="progress-container">
-                            <div class="progress-bar" style="width:{analyse['pct_duplicates']}%"></div>
+                            <div class="progress-bar" style="width:{analyse.get('pct_duplicates', 0)}%"></div>
                         </div>
-                        <small>{analyse['pct_duplicates']:.1f}%</small>
+                        <small>{analyse.get('pct_duplicates', 0):.1f}%</small>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">{len(analyse['problem_columns'])}</div>
+                        <div class="stat-number">{len(analyse.get('problem_columns', []))}</div>
                         <div class="stat-label">Problèmes détectés</div>
                     </div>
                 </div>
@@ -1586,8 +1590,8 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
                     </tr>
     """
 
-    for dtype, count in analyse['dtypes_summary'].items():
-        pct = (count / analyse['total_colonnes']) * 100
+    for dtype, count in analyse.get('dtypes_summary', {}).items():
+        pct = (count / max(analyse.get('total_colonnes', 1), 1)) * 100
         html += f"""
                     <tr>
                         <td>{dtype}</td>
@@ -1614,7 +1618,7 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
             </div>
         """
 
-    if fig2_base64 and analyse['missing_cols']:
+    if fig2_base64:
         html += f"""
             <div class="section">
                 <div class="section-title">
@@ -1627,7 +1631,8 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
         """
 
     # Section problèmes détectés
-    if analyse['problem_columns']:
+    problem_columns = analyse.get('problem_columns', [])
+    if problem_columns:
         html += """
             <div class="section">
                 <div class="section-title">
@@ -1640,19 +1645,20 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
                     </tr>
         """
 
-        for prob in analyse['problem_columns'][:15]:
+        for prob in problem_columns[:15]:
+            issues = prob.get('issues', [])
             html += f"""
                     <tr>
-                        <td><strong>{prob['colonne']}</strong></td>
-                        <td>{', '.join(prob['issues'])}</td>
+                        <td><strong>{prob.get('colonne', 'Inconnue')}</strong></td>
+                        <td>{', '.join(issues)}</td>
                     </tr>
             """
 
-        if len(analyse['problem_columns']) > 15:
+        if len(problem_columns) > 15:
             html += f"""
                     <tr>
                         <td colspan="2" style="text-align: center; font-style: italic;">
-                            ... et {len(analyse['problem_columns']) - 15} autres problèmes
+                            ... et {len(problem_columns) - 15} autres problèmes
                         </td>
                     </tr>
             """
@@ -1663,82 +1669,86 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
         """
 
     # Section comparaison (si disponible)
-    if comparaison:
-        html += f"""
-            <div class="section">
-                <div class="section-title">
-                    <span>🔄</span> Comparaison Original vs Nettoyé
-                </div>
+    if comparaison and isinstance(comparaison, dict):
+        avant = comparaison.get('avant', {})
+        apres = comparaison.get('apres', {})
 
-                <div class="comparison-grid">
-                    <div class="comparison-card">
-                        <h4>📋 Dataset Original</h4>
-                        <table style="margin:0;">
-                            <tr><td>Score qualité</td><td><strong>{comparaison['avant']['quality_score']:.1f}</strong></td></tr>
-                            <tr><td>Lignes</td><td>{comparaison['avant']['total_lignes']:,}</td></tr>
-                            <tr><td>Colonnes</td><td>{comparaison['avant']['total_colonnes']}</td></tr>
-                            <tr><td>Valeurs manquantes</td><td>{comparaison['avant']['total_missing']} ({comparaison['avant']['pct_missing']:.1f}%)</td></tr>
-                            <tr><td>Doublons</td><td>{comparaison['avant']['duplicates']} ({comparaison['avant']['pct_duplicates']:.1f}%)</td></tr>
-                            <tr><td>Problèmes</td><td>{len(comparaison['avant']['problem_columns'])}</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="comparison-card">
-                        <h4>✨ Dataset Nettoyé</h4>
-                        <table style="margin:0;">
-                            <tr><td>Score qualité</td><td><strong>{comparaison['apres']['quality_score']:.1f}</strong></td></tr>
-                            <tr><td>Lignes</td><td>{comparaison['apres']['total_lignes']:,}</td></tr>
-                            <tr><td>Colonnes</td><td>{comparaison['apres']['total_colonnes']}</td></tr>
-                            <tr><td>Valeurs manquantes</td><td>{comparaison['apres']['total_missing']} ({comparaison['apres']['pct_missing']:.1f}%)</td></tr>
-                            <tr><td>Doublons</td><td>{comparaison['apres']['duplicates']} ({comparaison['apres']['pct_duplicates']:.1f}%)</td></tr>
-                            <tr><td>Problèmes</td><td>{len(comparaison['apres']['problem_columns'])}</td></tr>
-                        </table>
-                    </div>
-                </div>
-
-                <div style="margin-top:20px; padding:20px; background:#f8fafc; border-radius:15px;">
-                    <h4 style="margin-bottom:15px;">📊 Bilan du nettoyage</h4>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number">{comparaison['amelioration_score']:+.1f}</div>
-                            <div class="stat-label">Amélioration score</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{comparaison['reduction_lignes']}</div>
-                            <div class="stat-label">Lignes supprimées</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{comparaison['reduction_missing']}</div>
-                            <div class="stat-label">Manquantes en moins</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{comparaison['reduction_duplicates']}</div>
-                            <div class="stat-label">Doublons supprimés</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{comparaison['reduction_problemes']:+d}</div>
-                            <div class="stat-label">Problèmes résolus</div>
-                        </div>
-                    </div>
-                </div>
-        """
-
-        if fig4_base64:
+        if avant and apres:
             html += f"""
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <span>📊</span> Évolution de la qualité
+                <div class="section">
+                    <div class="section-title">
+                        <span>🔄</span> Comparaison Original vs Nettoyé
                     </div>
-                    <img src="data:image/png;base64,{fig4_base64}" class="chart-image" alt="Comparaison radar">
+
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <h4>📋 Dataset Original</h4>
+                            <table style="margin:0;">
+                                <tr><td>Score qualité</td><td><strong>{avant.get('quality_score', 0):.1f}</strong></td></tr>
+                                <tr><td>Lignes</td><td>{avant.get('total_lignes', 0):,}</td></tr>
+                                <tr><td>Colonnes</td><td>{avant.get('total_colonnes', 0)}</td></tr>
+                                <tr><td>Valeurs manquantes</td><td>{avant.get('total_missing', 0)} ({avant.get('pct_missing', 0):.1f}%)</td></tr>
+                                <tr><td>Doublons</td><td>{avant.get('duplicates', 0)} ({avant.get('pct_duplicates', 0):.1f}%)</td></tr>
+                                <tr><td>Problèmes</td><td>{len(avant.get('problem_columns', []))}</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="comparison-card">
+                            <h4>✨ Dataset Nettoyé</h4>
+                            <table style="margin:0;">
+                                <tr><td>Score qualité</td><td><strong>{apres.get('quality_score', 0):.1f}</strong></td></tr>
+                                <tr><td>Lignes</td><td>{apres.get('total_lignes', 0):,}</td></tr>
+                                <tr><td>Colonnes</td><td>{apres.get('total_colonnes', 0)}</td></tr>
+                                <tr><td>Valeurs manquantes</td><td>{apres.get('total_missing', 0)} ({apres.get('pct_missing', 0):.1f}%)</td></tr>
+                                <tr><td>Doublons</td><td>{apres.get('duplicates', 0)} ({apres.get('pct_duplicates', 0):.1f}%)</td></tr>
+                                <tr><td>Problèmes</td><td>{len(apres.get('problem_columns', []))}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; padding:20px; background:#f8fafc; border-radius:15px;">
+                        <h4 style="margin-bottom:15px;">📊 Bilan du nettoyage</h4>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number">{comparaison.get('amelioration_score', 0):+.1f}</div>
+                                <div class="stat-label">Amélioration score</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">{comparaison.get('reduction_lignes', 0)}</div>
+                                <div class="stat-label">Lignes supprimées</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">{comparaison.get('reduction_missing', 0)}</div>
+                                <div class="stat-label">Manquantes en moins</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">{comparaison.get('reduction_duplicates', 0)}</div>
+                                <div class="stat-label">Doublons supprimés</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">{comparaison.get('reduction_problemes', 0):+d}</div>
+                                <div class="stat-label">Problèmes résolus</div>
+                            </div>
+                        </div>
+                    </div>
+            """
+
+            if fig4_base64:
+                html += f"""
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <span>📊</span> Évolution de la qualité
+                        </div>
+                        <img src="data:image/png;base64,{fig4_base64}" class="chart-image" alt="Comparaison radar">
+                    </div>
+                """
+
+            html += """
                 </div>
             """
 
-        html += """
-            </div>
-        """
-
     # Section historique (si disponible)
-    if historique:
+    if historique and len(historique) > 0:
         html += """
             <div class="section">
                 <div class="section-title">
@@ -1754,13 +1764,15 @@ def generer_rapport_html(analyse, comparaison=None, historique=None):
         """
 
         for i, h in enumerate(historique):
-            amelioration = h.get('amelioration', 0)
+            score_avant = h.get('score_avant', 0)
+            score_apres = h.get('score_apres', 0)
+            amelioration = score_apres - score_avant
             color_class = "improvement-positive" if amelioration > 0 else "improvement-negative" if amelioration < 0 else ""
             html += f"""
                     <tr>
                         <td>{h.get('etape', f'Étape {i + 1}')}</td>
-                        <td>{h.get('score_avant', 0):.1f}</td>
-                        <td>{h.get('score_apres', 0):.1f}</td>
+                        <td>{score_avant:.1f}</td>
+                        <td>{score_apres:.1f}</td>
                         <td class="{color_class}">{amelioration:+.1f}</td>
                     </tr>
             """
@@ -2921,21 +2933,25 @@ if file_avant:
             st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
 
         # --- SECTION : GÉNÉRATION DE RAPPORT ---
+        # --- SECTION : GÉNÉRATION DE RAPPORT ---
         if st.session_state.generate_report:
-            # Inclure la comparaison si disponible
-            if analyse_apres and comparaison:
-                rapport_html = generer_rapport_html(analyse_avant, comparaison, st.session_state.changes_log)
-            else:
-                rapport_html = generer_rapport_html(analyse_avant)
+            try:
+                # Vérifier si une comparaison est disponible
+                if 'analyse_apres' in locals() and analyse_apres and 'comparaison' in locals() and comparaison:
+                    rapport_html = generer_rapport_html(analyse_avant, comparaison, st.session_state.changes_log)
+                else:
+                    rapport_html = generer_rapport_html(analyse_avant)
 
-            st.download_button(
-                label="📥 Télécharger rapport HTML",
-                data=rapport_html,
-                file_name=f"rapport_qualite_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
-                mime="text/html"
-            )
-            st.session_state.generate_report = False
-
+                st.download_button(
+                    label="📥 Télécharger rapport HTML",
+                    data=rapport_html,
+                    file_name=f"rapport_qualite_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
+                    mime="text/html"
+                )
+            except Exception as e:
+                st.error(f"Erreur lors de la génération du rapport: {str(e)}")
+            finally:
+                st.session_state.generate_report = False
         # --- SECTION : RÉSULTAT DU NETTOYAGE AUTOMATIQUE ---
         if st.session_state.df_avant_cleaned is not None:
             st.markdown("---")
