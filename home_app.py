@@ -40,6 +40,7 @@ st.markdown("""
         --gradient-success: linear-gradient(135deg, #4cc9f0, #4895ef);
         --gradient-rent: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047);
         --gradient-dashboard: linear-gradient(135deg, #f59e0b, #d97706);
+        --gradient-diabetes: linear-gradient(135deg, #e63946, #c91e2c); /* Nouveau dégradé pour l'app diabète */
     }
 
     /* ===== MASQUAGE DES ÉLÉMENTS INDÉSIRABLES ===== */
@@ -333,6 +334,10 @@ st.markdown("""
         background: var(--gradient-rent) !important;
     }
 
+    .app-card-diabetes::before {
+        background: var(--gradient-diabetes) !important;
+    }
+
     .app-card-dashboard::before {
         background: var(--gradient-dashboard) !important;
     }
@@ -343,6 +348,18 @@ st.markdown("""
         background: var(--gradient-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+    }
+
+    .app-icon-rent {
+        background: var(--gradient-rent) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+
+    .app-icon-diabetes {
+        background: var(--gradient-diabetes) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
     }
 
     .app-icon-dashboard {
@@ -412,6 +429,10 @@ st.markdown("""
 
     .badge-rent {
         background: var(--gradient-rent);
+    }
+
+    .badge-diabetes {
+        background: var(--gradient-diabetes);
     }
 
     .badge-dashboard {
@@ -625,6 +646,10 @@ st.markdown("""
         background: var(--gradient-rent) !important;
     }
 
+    .btn-diabetes > button {
+        background: var(--gradient-diabetes) !important;
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
         .hero-title {
@@ -731,9 +756,8 @@ with st.sidebar:
     if st.button("🏙️ Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
-    # --- NOUVELLE APPLICATION : Diabetes Predictor ---
+    # Application 4 : Diabetes Predictor
     if st.button("🩸 Diabetes Predictor", use_container_width=True, key="sidebar_diabete"):
-        # Assure-toi que le nom du fichier correspond exactement à celui sur GitHub
         st.switch_page("pages/app_prediction_diabete.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
@@ -759,14 +783,16 @@ with st.sidebar:
                 <span>ℹ️</span> Informations
             </div>
             <div style='padding: 0.4rem 0; color: #334155; font-size: 0.85rem;'>
-                <p><strong>Version:</strong> 4.1</p> <p><strong>Mise à jour:</strong> Mars 2026</p>
+                <p><strong>Version:</strong> 4.1</p>
+                <p><strong>Mise à jour:</strong> Mars 2026</p>
                 <p><strong>Auteur:</strong> Gana Faye</p>
             </div>
             <div style='display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem;'>
                 <span class='sidebar-badge'>Python</span>
                 <span class='sidebar-badge'>Streamlit</span>
                 <span class='sidebar-badge'>ML</span>
-                <span class='sidebar-badge'>HealthTech</span> </div>
+                <span class='sidebar-badge'>HealthTech</span>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -804,7 +830,7 @@ st.markdown("""
 st.markdown("""
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-number">3</div>
+            <div class="stat-number">4</div>
             <div class="stat-label">Applications</div>
         </div>
         <div class="stat-card">
@@ -812,7 +838,7 @@ st.markdown("""
             <div class="stat-label">Dashboard</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">30+</div>
+            <div class="stat-number">40+</div>
             <div class="stat-label">Fonctionnalités</div>
         </div>
         <div class="stat-card">
@@ -827,16 +853,17 @@ st.markdown("""
     <div class="category-header">
         <span class="category-icon">⚡</span>
         <span class="category-title">Applications Interactives</span>
-        <span class="category-badge category-badge-app">3 apps</span>
+        <span class="category-badge category-badge-app">4 apps</span>
     </div>
 """, unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns(3)
+# Passage à 4 colonnes pour accueillir la nouvelle application
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown("""
         <div class='app-card app-card-rent'>
-            <div class='app-icon'>🏙️</div>
+            <div class='app-icon app-icon-rent'>🏙️</div>
             <h2 class='app-title'>Dakar Immo AI</h2>
             <p class='app-description'>Prédiction intelligente des loyers à Dakar basée sur Random Forest avec visualisations interactives et analyse de marché.</p>
             <ul class='feature-list'>
@@ -887,6 +914,24 @@ with col3:
     if st.button("🔬 Lancer PCA Vision", key="pca_lab", use_container_width=True):
         st.switch_page("pages/app_acp_v2.py")
 
+with col4:
+    st.markdown("""
+        <div class='app-card app-card-diabetes'>
+            <div class='app-icon app-icon-diabetes'>🩸</div>
+            <h2 class='app-title'>Diabetes Predictor</h2>
+            <p class='app-description'>Prédiction du risque de diabète basée sur les données cliniques avec algorithmes de machine learning.</p>
+            <ul class='feature-list'>
+                <li>Prédiction en temps réel</li>
+                <li>Analyse des facteurs de risque</li>
+                <li>Interprétation des résultats</li>
+                <li>Recommandations personnalisées</li>
+            </ul>
+            <span class='app-badge badge-diabetes'>🩸 Santé</span>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("🩸 Lancer Diabetes Predictor", key="diabetes_lab", use_container_width=True):
+        st.switch_page("pages/app_prediction_diabete.py")
+
 # --- SECTION DASHBOARDS ---
 st.markdown("""
     <div class="category-header">
@@ -896,14 +941,14 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-col_dash1, col_dash2, col_dash3 = st.columns([1, 1, 1])
+col_dash1, col_dash2, col_dash3, col_dash4 = st.columns(4)
 
 with col_dash1:
     st.markdown("""
         <div class='dashboard-card'>
             <div class='dashboard-icon'>📈</div>
             <h2 class='dashboard-title'>Travaux Dashboard</h2>
-            <p class='app-description'>Tableau de bord interactif de Pilotage Médical Analyse en temps réel des indicateurs de santé - République du Sénégal.</p>
+            <p class='app-description'>Tableau de bord interactif de Pilotage Médical. Analyse en temps réel des indicateurs de santé - République du Sénégal.</p>
             <div class='dashboard-meta'>
                 <span class='dashboard-tag'>KPIs</span>
                 <span class='dashboard-tag'>Graphiques</span>
@@ -913,13 +958,6 @@ with col_dash1:
     """, unsafe_allow_html=True)
     if st.button("📊 Ouvrir le Dashboard", key="dash_lab", use_container_width=True, help="Lancer Travaux Dashboard"):
         st.switch_page("pages/dashboard_v2.py")
-
-# Espaces vides pour aligner
-with col_dash2:
-    st.markdown("""<div style='height: 100%;'></div>""", unsafe_allow_html=True)
-
-with col_dash3:
-    st.markdown("""<div style='height: 100%;'></div>""", unsafe_allow_html=True)
 
 # --- SECTION RÉALISATEUR ---
 st.markdown("""
@@ -934,6 +972,7 @@ st.markdown("""
             <span class='tech-badge'>📊 Streamlit</span>
             <span class='tech-badge'>🤖 ML</span>
             <span class='tech-badge'>🔬 Computer Vision</span>
+            <span class='tech-badge'>🩸 HealthTech</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
@@ -943,6 +982,6 @@ current_year = datetime.now().year
 st.markdown(f"""
     <div class='footer'>
         <strong>🚀 Gana's AI & Data HomeLab</strong> · Conçu avec passion par Gana Faye<br>
-        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 4.0</span>
+        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 4.1</span>
     </div>
 """, unsafe_allow_html=True)
