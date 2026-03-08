@@ -352,6 +352,74 @@ st.markdown("""
 
     </style>
     """, unsafe_allow_html=True)
+st.markdown("""
+        <style>
+            /* 1. MASQUER LA NAVIGATION NATIVE (La liste des fichiers .py) */
+            [data-testid="stSidebarNav"] {
+                display: none;
+            }
+
+            /* 2. AJUSTEMENT DE L'ESPACE SUPÉRIEUR */
+            .block-container {
+                padding-top: 1.5rem;
+                padding-bottom: 0rem;
+            }
+
+            /* 3. STYLE DES TITRES DE CATÉGORIES (IA, Outils, Dashboards) */
+            .sidebar-section-title {
+                font-weight: 700;
+                color: #1e293b;
+                margin-top: 1.2rem;
+                margin-bottom: 0.6rem;
+                padding-left: 0.5rem;
+                border-left: 4px solid #2563eb; /* Barre bleue distinctive */
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+
+            /* 4. STYLE DES BOUTONS DE NAVIGATION */
+            .stButton > button {
+                width: 100%;
+                border-radius: 10px;
+                text-align: left;
+                padding: 0.6rem 1rem;
+                border: 1px solid #e2e8f0;
+                background-color: #ffffff;
+                color: #334155;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+            }
+
+            .stButton > button:hover {
+                border-color: #2563eb;
+                background-color: #f1f5f9;
+                color: #2563eb;
+                transform: translateX(3px); /* Petit effet de mouvement au survol */
+            }
+
+            /* 5. STYLE DES BADGES ET DU FOOTER */
+            .sidebar-badge {
+                background: #e2e8f0;
+                color: #475569;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 600;
+            }
+
+            .sidebar-footer {
+                margin-top: 2rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+                font-size: 0.75rem;
+                color: #94a3b8;
+                text-align: center;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 with st.sidebar:
     st.markdown('<div class="nav-title">🚀 Gana\'s HomeLab</div>', unsafe_allow_html=True)
 
