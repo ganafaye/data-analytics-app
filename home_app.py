@@ -988,7 +988,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("## ✨ Mes Projets de Master")
+st.markdown("## ✨ Mes Projets DATA et IA")
 
 # Utilisation de 3 colonnes pour un meilleur équilibre visuel
 col1, col2, col3 = st.columns(3)
