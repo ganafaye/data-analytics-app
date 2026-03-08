@@ -953,7 +953,7 @@ with st.sidebar:
                 <span class='sidebar-badge'>Python</span>
                 <span class='sidebar-badge'>Streamlit</span>
                 <span class='sidebar-badge'>ML</span>
-                <span class='sidebar-badge'>Immo</span>
+                <span class='sidebar-badge'>Prédiction Prix loyer immobilier a Dakar </span>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -975,14 +975,14 @@ if 'image_grise' not in st.session_state:
 # --- BANNIÈRE PRINCIPALE ---
 st.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">🚀 Data & Image Analytics Hub</h1>
-        <p class="hero-subtitle">La plateforme ultime pour l'analyse et comparaison de données avant et après nettoyage et d'images</p>
+        <h1 class="hero-title">👨‍💻 Gana Faye · Data & AI Lab</h1>
+        <p class="hero-subtitle">Mes projets, expérimentations et découvertes en Data Science et Intelligence Artificielle</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
-            <span class='tech-badge'>🐍 Python 3.12</span>
+            <span class='tech-badge'>🐍 Python</span>
             <span class='tech-badge'>📊 Streamlit</span>
-            <span class='tech-badge'>🤖 Scikit-learn</span>
-            <span class='tech-badge'>📈 Pandas</span>
-            <span class='tech-badge'>🔬 OpenCV</span>
+            <span class='tech-badge'>🤖 Machine Learning</span>
+            <span class='tech-badge'>📈 Data Viz</span>
+            <span class='tech-badge'>🔬 Computer Vision</span>
             <span class='tech-badge'>🎨 Plotly</span>
         </div>
     </div>
