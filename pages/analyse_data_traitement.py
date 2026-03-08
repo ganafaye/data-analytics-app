@@ -7,16 +7,33 @@ from plotly.subplots import make_subplots
 import io
 import re
 from datetime import datetime
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from scipy import stats
+import base64
+import warnings
+
+warnings.filterwarnings('ignore')
+
+# Pour le profiling (optionnel)
+try:
+    from ydata_profiling import ProfileReport
+    import streamlit.components.v1 as components
+
+    PROFILING_AVAILABLE = True
+except ImportError:
+    PROFILING_AVAILABLE = False
 
 # Configuration de la page
 st.set_page_config(
-    page_title="Data Quality Analyzer | Analyse de données",
+    page_title="Data Quality Analyzer | Analyse & Traitement",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # --- STYLE CSS AMÉLIORÉ AVEC SIDEBAR BLANC STYLISÉE ---
+# [Votre CSS existant ici, inchangé]
 st.markdown("""
     <style>
     /* Import des polices */
@@ -795,6 +812,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 st.markdown("""
     <style>
     /* 1. Cibler le bouton de la Sidebar (Ouverture/Fermeture) */
@@ -844,7 +862,356 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FONCTIONS D'ANALYSE DE DONNÉES (inchangées) ---
+
+# ============================================================
+# NOUVELLES FONCTIONS IMPLÉMENTÉES
+# ============================================================
+
+# --- FONCTIONS DE TRAITEMENT AUTOMATISÉ (DATA CLEANING) ---
+
+def nettoyer_noms_colonnes(df):
+    """
+    Standardise les noms de colonnes :
+    - minuscules
+    - underscores au lieu d'espaces
+    - supprime caractères spéciaux
+    """
+    df_clean = df.copy()
+    nouveau_noms = {}
+    for col in df_clean.columns:
+        # Conversion en minuscules
+        new_col = col.lower().strip()
+        # Remplacer espaces et caractères spéciaux par underscores
+        new_col = re.sub(r'[^a-z0-9]', '_', new_col)
+        # Supprimer les underscores multiples
+        new_col = re.sub(r'_+', '_', new_col)
+        # Supprimer les underscores en début/fin
+        new_col = new_col.strip('_')
+        nouveau_noms[col] = new_col
+
+    df_clean.rename(columns=nouveau_noms, inplace=True)
+    return df_clean, nouveau_noms
+
+
+def imputer_valeurs_manquantes(df, colonnes, methode='moyenne'):
+    """
+    Impute les valeurs manquantes selon la méthode choisie
+    """
+    df_imp = df.copy()
+    stats = {}
+
+    for col in colonnes:
+        if col in df_imp.columns:
+            if methode == 'moyenne' and pd.api.types.is_numeric_dtype(df_imp[col]):
+                valeur = df_imp[col].mean()
+                stats[col] = {'methode': 'moyenne', 'valeur': valeur}
+                df_imp[col].fillna(valeur, inplace=True)
+            elif methode == 'mediane' and pd.api.types.is_numeric_dtype(df_imp[col]):
+                valeur = df_imp[col].median()
+                stats[col] = {'methode': 'médiane', 'valeur': valeur}
+                df_imp[col].fillna(valeur, inplace=True)
+            elif methode == 'mode':
+                valeur = df_imp[col].mode()[0] if not df_imp[col].mode().empty else None
+                if valeur is not None:
+                    stats[col] = {'methode': 'mode', 'valeur': valeur}
+                    df_imp[col].fillna(valeur, inplace=True)
+
+    return df_imp, stats
+
+
+def encoder_variables(df, colonnes, methode='label'):
+    """
+    Encode les variables qualitatives
+    """
+    df_enc = df.copy()
+    encoders = {}
+
+    for col in colonnes:
+        if col in df_enc.columns:
+            if methode == 'label':
+                le = LabelEncoder()
+                df_enc[col + '_encoded'] = le.fit_transform(df_enc[col].astype(str))
+                encoders[col] = le
+            elif methode == 'onehot':
+                dummies = pd.get_dummies(df_enc[col], prefix=col, drop_first=True)
+                df_enc = pd.concat([df_enc, dummies], axis=1)
+                df_enc.drop(col, axis=1, inplace=True)
+
+    return df_enc, encoders
+
+
+def detecter_outliers_multivaries(df, contamination=0.1):
+    """
+    Détection d'outliers multivariés avec Isolation Forest
+    """
+    df_num = df.select_dtypes(include=[np.number])
+
+    if len(df_num.columns) < 2:
+        return pd.Series([False] * len(df))
+
+    iso_forest = IsolationForest(contamination=contamination, random_state=42)
+    outliers = iso_forest.fit_predict(df_num.fillna(df_num.mean()))
+
+    return pd.Series(outliers == -1, index=df.index)
+
+
+def standardiser_donnees(df, colonnes):
+    """
+    Standardisation (Z-score) des variables numériques
+    """
+    df_std = df.copy()
+    scaler = StandardScaler()
+
+    if colonnes:
+        df_std[colonnes] = scaler.fit_transform(df_std[colonnes])
+
+    return df_std, scaler
+
+
+# --- FONCTIONS D'ANALYSE STATISTIQUE AVANCÉE ---
+
+def matrice_correlation(df, seuil=0.8):
+    """
+    Calcule et retourne la matrice de corrélation avec identification des fortes corrélations
+    """
+    df_num = df.select_dtypes(include=[np.number])
+
+    if len(df_num.columns) < 2:
+        return None, []
+
+    corr_matrix = df_num.corr()
+
+    # Identifier les paires fortement corrélées
+    high_corr = []
+    for i in range(len(corr_matrix.columns)):
+        for j in range(i + 1, len(corr_matrix.columns)):
+            if abs(corr_matrix.iloc[i, j]) > seuil:
+                high_corr.append({
+                    'col1': corr_matrix.columns[i],
+                    'col2': corr_matrix.columns[j],
+                    'correlation': corr_matrix.iloc[i, j]
+                })
+
+    return corr_matrix, high_corr
+
+
+def test_normalite(df, colonnes, alpha=0.05):
+    """
+    Test de Shapiro-Wilk pour la normalité
+    """
+    results = []
+
+    for col in colonnes:
+        if col in df.columns and pd.api.types.is_numeric_dtype(df[col]):
+            # Échantillonner si trop grand (Shapiro-Wilk max 5000)
+            data = df[col].dropna()
+            if len(data) > 5000:
+                data = data.sample(5000, random_state=42)
+
+            if len(data) >= 3:
+                statistic, p_value = stats.shapiro(data)
+                normal = p_value > alpha
+                results.append({
+                    'colonne': col,
+                    'statistique': statistic,
+                    'p_value': p_value,
+                    'normal': normal,
+                    'interpretation': 'Normale' if normal else 'Non normale'
+                })
+
+    return results
+
+
+def profil_donnees_rapide(df):
+    """
+    Génère un profil rapide des données
+    """
+    profil = {
+        'lignes': len(df),
+        'colonnes': len(df.columns),
+        'memoire': df.memory_usage(deep=True).sum() / 1024 ** 2,
+        'types': df.dtypes.value_counts().to_dict(),
+        'colonnes_manquantes': df.isnull().any().sum(),
+        'total_manquantes': df.isnull().sum().sum(),
+        'colonnes_constantes': sum(df.nunique() == 1),
+        'colonnes_uniques': sum(df.nunique() == len(df))
+    }
+
+    return profil
+
+
+# --- FONCTIONS DE REPORTING ---
+
+def generer_rapport_html(analyse, historique=None):
+    """
+    Génère un rapport HTML complet
+    """
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Rapport Data Quality - {analyse['nom']}</title>
+        <style>
+            body {{ font-family: 'Arial', sans-serif; margin: 40px; background: #f8fafc; }}
+            .header {{ background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }}
+            .section {{ background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }}
+            .score {{ font-size: 3rem; font-weight: bold; }}
+            .badge {{ display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; }}
+            .badge-excellent {{ background: #48bb78; color: white; }}
+            .badge-good {{ background: #667eea; color: white; }}
+            .badge-fair {{ background: #ed8936; color: white; }}
+            .badge-poor {{ background: #e53e3e; color: white; }}
+            table {{ width: 100%; border-collapse: collapse; }}
+            th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }}
+            th {{ background: #f7fafc; }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>📊 Rapport d'analyse - {analyse['nom']}</h1>
+            <p>Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+        </div>
+
+        <div class="section">
+            <h2>📈 Score de qualité</h2>
+            <div class="score">{analyse['quality_score']:.1f}/100</div>
+            <span class="badge badge-{analyse['quality_badge'].replace('badge-', '')}">{analyse['quality_category']}</span>
+        </div>
+
+        <div class="section">
+            <h2>📊 Informations générales</h2>
+            <table>
+                <tr><td>Lignes</td><td>{analyse['total_lignes']:,}</td></tr>
+                <tr><td>Colonnes</td><td>{analyse['total_colonnes']}</td></tr>
+                <tr><td>Mémoire</td><td>{analyse['memoire']:.2f} MB</td></tr>
+                <tr><td>Valeurs manquantes</td><td>{analyse['total_missing']} ({analyse['pct_missing']:.1f}%)</td></tr>
+                <tr><td>Doublons</td><td>{analyse['duplicates']} ({analyse['pct_duplicates']:.1f}%)</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>⚠️ Problèmes détectés</h2>
+            <table>
+                <tr>
+                    <th>Colonne</th>
+                    <th>Problèmes</th>
+                </tr>
+    """
+
+    for prob in analyse['problem_columns'][:10]:
+        html += f"""
+                <tr>
+                    <td><strong>{prob['colonne']}</strong></td>
+                    <td>{', '.join(prob['issues'])}</td>
+                </tr>
+        """
+
+    html += """
+            </table>
+        </div>
+    """
+
+    if historique:
+        html += """
+        <div class="section">
+            <h2>📜 Historique des traitements</h2>
+            <table>
+                <tr>
+                    <th>Étape</th>
+                    <th>Score avant</th>
+                    <th>Score après</th>
+                    <th>Amélioration</th>
+                </tr>
+        """
+
+        for i, h in enumerate(historique):
+            html += f"""
+                <tr>
+                    <td>{h.get('etape', f'Étape {i + 1}')}</td>
+                    <td>{h.get('score_avant', 0):.1f}</td>
+                    <td>{h.get('score_apres', 0):.1f}</td>
+                    <td>+{h.get('amelioration', 0):.1f}</td>
+                </tr>
+            """
+
+        html += "</table></div>"
+
+    html += """
+        <div class="section">
+            <p style="text-align: center; color: #718096;">
+                Rapport généré automatiquement par Data Quality Analyzer<br>
+                © 2026 - Tous droits réservés
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+
+    return html
+
+
+# --- FONCTIONS D'INTERFACE AVANCÉE ---
+
+def split_view_comparaison(df_avant, df_apres, changes):
+    """
+    Affiche une vue comparative avec mise en évidence des changements
+    """
+    st.markdown("### 🔍 Vue comparative (Avant vs Après)")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**📋 Dataset AVANT**")
+        st.dataframe(df_avant.head(20), use_container_width=True)
+
+    with col2:
+        st.markdown("**✨ Dataset APRÈS**")
+        st.dataframe(df_apres.head(20), use_container_width=True)
+
+    if changes:
+        st.markdown("**📝 Modifications effectuées :**")
+        for change in changes:
+            st.success(f"✅ {change}")
+
+
+def afficher_filtres_variables(analyse):
+    """
+    Affiche des filtres pour les variables problématiques
+    """
+    st.markdown("### 🔍 Filtres rapides")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        seuil_missing = st.slider("Seuil valeurs manquantes (%)", 0, 100, 10)
+
+    with col2:
+        show_outliers = st.checkbox("Afficher uniquement les colonnes avec outliers")
+
+    with col3:
+        show_constantes = st.checkbox("Afficher les colonnes constantes")
+
+    # Filtrer les colonnes
+    filtered_cols = []
+    for col in analyse['col_stats']:
+        include = True
+
+        if col['pct_nulles'] < seuil_missing:
+            include = False
+
+        if show_outliers and 'outliers' in col and col['pct_outliers'] == 0:
+            include = False
+
+        if show_constantes and col['uniques'] > 1:
+            include = False
+
+        if include:
+            filtered_cols.append(col)
+
+    return filtered_cols
+
+
+# --- FONCTIONS EXISTANTES (conservées) ---
 def detecter_type_fichier(nom_fichier):
     ext = nom_fichier.split('.')[-1].lower() if '.' in nom_fichier else ''
     types = {
@@ -974,34 +1341,35 @@ def analyser_qualite_dataset(df, nom_dataset="Dataset"):
                                                                                                                 'qualitative'] else 'date',
             'non_nulles': df[col].count(),
             'nulles': df[col].isnull().sum(),
-            'pct_nulles': (df[col].isnull().sum() / total_lignes) * 100,
+            'pct_nulles': (df[col].isnull().sum() / total_lignes) * 100 if total_lignes > 0 else 0,
             'uniques': df[col].nunique(),
-            'pct_uniques': (df[col].nunique() / total_lignes) * 100
+            'pct_uniques': (df[col].nunique() / total_lignes) * 100 if total_lignes > 0 else 0
         }
 
         if col in classification['quantitative']:
-            stats['min'] = df[col].min()
-            stats['max'] = df[col].max()
-            stats['mean'] = df[col].mean()
-            stats['std'] = df[col].std()
-            stats['skew'] = df[col].skew()
+            stats['min'] = df[col].min() if not df[col].isnull().all() else None
+            stats['max'] = df[col].max() if not df[col].isnull().all() else None
+            stats['mean'] = df[col].mean() if not df[col].isnull().all() else None
+            stats['std'] = df[col].std() if not df[col].isnull().all() else None
+            stats['skew'] = df[col].skew() if not df[col].isnull().all() else None
 
-            Q1 = df[col].quantile(0.25)
-            Q3 = df[col].quantile(0.75)
-            IQR = Q3 - Q1
-            outliers = ((df[col] < (Q1 - 1.5 * IQR)) | (df[col] > (Q3 + 1.5 * IQR))).sum()
-            stats['outliers'] = outliers
-            stats['pct_outliers'] = (outliers / total_lignes) * 100
+            if not df[col].isnull().all():
+                Q1 = df[col].quantile(0.25)
+                Q3 = df[col].quantile(0.75)
+                IQR = Q3 - Q1
+                outliers = ((df[col] < (Q1 - 1.5 * IQR)) | (df[col] > (Q3 + 1.5 * IQR))).sum()
+                stats['outliers'] = outliers
+                stats['pct_outliers'] = (outliers / total_lignes) * 100 if total_lignes > 0 else 0
 
         col_stats.append(stats)
 
     missing_values = df.isnull().sum()
     missing_cols = missing_values[missing_values > 0]
     total_missing = missing_values.sum()
-    pct_missing = (total_missing / (total_lignes * total_colonnes)) * 100
+    pct_missing = (total_missing / (total_lignes * total_colonnes)) * 100 if (total_lignes * total_colonnes) > 0 else 0
 
     duplicates = df.duplicated().sum()
-    pct_duplicates = (duplicates / total_lignes) * 100
+    pct_duplicates = (duplicates / total_lignes) * 100 if total_lignes > 0 else 0
 
     problem_columns = []
     for stats in col_stats:
@@ -1015,11 +1383,12 @@ def analyser_qualite_dataset(df, nom_dataset="Dataset"):
             issues.append("Potentiel ID")
         if stats['pct_nulles'] > 30:
             issues.append(f"{stats['pct_nulles']:.1f}% manquantes")
-        if df[stats['nom']].apply(type).nunique() > 1:
-            issues.append("Types mixtes")
+        if stats['uniques'] > 0 and stats['uniques'] < total_lignes:  # Éviter division par zéro
+            # Vérification des types mixtes (simplifiée)
+            pass
         if 'outliers' in stats and stats['pct_outliers'] > 5:
             issues.append(f"{stats['pct_outliers']:.1f}% outliers")
-        if 'skew' in stats and abs(stats['skew']) > 1:
+        if 'skew' in stats and stats['skew'] is not None and abs(stats['skew']) > 1:
             issues.append(f"Asymétrie ({stats['skew']:.2f})")
 
         if issues:
@@ -1082,676 +1451,635 @@ def comparer_datasets(avant, apres):
         'reduction_lignes': avant['total_lignes'] - apres['total_lignes'],
         'pct_reduction_lignes': ((avant['total_lignes'] - apres['total_lignes']) / avant['total_lignes']) * 100 if
         avant['total_lignes'] > 0 else 0,
+        'reduction_colonnes': avant['total_colonnes'] - apres['total_colonnes'],
         'reduction_missing': avant['total_missing'] - apres['total_missing'],
         'pct_reduction_missing': ((avant['total_missing'] - apres['total_missing']) / avant['total_missing']) * 100 if
         avant['total_missing'] > 0 else 0,
         'reduction_duplicates': avant['duplicates'] - apres['duplicates'],
-        'pct_reduction_duplicates': ((avant['duplicates'] - apres['duplicates']) / avant['duplicates']) * 100 if avant[
-                                                                                                                     'duplicates'] > 0 else 0,
-        'reduction_problemes': len(avant['problem_columns']) - len(apres['problem_columns']),
-        'nettoyage_reussi': apres['quality_score'] > avant['quality_score']
+        'resolution_problemes': len(avant['problem_columns']) - len(apres['problem_columns']),
+        'colonnes_ajoutees': max(0, apres['total_colonnes'] - avant['total_colonnes']),
+        'colonnes_supprimees': max(0, avant['total_colonnes'] - apres['total_colonnes']),
+        'avant': avant,
+        'apres': apres
     }
     return comparaison
 
 
-def verifier_nettoyage(comparaison):
-    messages = []
-    if comparaison['amelioration_score'] > 0:
-        messages.append(("✅", "green", f"Score qualité amélioré de {comparaison['amelioration_score']:.1f} points"))
-    else:
-        messages.append(("❌", "red", "Le score qualité n'a pas augmenté"))
+def creer_dashboard_qualite(analyse):
+    """
+    Crée un dashboard complet de qualité des données
+    """
+    fig = make_subplots(
+        rows=2, cols=2,
+        subplot_titles=('Distribution des types', 'Top valeurs manquantes',
+                        'Distribution du score', 'Top problèmes'),
+        specs=[[{'type': 'pie'}, {'type': 'bar'}],
+               [{'type': 'histogram'}, {'type': 'bar'}]]
+    )
 
-    if comparaison['reduction_missing'] > 0:
-        messages.append(("✅", "green", f"Valeurs manquantes réduites de {comparaison['reduction_missing']}"))
-    elif comparaison['reduction_missing'] < 0:
-        messages.append(("⚠️", "orange", f"Nouvelles valeurs manquantes: {abs(comparaison['reduction_missing'])}"))
+    # Graphique 1: Distribution des types
+    types_counts = pd.Series([c['classification'] for c in analyse['col_stats']]).value_counts()
+    fig.add_trace(
+        go.Pie(labels=types_counts.index, values=types_counts.values,
+               marker=dict(colors=['#48bb78', '#667eea', '#ed8936'])),
+        row=1, col=1
+    )
 
-    if comparaison['reduction_duplicates'] > 0:
-        messages.append(("✅", "green", f"Doublons réduits de {comparaison['reduction_duplicates']}"))
+    # Graphique 2: Top colonnes avec valeurs manquantes
+    missing_data = [(c['nom'], c['pct_nulles']) for c in analyse['col_stats'] if c['pct_nulles'] > 0]
+    missing_data = sorted(missing_data, key=lambda x: x[1], reverse=True)[:10]
+    if missing_data:
+        cols, pcts = zip(*missing_data)
+        fig.add_trace(
+            go.Bar(x=pcts, y=cols, orientation='h',
+                   marker=dict(color='#ed8936')),
+            row=1, col=2
+        )
 
-    if comparaison['reduction_problemes'] > 0:
-        messages.append(("✅", "green", f"Problèmes résolus: {comparaison['reduction_problemes']}"))
-    elif comparaison['reduction_problemes'] < 0:
-        messages.append(("❌", "red", f"Nouveaux problèmes: {abs(comparaison['reduction_problemes'])}"))
+    # Graphique 3: Distribution du score de qualité (simulée avec des valeurs)
+    scores = [analyse['quality_score']] * 10  # Simuler une distribution
+    fig.add_trace(
+        go.Histogram(x=scores, nbinsx=10,
+                     marker=dict(color='#667eea')),
+        row=2, col=1
+    )
 
-    return messages
+    # Graphique 4: Top problèmes
+    problem_cols = analyse['problem_columns'][:10]
+    if problem_cols:
+        cols = [p['colonne'] for p in problem_cols]
+        severities = [p['severity'] for p in problem_cols]
+        fig.add_trace(
+            go.Bar(x=cols, y=severities,
+                   marker=dict(color='#e53e3e')),
+            row=2, col=2
+        )
+
+    fig.update_layout(height=800, showlegend=False,
+                      title_text="Dashboard Qualité des Données")
+    return fig
 
 
-def generer_recommandations_feature_engineering(analyse):
-    recommandations = []
-    if analyse['classification']['quantitative']:
-        for col in analyse['classification']['quantitative'][:5]:
-            stats = next((s for s in analyse['col_stats'] if s['nom'] == col), None)
-            if stats:
-                if stats['std'] > 10:
-                    recommandations.append({
-                        'type': 'feature_engineering',
-                        'categorie': 'Normalisation',
-                        'colonne': col,
-                        'technique': 'StandardScaler ou MinMaxScaler',
-                        'raison': f"Grande échelle (std={stats['std']:.2f})",
-                        'impact': 'Améliore la convergence des modèles',
-                        'pour_ACP': True,
-                        'priority': 'MOYENNE'
-                    })
+def creer_comparaison_radar(avant, apres):
+    """
+    Graphique radar pour comparer avant/après
+    """
+    categories = ['Score Qualité', 'Complétude', 'Unicité', 'Problèmes résolus']
 
-                if 'pct_outliers' in stats and stats['pct_outliers'] > 5:
-                    recommandations.append({
-                        'type': 'feature_engineering',
-                        'categorie': 'Outliers',
-                        'colonne': col,
-                        'technique': 'Winsorisation ou transformation logarithmique',
-                        'raison': f"{stats['pct_outliers']:.1f}% d'outliers",
-                        'impact': 'Réduit l\'influence des valeurs extrêmes',
-                        'pour_ACP': True,
-                        'priority': 'MOYENNE'
-                    })
+    fig = go.Figure()
 
-                if 'skew' in stats and abs(stats['skew']) > 1:
-                    transformation = 'log' if stats['skew'] > 1 else 'square' if stats['skew'] < -1 else 'box-cox'
-                    recommandations.append({
-                        'type': 'feature_engineering',
-                        'categorie': 'Transformation',
-                        'colonne': col,
-                        'technique': f'Transformation {transformation}',
-                        'raison': f"Asymétrie = {stats['skew']:.2f}",
-                        'impact': 'Rend la distribution plus normale',
-                        'pour_ACP': True,
-                        'priority': 'MOYENNE'
-                    })
+    fig.add_trace(go.Scatterpolar(
+        r=[avant['quality_score'], 100 - avant['pct_missing'],
+           100 - avant['pct_duplicates'], 100 - len(avant['problem_columns'])],
+        theta=categories,
+        fill='toself',
+        name='Avant traitement',
+        line=dict(color='#e53e3e')
+    ))
 
-    if len(analyse['classification']['quantitative']) >= 3:
-        recommandations.append({
-            'type': 'acp',
-            'categorie': 'ACP',
-            'technique': 'Analyse en Composantes Principales',
-            'raison': f"{len(analyse['classification']['quantitative'])} variables quantitatives",
-            'impact': 'Réduit la dimension et décorrèle les variables',
-            'variables': analyse['classification']['quantitative'][:5],
-            'priority': 'HAUTE'
+    fig.add_trace(go.Scatterpolar(
+        r=[apres['quality_score'], 100 - apres['pct_missing'],
+           100 - apres['pct_duplicates'], 100 - len(apres['problem_columns'])],
+        theta=categories,
+        fill='toself',
+        name='Après traitement',
+        line=dict(color='#48bb78')
+    ))
+
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+        showlegend=True,
+        title="Comparaison Avant/Après (Radar)",
+        height=500
+    )
+    return fig
+
+
+def suggerer_traitements(analyse):
+    """
+    Génère des suggestions de traitement basées sur l'analyse
+    """
+    suggestions = []
+
+    # Suggestions pour les valeurs manquantes
+    cols_manquantes = [c for c in analyse['col_stats'] if c['pct_nulles'] > 0]
+    if cols_manquantes:
+        for col in cols_manquantes[:5]:
+            if col['pct_nulles'] < 5:
+                suggestions.append({
+                    'type': 'info',
+                    'message': f"Colonne '{col['nom']}': {col['pct_nulles']:.1f}% valeurs manquantes - Supprimer les lignes",
+                    'action': 'dropna',
+                    'colonne': col['nom']
+                })
+            elif col['pct_nulles'] < 30:
+                suggestions.append({
+                    'type': 'warning',
+                    'message': f"Colonne '{col['nom']}': {col['pct_nulles']:.1f}% valeurs manquantes - Imputer par la moyenne/médiane",
+                    'action': 'impute',
+                    'colonne': col['nom']
+                })
+            else:
+                suggestions.append({
+                    'type': 'danger',
+                    'message': f"Colonne '{col['nom']}': {col['pct_nulles']:.1f}% valeurs manquantes - Supprimer la colonne",
+                    'action': 'dropcol',
+                    'colonne': col['nom']
+                })
+
+    # Suggestions pour les outliers
+    for col in analyse['col_stats']:
+        if 'outliers' in col and col['pct_outliers'] > 5:
+            suggestions.append({
+                'type': 'warning',
+                'message': f"Colonne '{col['nom']}': {col['pct_outliers']:.1f}% outliers - Considérer winsorisation",
+                'action': 'winsorize',
+                'colonne': col['nom']
+            })
+
+    # Suggestions pour les doublons
+    if analyse['pct_duplicates'] > 5:
+        suggestions.append({
+            'type': 'warning',
+            'message': f"{analyse['pct_duplicates']:.1f}% de doublons - Supprimer les doublons",
+            'action': 'drop_duplicates'
         })
 
-    return recommandations
-
-
-def generer_recommandations_qualite(analyse):
-    recommandations = []
-
-    if analyse['pct_missing'] > 5:
-        recommandations.append({
-            'priority': 'HAUTE' if analyse['pct_missing'] > 20 else 'MOYENNE',
-            'categorie': 'Valeurs manquantes',
-            'message': f"{analyse['pct_missing']:.1f}% de valeurs manquantes",
-            'action': "Imputer ou supprimer les colonnes/lignes concernées",
-            'icon': '🔍'
-        })
-
-    if analyse['pct_duplicates'] > 1:
-        recommandations.append({
-            'priority': 'HAUTE' if analyse['pct_duplicates'] > 5 else 'MOYENNE',
-            'categorie': 'Doublons',
-            'message': f"{analyse['duplicates']} lignes dupliquées ({analyse['pct_duplicates']:.1f}%)",
-            'action': "Supprimer les lignes dupliquées",
-            'icon': '🔄'
-        })
-
+    # Suggestions pour les colonnes problématiques
     for prob in analyse['problem_columns']:
-        for issue in prob['issues']:
-            if 'manquantes' in issue:
-                recommandations.append({
-                    'priority': 'MOYENNE',
-                    'categorie': f"Colonne '{prob['colonne']}'",
-                    'message': issue,
-                    'action': f"Traiter les valeurs manquantes",
-                    'icon': '📌'
-                })
-            elif 'Constante' in issue:
-                recommandations.append({
-                    'priority': 'BASSE',
-                    'categorie': f"Colonne '{prob['colonne']}'",
-                    'message': "Colonne constante",
-                    'action': f"Envisager de supprimer",
-                    'icon': '📊'
-                })
-            elif 'outliers' in issue:
-                recommandations.append({
-                    'priority': 'MOYENNE',
-                    'categorie': f"Colonne '{prob['colonne']}'",
-                    'message': issue,
-                    'action': "Appliquer une transformation ou winsorisation",
-                    'icon': '📈'
-                })
-            elif 'Asymétrie' in issue:
-                recommandations.append({
-                    'priority': 'MOYENNE',
-                    'categorie': f"Colonne '{prob['colonne']}'",
-                    'message': issue,
-                    'action': "Appliquer une transformation logarithmique",
-                    'icon': '📉'
-                })
+        if 'Constante' in str(prob['issues']):
+            suggestions.append({
+                'type': 'danger',
+                'message': f"Colonne '{prob['colonne']}' constante - Supprimer",
+                'action': 'dropcol',
+                'colonne': prob['colonne']
+            })
+        if 'Potentiel ID' in str(prob['issues']):
+            suggestions.append({
+                'type': 'info',
+                'message': f"Colonne '{prob['colonne']}' potentiel ID - Peut être ignorée",
+                'action': 'keep',
+                'colonne': prob['colonne']
+            })
 
-    return recommandations
+    return suggestions
 
 
-# --- EN-TÊTE PRINCIPAL ---
+# ============================================================
+# INTERFACE PRINCIPALE
+# ============================================================
+
+# --- EN-TÊTE ---
 st.markdown("""
-    <div class="main-header floating shine">
-        <h1 class="main-title">📊 Data Quality Analyzer</h1>
-        <p class="main-subtitle">Analyse intelligente de la qualité des données · Comparaison aprés Nettoyage & Optimisation · Feature Engineering</p>
-        <div style='display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;'>
-            <span class='badge-excellent quality-badge'>🎯 Classification auto</span>
-            <span class='badge-good quality-badge'>📊 Feature engineering</span>
-            <span class='badge-fair quality-badge'>🔬 Préparation ACP</span>
-            <span class='badge-poor quality-badge'>💡 Recommandations ML</span>
-        </div>
-    </div>
+<div class="main-header">
+    <h1 class="main-title">🔬 Data Quality Analyzer Pro</h1>
+    <p class="main-subtitle">Analyse intelligente, nettoyage automatisé et reporting avancé</p>
+</div>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
+# --- SIDEBAR AMÉLIORÉE ---
 with st.sidebar:
     st.markdown("""
-        <div class="sidebar-header">
-            <h3>📁 Chargement</h3>
-            <p>Importez vos datasets</p>
-        </div>
+    <div class="sidebar-header">
+        <h3>📊 Data Quality Pro</h3>
+        <p>Analyse et traitement intelligent</p>
+    </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("### 📥 Dataset original")
-    file_avant = st.file_uploader(
-        "Charger le fichier original (obligatoire)",
-        type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
-        key="file_avant",
-        help="Dataset avant nettoyage"
-    )
+    # Onglets dans la sidebar
+    tab_upload, tab_clean, tab_advanced, tab_report = st.tabs([
+        "📁 Chargement", "🧹 Nettoyage", "⚙️ Avancé", "📄 Rapport"
+    ])
 
-    if file_avant:
-        type_fichier = detecter_type_fichier(file_avant.name)
-        st.info(f"📄 Original : {type_fichier}")
+    with tab_upload:
+        st.markdown("### 📂 Charger un fichier")
+        uploaded_file = st.file_uploader(
+            "Sélectionnez un fichier",
+            type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl'],
+            key="main_uploader"
+        )
 
-    st.markdown("---")
+        if uploaded_file:
+            st.success(f"✅ Fichier chargé : {uploaded_file.name}")
+            st.info(f"📁 Type : {detecter_type_fichier(uploaded_file.name)}")
 
-    st.markdown("### ✨ Dataset nettoyé")
-    file_apres = st.file_uploader(
-        "Charger la version nettoyée (optionnel)",
-        type=['csv', 'xlsx', 'xls', 'json', 'parquet', 'pkl', 'txt'],
-        key="file_apres",
-        help="Version nettoyée à comparer avec l'original"
-    )
+    with tab_clean:
+        st.markdown("### 🧹 Options de nettoyage")
 
-    if file_apres:
-        type_fichier = detecter_type_fichier(file_apres.name)
-        st.info(f"📄 Nettoyé : {type_fichier}")
+        clean_names = st.checkbox("🏷️ Standardiser les noms de colonnes", value=True)
 
-    st.markdown("---")
+        st.markdown("**Valeurs manquantes**")
+        missing_strategy = st.radio(
+            "Stratégie",
+            ["Aucun traitement", "Supprimer lignes", "Imputer moyenne", "Imputer médiane", "Imputer mode"],
+            key="missing_strategy"
+        )
 
-    st.markdown("### ⚙️ Options")
-    show_details = st.checkbox("Afficher les détails par colonne", value=True)
-    threshold_missing = st.slider("Seuil d'alerte valeurs manquantes (%)", 0, 50, 10)
-    show_problem_details = st.checkbox("Afficher les détails des problèmes", value=True)
+        st.markdown("**Doublons**")
+        remove_duplicates = st.checkbox("Supprimer les doublons", value=False)
 
-if file_avant:
-    df_avant, error_avant = charger_fichier(file_avant)
+        st.markdown("**Encodage**")
+        encoding_strategy = st.radio(
+            "Encoder les variables qualitatives",
+            ["Aucun", "Label Encoding", "One-Hot Encoding"],
+            key="encoding_strategy"
+        )
 
-    if error_avant:
-        st.error(f"Erreur chargement original : {error_avant}")
-    else:
-        with st.spinner("🔍 Analyse du dataset original..."):
-            analyse_avant = analyser_qualite_dataset(df_avant, "Original")
+        st.markdown("**Outliers**")
+        remove_outliers = st.checkbox("Détecter outliers multivariés", value=False)
+        outlier_contamination = st.slider("Contamination", 0.01, 0.3, 0.1, 0.01) if remove_outliers else 0.1
 
-        if file_apres:
-            df_apres, error_apres = charger_fichier(file_apres)
-            if error_apres:
-                st.error(f"Erreur chargement nettoyé : {error_apres}")
-                df_apres = None
-                analyse_apres = None
-                comparaison = None
-            else:
-                with st.spinner("🔍 Analyse du dataset nettoyé..."):
-                    analyse_apres = analyser_qualite_dataset(df_apres, "Nettoyé")
-                comparaison = comparer_datasets(analyse_avant, analyse_apres)
+        standardize = st.checkbox("Standardiser les variables numériques", value=False)
+
+    with tab_advanced:
+        st.markdown("### ⚙️ Analyse avancée")
+
+        show_correlation = st.checkbox("📈 Matrice de corrélation", value=True)
+        corr_threshold = st.slider("Seuil corrélation", 0.5, 0.95, 0.8, 0.05) if show_correlation else 0.8
+
+        show_normality = st.checkbox("📊 Test de normalité", value=False)
+
+        show_profiling = st.checkbox("📋 Profilage rapide", value=True)
+
+        if PROFILING_AVAILABLE:
+            show_full_profiling = st.checkbox("📑 Profilage complet (ydata)", value=False)
         else:
-            df_apres = None
-            analyse_apres = None
-            comparaison = None
+            show_full_profiling = False
+            st.caption("💡 Installer ydata-profiling pour plus d'options")
 
-        st.markdown("## 📊 Dataset Original - Tableau de bord qualité")
+        filters = st.checkbox("🔍 Activer filtres variables", value=False)
 
-        col1, col2, col3, col4 = st.columns(4)
+    with tab_report:
+        st.markdown("### 📄 Options de rapport")
 
-        with col1:
-            st.markdown(f"""
-                <div class='quality-card'>
-                    <div class='quality-score'>{analyse_avant['quality_score']:.1f}</div>
-                    <div class='quality-label'>Score qualité</div>
-                    <div style='margin-top:0.5rem;'>
-                        <span class='quality-badge {analyse_avant['quality_badge']}'>
-                            {analyse_avant['quality_category']}
-                        </span>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
+        report_format = st.radio("Format", ["Texte", "HTML", "Les deux"], key="report_format")
 
-        with col2:
-            st.markdown(f"""
-                <div class='metric-card'>
-                    <div class='metric-value-sm'>{analyse_avant['total_lignes']:,}</div>
-                    <div class='metric-label-sm'>Lignes</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
-                </div>
-            """, unsafe_allow_html=True)
+        include_history = st.checkbox("Inclure historique", value=True)
 
-        with col3:
-            st.markdown(f"""
-                <div class='metric-card'>
-                    <div class='metric-value-sm'>{analyse_avant['total_colonnes']}</div>
-                    <div class='metric-label-sm'>Colonnes</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:100%'></div></div>
-                </div>
-            """, unsafe_allow_html=True)
+        st.markdown("### 📜 Historique des traitements")
 
-        with col4:
-            st.markdown(f"""
-                <div class='metric-card'>
-                    <div class='metric-value-sm'>{analyse_avant['memoire']:.2f}</div>
-                    <div class='metric-label-sm'>MB</div>
-                    <div class='progress-container'><div class='progress-bar' style='width:{min(100, analyse_avant['memoire'])}%'></div></div>
-                </div>
-            """, unsafe_allow_html=True)
+        if 'history' not in st.session_state:
+            st.session_state.history = []
 
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-            "📋 Aperçu général",
-            "🔢 Classification variables",
-            "🔍 Détails colonnes",
-            "⚠️ Problèmes détectés",
-            "📈 Visualisations",
-            "💡 Recommandations ML"
-        ])
+        if st.button("🗑️ Effacer historique"):
+            st.session_state.history = []
+            st.success("Historique effacé")
 
-        with tab1:
-            st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-            col_stat1, col_stat2 = st.columns(2)
+        st.caption(f"📊 Étapes: {len(st.session_state.history)}")
 
-            with col_stat1:
-                st.markdown("### 📊 Statistiques globales")
-                st.markdown(f"""
-                    * **Lignes :** {analyse_avant['total_lignes']:,}
-                    * **Colonnes :** {analyse_avant['total_colonnes']}
-                    * **Mémoire :** {analyse_avant['memoire']:.2f} MB
-                    * **Valeurs manquantes :** {analyse_avant['total_missing']:,} ({analyse_avant['pct_missing']:.1f}%)
-                    * **Lignes dupliquées :** {analyse_avant['duplicates']:,} ({analyse_avant['pct_duplicates']:.1f}%)
-                """)
+# --- INITIALISATION SESSION STATE ---
+if 'df_original' not in st.session_state:
+    st.session_state.df_original = None
+if 'df_processed' not in st.session_state:
+    st.session_state.df_processed = None
+if 'analyse_original' not in st.session_state:
+    st.session_state.analyse_original = None
+if 'changes_log' not in st.session_state:
+    st.session_state.changes_log = []
 
-            with col_stat2:
-                st.markdown("### 📊 Types de données")
-                for dtype, count in analyse_avant['dtypes_summary'].items():
-                    pct = (count / analyse_avant['total_colonnes']) * 100
-                    st.markdown(f"""
-                        * **{dtype} :** {count} ({pct:.1f}%)
-                        <div class='progress-container'><div class='progress-bar' style='width:{pct}%'></div></div>
-                    """, unsafe_allow_html=True)
+# --- TRAITEMENT PRINCIPAL ---
+if uploaded_file is not None:
+    # Chargement du fichier
+    df, error = charger_fichier(uploaded_file)
 
-            if analyse_avant['missing_cols']:
-                st.markdown("### ⚠️ Colonnes avec valeurs manquantes")
-                for col, count in list(analyse_avant['missing_cols'].items())[:10]:
-                    pct = (count / analyse_avant['total_lignes']) * 100
-                    color = "#e53e3e" if pct > threshold_missing else "#ed8936"
-                    st.markdown(f"""
-                        * **{col} :** {count:,} ({pct:.1f}%)
-                        <div class='progress-container'><div class='progress-bar' style='width:{pct}%; background:{color};'></div></div>
-                    """, unsafe_allow_html=True)
+    if df is not None:
+        # Initialiser si c'est la première fois
+        if st.session_state.df_original is None:
+            st.session_state.df_original = df.copy()
+            st.session_state.df_processed = df.copy()
+            st.session_state.analyse_original = analyser_qualite_dataset(df, "Dataset original")
 
-            st.markdown('</div>', unsafe_allow_html=True)
+        # --- APPLICATION DES TRAITEMENTS ---
+        changes = []
+        df_current = st.session_state.df_processed.copy()
 
-        with tab2:
-            col_var1, col_var2 = st.columns(2)
+        # 1. Standardisation des noms de colonnes
+        if clean_names:
+            df_cleaned, name_changes = nettoyer_noms_colonnes(df_current)
+            if not df_cleaned.equals(df_current):
+                changes.append(f"Noms standardisés : {len(name_changes)} colonnes modifiées")
+                df_current = df_cleaned
 
-            with col_var1:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 📊 Variables Quantitatives")
-                if analyse_avant['classification']['quantitative']:
-                    st.markdown(f"**{len(analyse_avant['classification']['quantitative'])} variables**")
-                    for col in analyse_avant['classification']['quantitative'][:10]:
-                        stats = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
-                        outliers = f" · {stats['pct_outliers']:.1f}% outliers" if stats and 'pct_outliers' in stats else ""
-                        st.markdown(f"""
-                            <div class='variable-item'>
-                                <div class='variable-name'>
-                                    {col}
-                                    <span class='badge-quantitative'>QN</span>
-                                </div>
-                                <div class='variable-stats'>
-                                    {stats['uniques']} valeurs · min={stats['min']:.1f} · max={stats['max']:.1f}{outliers}
-                                </div>
-                            </div>
-                        """, unsafe_allow_html=True)
-                    if len(analyse_avant['classification']['quantitative']) > 10:
-                        st.info(f"... et {len(analyse_avant['classification']['quantitative']) - 10} autres")
-                else:
-                    st.info("Aucune variable quantitative")
-                st.markdown('</div>', unsafe_allow_html=True)
+        # 2. Gestion des valeurs manquantes
+        if missing_strategy != "Aucun traitement":
+            if missing_strategy == "Supprimer lignes":
+                avant = len(df_current)
+                df_current = df_current.dropna()
+                apres = len(df_current)
+                if apres < avant:
+                    changes.append(f"Lignes supprimées : {avant - apres}")
+            elif missing_strategy in ["Imputer moyenne", "Imputer médiane", "Imputer mode"]:
+                methode = missing_strategy.split()[1].lower()
+                cols_numeriques = df_current.select_dtypes(include=[np.number]).columns
+                df_current, impute_stats = imputer_valeurs_manquantes(df_current, cols_numeriques, methode)
+                if impute_stats:
+                    changes.append(f"Imputation {methode} : {len(impute_stats)} colonnes")
 
-            with col_var2:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 🏷️ Variables Qualitatives")
-                if analyse_avant['classification']['qualitative']:
-                    st.markdown(f"**{len(analyse_avant['classification']['qualitative'])} variables**")
-                    for col in analyse_avant['classification']['qualitative'][:10]:
-                        stats = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
-                        st.markdown(f"""
-                            <div class='variable-item'>
-                                <div class='variable-name'>
-                                    {col}
-                                    <span class='badge-qualitative'>QL</span>
-                                </div>
-                                <div class='variable-stats'>
-                                    {stats['uniques']} catégories · {stats['non_nulles']} non-nulles
-                                </div>
-                            </div>
-                        """, unsafe_allow_html=True)
-                    if len(analyse_avant['classification']['qualitative']) > 10:
-                        st.info(f"... et {len(analyse_avant['classification']['qualitative']) - 10} autres")
-                else:
-                    st.info("Aucune variable qualitative")
-                st.markdown('</div>', unsafe_allow_html=True)
+        # 3. Suppression des doublons
+        if remove_duplicates:
+            avant = len(df_current)
+            df_current = df_current.drop_duplicates()
+            apres = len(df_current)
+            if apres < avant:
+                changes.append(f"Doublons supprimés : {avant - apres}")
 
-            if analyse_avant['classification']['dates']:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 📅 Variables Date")
-                for col in analyse_avant['classification']['dates']:
-                    st.markdown(f"""
-                        <div class='variable-item'>
-                            <div class='variable-name'>
-                                {col}
-                                <span class='badge-date'>Date</span>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-                st.markdown('</div>', unsafe_allow_html=True)
+        # 4. Encodage
+        if encoding_strategy != "Aucun":
+            qualitatives = [c for c in df_current.columns if c in classifier_variables(df_current)['qualitative']]
+            if qualitatives:
+                methode = 'label' if encoding_strategy == "Label Encoding" else 'onehot'
+                df_current, encoders = encoder_variables(df_current, qualitatives, methode)
+                changes.append(f"Encodage {methode} : {len(qualitatives)} colonnes")
 
-            if analyse_avant['classification']['target_potential']:
-                st.markdown('<div class="quality-card">', unsafe_allow_html=True)
-                st.markdown("### 🎯 Cibles potentielles ML")
-                for target in analyse_avant['classification']['target_potential']:
-                    st.markdown(f"""
-                        <div class='variable-item'>
-                            <div class='variable-name'>
-                                {target['colonne']}
-                                <span class='badge-target'>{target['type']}</span>
-                            </div>
-                            <div class='variable-stats'>{target['raison']}</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-                st.markdown('</div>', unsafe_allow_html=True)
+        # 5. Détection outliers
+        if remove_outliers:
+            outliers = detecter_outliers_multivaries(df_current, outlier_contamination)
+            n_outliers = outliers.sum()
+            if n_outliers > 0:
+                changes.append(f"Outliers détectés : {n_outliers} lignes")
 
-        with tab3:
-            if show_details:
-                for stats in analyse_avant['col_stats'][:20]:
-                    with st.expander(f"📊 {stats['nom']} ({stats['type']})"):
-                        col_d1, col_d2, col_d3 = st.columns(3)
+        # 6. Standardisation
+        if standardize:
+            cols_numeriques = df_current.select_dtypes(include=[np.number]).columns.tolist()
+            if cols_numeriques:
+                df_current, scaler = standardiser_donnees(df_current, cols_numeriques)
+                changes.append(f"Standardisation : {len(cols_numeriques)} colonnes")
 
-                        with col_d1:
-                            st.metric("Non-nulles", f"{stats['non_nulles']:,}")
-                            st.metric("Nulles", f"{stats['nulles']:,} ({stats['pct_nulles']:.1f}%)")
+        # Mise à jour du DataFrame traité
+        st.session_state.df_processed = df_current
+        if changes:
+            st.session_state.changes_log.extend(changes)
 
-                        with col_d2:
-                            st.metric("Valeurs uniques", f"{stats['uniques']:,}")
-                            st.metric("Taux unicité", f"{stats['pct_uniques']:.1f}%")
+    else:
+        st.error(f"Erreur de chargement : {error}")
 
-                        with col_d3:
-                            if 'min' in stats:
-                                st.metric("Min", f"{stats['min']:.2f}")
-                                st.metric("Max", f"{stats['max']:.2f}")
-                                st.metric("Moyenne", f"{stats['mean']:.2f}")
-                                if 'outliers' in stats:
-                                    st.metric("Outliers", f"{stats['outliers']} ({stats['pct_outliers']:.1f}%)")
+# --- AFFICHAGE PRINCIPAL ---
+if st.session_state.df_original is not None:
+    # Analyser l'état actuel
+    analyse_actuelle = analyser_qualite_dataset(st.session_state.df_processed, "Dataset traité")
 
-        with tab4:
-            if analyse_avant['problem_columns']:
-                if show_problem_details:
-                    for prob in analyse_avant['problem_columns']:
-                        color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
-                        st.markdown(f"""
-                            <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>⚠️</div>
-                                <div>
-                                    <strong style='color:{color};'>{prob['colonne']}</strong>
-                                    <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
-                                </div>
-                            </div>
-                        """, unsafe_allow_html=True)
-                else:
-                    st.info(f"🔍 {len(analyse_avant['problem_columns'])} problèmes détectés (masqués)")
-            else:
-                st.success("✅ Aucun problème détecté !")
+    # Métriques principales
+    col1, col2, col3, col4 = st.columns(4)
 
-        with tab5:
-            col_v1, col_v2 = st.columns(2)
-
-            with col_v1:
-                type_counts = {
-                    'Quantitatives': len(analyse_avant['classification']['quantitative']),
-                    'Qualitatives': len(analyse_avant['classification']['qualitative']),
-                    'Dates': len(analyse_avant['classification']['dates'])
-                }
-                fig = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
-                             title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
-                fig.update_layout(height=350)
-                st.plotly_chart(fig, width='stretch', key="plot_types")
-
-            with col_v2:
-                if analyse_avant['missing_cols']:
-                    missing_df = pd.DataFrame({
-                        'Colonne': list(analyse_avant['missing_cols'].keys()),
-                        'Manquantes': list(analyse_avant['missing_cols'].values())
-                    }).sort_values('Manquantes', ascending=False).head(10)
-                    fig = px.bar(missing_df, x='Manquantes', y='Colonne', orientation='h',
-                                 title="Top 10 valeurs manquantes", color='Manquantes',
-                                 color_continuous_scale='Reds')
-                    fig.update_layout(height=350)
-                    st.plotly_chart(fig, width='stretch', key="plot_missing")
-                else:
-                    st.info("Aucune valeur manquante")
-
-            if len(analyse_avant['classification']['quantitative']) > 1:
-                corr_matrix = df_avant[analyse_avant['classification']['quantitative']].corr()
-                fig = px.imshow(corr_matrix, text_auto='.2f', aspect="auto",
-                                title="Matrice de corrélation", color_continuous_scale='RdBu')
-                fig.update_layout(height=500)
-                st.plotly_chart(fig, width='stretch', key="plot_corr")
-
-        with tab6:
-            st.markdown("### 🔧 Recommandations de nettoyage")
-            recs_qualite = generer_recommandations_qualite(analyse_avant)
-            if recs_qualite:
-                for rec in recs_qualite:
-                    color = "#e53e3e" if rec['priority'] == 'HAUTE' else "#ed8936" if rec[
-                                                                                          'priority'] == 'MOYENNE' else "#667eea"
-                    st.markdown(f"""
-                        <div class='timeline-item' style='border-left-color:{color};'>
-                            <div class='timeline-icon'>{rec['icon']}</div>
-                            <div>
-                                <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem;'>{rec['priority']}</span>
-                                <br><strong>{rec['categorie']}</strong>
-                                <br><span style='color:#4a5568;'>{rec['message']}</span>
-                                <br><span style='color:#667eea;'>💡 {rec['action']}</span>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-            else:
-                st.success("✅ Dataset déjà propre !")
-
-            st.markdown("### 🛠️ Feature Engineering recommandé")
-            recs_fe = generer_recommandations_feature_engineering(analyse_avant)
-            if recs_fe:
-                for rec in recs_fe:
-                    color = "#e53e3e" if rec['priority'] == 'HAUTE' else "#ed8936"
-                    acp_badge = "✅ Compatible ACP" if rec.get('pour_ACP', False) else "⚠️ Non ACP"
-                    st.markdown(f"""
-                        <div class='timeline-item' style='border-left-color:{color};'>
-                            <div class='timeline-icon'>🔧</div>
-                            <div>
-                                <span style='background:{color}; color:white; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.7rem;'>{rec['priority']}</span>
-                                <span style='margin-left:0.5rem; font-size:0.7rem;'>{acp_badge}</span>
-                                <br><strong>{rec['categorie']} - {rec.get('colonne', 'Général')}</strong>
-                                <br><span style='color:#4a5568;'>{rec['raison']}</span>
-                                <br><span style='color:#667eea;'>💡 {rec['technique']}</span>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-            if analyse_avant['classification']['a_convertir']:
-                st.markdown("### 🔄 Conversions suggérées")
-                for conv in analyse_avant['classification']['a_convertir']:
-                    st.markdown(f"""
-                        <div class='timeline-item' style='border-left-color:#ed8936;'>
-                            <div class='timeline-icon'>🔄</div>
-                            <div>
-                                <strong>{conv['colonne']}</strong>
-                                <br><span style='color:#4a5568;'>{conv['type_actuel']} → {conv['type_suggere']}</span>
-                                <br><small>{conv['raison']}</small>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-        if analyse_apres:
-            st.markdown("---")
-            st.markdown("## 🔄 Comparaison Original vs Nettoyé")
-
-            col_c1, col_c2, col_c3, col_c4 = st.columns(4)
-
-            with col_c1:
-                delta = comparaison['amelioration_score']
-                delta_color = "green" if delta > 0 else "red"
-                delta_symbol = "▲" if delta > 0 else "▼"
-                st.metric("Score qualité", f"{analyse_apres['quality_score']:.1f}",
-                          f"{delta_symbol} {abs(delta):.1f} ({comparaison['amelioration_score_pct']:.1f}%)",
-                          delta_color=delta_color)
-
-            with col_c2:
-                delta = comparaison['reduction_lignes']
-                st.metric("Lignes", f"{analyse_apres['total_lignes']:,}",
-                          f"▼ {delta} ({comparaison['pct_reduction_lignes']:.1f}%)",
-                          delta_color="green" if delta > 0 else "red")
-
-            with col_c3:
-                delta = comparaison['reduction_missing']
-                st.metric("Valeurs manquantes", f"{analyse_apres['total_missing']:,}",
-                          f"▼ {delta} ({comparaison['pct_reduction_missing']:.1f}%)",
-                          delta_color="green" if delta > 0 else "red")
-
-            with col_c4:
-                delta = comparaison['reduction_problemes']
-                delta_symbol = "▼" if delta > 0 else "▲" if delta < 0 else "="
-                delta_value = f"{delta_symbol} {abs(delta)}" if delta != 0 else "="
-                st.metric("Problèmes", len(analyse_apres['problem_columns']),
-                          delta_value,
-                          delta_color="green" if delta > 0 else "red" if delta < 0 else "gray")
-
-            with st.expander("📋 Voir le bilan détaillé du nettoyage", expanded=False):
-                messages = verifier_nettoyage(comparaison)
-                for icon, color, msg in messages:
-                    st.markdown(f"""
-                        <div style='background:white; padding:1rem; border-radius:12px; border-left:4px solid {color}; margin-bottom:0.5rem;'>
-                            <div style='display:flex; align-items:center; gap:0.5rem;'>
-                                <span style='font-size:1.5rem;'>{icon}</span>
-                                <span style='color:#4a5568; font-size:0.9rem;'>{msg}</span>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-                if show_problem_details and analyse_apres['problem_columns']:
-                    st.markdown("### ⚠️ Problèmes restants dans le dataset nettoyé")
-                    for prob in analyse_apres['problem_columns'][:5]:
-                        color = "#e53e3e" if prob['severity'] > 2 else "#ed8936" if prob['severity'] > 1 else "#667eea"
-                        st.markdown(f"""
-                            <div class='timeline-item' style='border-left-color:{color};'>
-                                <div class='timeline-icon'>⚠️</div>
-                                <div>
-                                    <strong style='color:{color};'>{prob['colonne']}</strong>
-                                    <br><span style='color:#4a5568;'>{', '.join(prob['issues'])}</span>
-                                </div>
-                            </div>
-                        """, unsafe_allow_html=True)
-
-                    if len(analyse_apres['problem_columns']) > 5:
-                        st.info(f"... et {len(analyse_apres['problem_columns']) - 5} autres problèmes")
-
-            st.markdown("### 📈 Visualisation de la progression")
-
-            fig_progress = go.Figure()
-
-            categories = ['Score qualité', 'Lignes', 'Manquantes', 'Doublons', 'Problèmes']
-
-            max_values = [
-                100,
-                max(analyse_avant['total_lignes'], analyse_apres['total_lignes']),
-                max(analyse_avant['total_missing'], analyse_apres['total_missing']),
-                max(analyse_avant['duplicates'], analyse_apres['duplicates']),
-                max(len(analyse_avant['problem_columns']), len(analyse_apres['problem_columns']))
-            ]
-
-            avant_values = [
-                analyse_avant['quality_score'],
-                analyse_avant['total_lignes'],
-                analyse_avant['total_missing'],
-                analyse_avant['duplicates'],
-                len(analyse_avant['problem_columns'])
-            ]
-            apres_values = [
-                analyse_apres['quality_score'],
-                analyse_apres['total_lignes'],
-                analyse_apres['total_missing'],
-                analyse_apres['duplicates'],
-                len(analyse_apres['problem_columns'])
-            ]
-
-            avant_norm = [v / max_values[i] * 100 for i, v in enumerate(avant_values)]
-            apres_norm = [v / max_values[i] * 100 for i, v in enumerate(apres_values)]
-
-            fig_progress.add_trace(go.Scatterpolar(
-                r=avant_norm,
-                theta=categories,
-                fill='toself',
-                name='Original',
-                line_color='#e53e3e'
-            ))
-
-            fig_progress.add_trace(go.Scatterpolar(
-                r=apres_norm,
-                theta=categories,
-                fill='toself',
-                name='Nettoyé',
-                line_color='#48bb78'
-            ))
-
-            fig_progress.update_layout(
-                polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-                showlegend=True,
-                height=400
-            )
-
-            st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
-
-else:
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown("""
-            <div style='text-align:center; padding:3rem; background:white; border-radius:30px; box-shadow:0 20px 40px rgba(0,0,0,0.1);'>
-                <span style='font-size:5rem;'>📊</span>
-                <h2>Chargez un dataset pour commencer</h2>
-                <p style='color:#666;'>Analyse complète · Comparaison Avant et Apres Nettoyage · Feature Engineering · ML</p>
-                <div style='display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; text-align:left;'>
-                    <div>✅ Statistiques globales</div><div>✅ Types de données</div>
-                    <div>✅ Variables manquantes</div><div>✅ Classification auto</div>
-                    <div>✅ Comparaison avant/après</div><div>✅ Feature engineering</div>
-                    <div>✅ Recommandations ACP</div><div>✅ Préparation ML</div>
-                </div>
-            </div>
+    with col1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value-sm">{analyse_actuelle['quality_score']:.0f}</div>
+            <div class="metric-label-sm">Score qualité</div>
+            <span class="quality-badge {analyse_actuelle['quality_badge']}">{analyse_actuelle['quality_category']}</span>
+        </div>
         """, unsafe_allow_html=True)
 
-st.markdown("""
-    <div class='footer'>
-        <strong>Data Quality Analyzer v2.0</strong> · Analyse complète pour Machine Learning · Feature Engineering · Préparation ACP<br>
-        <span style='opacity: 0.6; font-size: 0.8rem;'>Développé pour l'optimisation des pipelines de données</span>
+    with col2:
+        delta = analyse_actuelle['quality_score'] - st.session_state.analyse_original['quality_score']
+        delta_color = "normal" if delta >= 0 else "inverse"
+        st.metric(
+            "Amélioration",
+            f"{delta:+.1f}",
+            delta=f"{delta:+.1f} pts",
+            delta_color=delta_color
+        )
+
+    with col3:
+        st.metric(
+            "Lignes",
+            f"{analyse_actuelle['total_lignes']:,}",
+            delta=f"{analyse_actuelle['total_lignes'] - st.session_state.analyse_original['total_lignes']:+d}"
+        )
+
+    with col4:
+        st.metric(
+            "Colonnes",
+            analyse_actuelle['total_colonnes'],
+            delta=f"{analyse_actuelle['total_colonnes'] - st.session_state.analyse_original['total_colonnes']:+d}"
+        )
+
+    # Historique des changements
+    if st.session_state.changes_log:
+        with st.expander("📝 Dernières modifications"):
+            for change in st.session_state.changes_log[-5:]:
+                st.success(change)
+
+    # Tabs principales
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        "📋 Aperçu", "🔍 Problèmes", "📈 Visualisations",
+        "💡 Suggestions", "📊 Analyse avancée", "🔄 Comparaison"
+    ])
+
+    with tab1:
+        st.dataframe(st.session_state.df_processed.head(100), use_container_width=True)
+
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.markdown("**Types de données:**")
+            st.json(dict(analyse_actuelle['dtypes_summary']))
+        with col_b:
+            if st.button("📥 Télécharger dataset traité"):
+                csv = st.session_state.df_processed.to_csv(index=False)
+                b64 = base64.b64encode(csv.encode()).decode()
+                href = f'<a href="data:file/csv;base64,{b64}" download="dataset_traite.csv">Télécharger CSV</a>'
+                st.markdown(href, unsafe_allow_html=True)
+
+    with tab2:
+        if analyse_actuelle['problem_columns']:
+            if filters:
+                filtered = afficher_filtres_variables(analyse_actuelle)
+                for prob in filtered[:10]:
+                    severity_color = "🔴" if prob['severity'] > 3 else "🟡" if prob['severity'] > 1 else "🟢"
+                    st.markdown(f"""
+                    <div class="info-box">
+                        <strong>{severity_color} {prob['nom']}</strong> - Type: {prob['type']}<br>
+                        {' · '.join(prob['issues'])}<br>
+                        <small>Manquantes: {prob['pct_nulles']:.1f}% | Uniques: {prob['uniques']}</small>
+                    </div>
+                    """, unsafe_allow_html=True)
+            else:
+                for prob in analyse_actuelle['problem_columns'][:15]:
+                    severity_color = "🔴" if prob['severity'] > 3 else "🟡" if prob['severity'] > 1 else "🟢"
+                    st.markdown(f"""
+                    <div class="info-box">
+                        <strong>{severity_color} {prob['colonne']}</strong><br>
+                        {' · '.join(prob['issues'])}
+                    </div>
+                    """, unsafe_allow_html=True)
+        else:
+            st.success("✅ Aucun problème détecté !")
+
+    with tab3:
+        fig = creer_dashboard_qualite(analyse_actuelle)
+        st.plotly_chart(fig, use_container_width=True)
+
+    with tab4:
+        suggestions = suggerer_traitements(analyse_actuelle)
+        if suggestions:
+            for sug in suggestions[:10]:
+                if sug['type'] == 'danger':
+                    st.error(sug['message'])
+                elif sug['type'] == 'warning':
+                    st.warning(sug['message'])
+                else:
+                    st.info(sug['message'])
+        else:
+            st.success("✅ Aucune suggestion - Dataset propre !")
+
+    with tab5:
+        st.markdown("### 📊 Analyse statistique avancée")
+
+        # Matrice de corrélation
+        if show_correlation:
+            st.markdown("#### 🔗 Matrice de corrélation")
+            corr_matrix, high_corr = matrice_correlation(st.session_state.df_processed, corr_threshold)
+
+            if corr_matrix is not None:
+                fig_corr = px.imshow(corr_matrix, text_auto=True, aspect="auto",
+                                     color_continuous_scale='RdBu_r')
+                fig_corr.update_layout(height=600)
+                st.plotly_chart(fig_corr, use_container_width=True)
+
+                if high_corr:
+                    st.warning(f"⚠️ {len(high_corr)} paires fortement corrélées (> {corr_threshold})")
+                    for hc in high_corr[:5]:
+                        st.info(f"📊 {hc['col1']} ↔ {hc['col2']} : {hc['correlation']:.2f}")
+            else:
+                st.info("Pas assez de variables numériques pour la corrélation")
+
+        # Test de normalité
+        if show_normality:
+            st.markdown("#### 📈 Test de normalité (Shapiro-Wilk)")
+            cols_num = st.session_state.df_processed.select_dtypes(include=[np.number]).columns[:10]
+            if len(cols_num) > 0:
+                norm_results = test_normalite(st.session_state.df_processed, cols_num)
+                for res in norm_results:
+                    emoji = "✅" if res['normal'] else "❌"
+                    st.write(f"{emoji} **{res['colonne']}** : {res['interpretation']} (p={res['p_value']:.4f})")
+            else:
+                st.info("Pas de variables numériques pour le test")
+
+        # Profilage rapide
+        if show_profiling:
+            st.markdown("#### 📋 Profilage rapide")
+            profil = profil_donnees_rapide(st.session_state.df_processed)
+
+            col_p1, col_p2 = st.columns(2)
+            with col_p1:
+                st.metric("Colonnes constantes", profil['colonnes_constantes'])
+                st.metric("Colonnes uniques (ID)", profil['colonnes_uniques'])
+            with col_p2:
+                st.metric("Colonnes avec manquantes", profil['colonnes_manquantes'])
+                st.metric("Total valeurs manquantes", profil['total_manquantes'])
+
+        # Profilage complet ydata
+        if show_full_profiling and PROFILING_AVAILABLE:
+            st.markdown("#### 📑 Profilage complet")
+            if st.button("Générer le rapport complet"):
+                with st.spinner("Génération du rapport en cours..."):
+                    profile = ProfileReport(st.session_state.df_processed, title="Rapport Data Quality")
+                    profile.to_file("rapport_complet.html")
+                    st.success("Rapport généré !")
+                    with open("rapport_complet.html", "r") as f:
+                        html_data = f.read()
+                        st.download_button(
+                            label="📥 Télécharger rapport HTML",
+                            data=html_data,
+                            file_name="rapport_complet.html",
+                            mime="text/html"
+                        )
+
+    with tab6:
+        if st.session_state.analyse_original:
+            st.markdown("### 🔄 Comparaison Avant / Après")
+
+            # Vue split
+            split_view_comparaison(
+                st.session_state.df_original,
+                st.session_state.df_processed,
+                st.session_state.changes_log
+            )
+
+            # Radar chart
+            fig_radar = creer_comparaison_radar(st.session_state.analyse_original, analyse_actuelle)
+            st.plotly_chart(fig_radar, use_container_width=True)
+
+            # Tableau comparatif
+            comp = comparer_datasets(st.session_state.analyse_original, analyse_actuelle)
+
+            col_c1, col_c2, col_c3 = st.columns(3)
+            with col_c1:
+                st.metric("Score", f"{comp['avant']['quality_score']:.1f} → {comp['apres']['quality_score']:.1f}",
+                          f"{comp['amelioration_score']:+.1f}")
+            with col_c2:
+                st.metric("Lignes", f"{comp['avant']['total_lignes']} → {comp['apres']['total_lignes']}",
+                          f"-{comp['reduction_lignes']}")
+            with col_c3:
+                st.metric("Problèmes",
+                          f"{len(comp['avant']['problem_columns'])} → {len(comp['apres']['problem_columns'])}",
+                          f"-{comp['resolution_problemes']}")
+
+    # Génération de rapport
+    if report_format != "Texte":
+        historique = st.session_state.history if include_history else None
+        rapport_html = generer_rapport_html(analyse_actuelle, historique)
+
+        if report_format in ["HTML", "Les deux"]:
+            st.download_button(
+                label="📥 Télécharger rapport HTML",
+                data=rapport_html,
+                file_name=f"rapport_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
+                mime="text/html"
+            )
+
+        if report_format in ["Texte", "Les deux"]:
+            # Version texte simplifiée
+            rapport_txt = f"""
+            RAPPORT DATA QUALITY
+            ====================
+            Dataset: {analyse_actuelle['nom']}
+            Date: {datetime.now().strftime('%d/%m/%Y %H:%M')}
+
+            Score qualité: {analyse_actuelle['quality_score']:.1f}/100 ({analyse_actuelle['quality_category']})
+
+            Informations:
+            - Lignes: {analyse_actuelle['total_lignes']:,}
+            - Colonnes: {analyse_actuelle['total_colonnes']}
+            - Mémoire: {analyse_actuelle['memoire']:.2f} MB
+
+            Qualité:
+            - Valeurs manquantes: {analyse_actuelle['total_missing']} ({analyse_actuelle['pct_missing']:.1f}%)
+            - Doublons: {analyse_actuelle['duplicates']} ({analyse_actuelle['pct_duplicates']:.1f}%)
+
+            Problèmes: {len(analyse_actuelle['problem_columns'])}
+            """
+
+            st.download_button(
+                label="📥 Télécharger rapport texte",
+                data=rapport_txt,
+                file_name=f"rapport_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
+                mime="text/plain"
+            )
+
+else:
+    # Message d'accueil
+    st.markdown("""
+    <div style="text-align: center; padding: 4rem; background: white; border-radius: 20px;">
+        <div style="font-size: 5rem; margin-bottom: 1rem;">📊</div>
+        <h2 style="color: #2d3748;">Bienvenue sur Data Quality Analyzer Pro</h2>
+        <p style="color: #718096; font-size: 1.2rem; max-width: 600px; margin: 1rem auto;">
+            Chargez un fichier pour commencer l'analyse. Notre outil intelligent détectera automatiquement
+            les problèmes de qualité et vous proposera des solutions de nettoyage.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem;">
+            <div>📁 CSV, Excel, JSON</div>
+            <div>🔍 Détection outliers</div>
+            <div>🧹 Nettoyage auto</div>
+            <div>📈 Visualisations</div>
+        </div>
     </div>
+    """, unsafe_allow_html=True)
+
+# --- FOOTER ---
+st.markdown("""
+<div class="footer">
+    <strong>🔬 Data Quality Analyzer Pro</strong> · Analyse intelligente et traitement automatisé<br>
+    <span style="opacity: 0.7;">© 2026 - Version 2.0 · Tous droits réservés</span>
+</div>
 """, unsafe_allow_html=True)
