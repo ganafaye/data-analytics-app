@@ -973,16 +973,18 @@ if 'image_grise' not in st.session_state:
     st.session_state.image_grise = None
 
 # --- BANNIÈRE PRINCIPALE ---
-st.markdown("""
+t.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">👨‍💻 Gana Faye · Data & AI Lab</h1>
-        <p class="hero-subtitle">Mes projets, expérimentations et découvertes en Data Science et Intelligence Artificielle</p>
+        <h1 class="hero-title">🚀 Gana’s AI & Data HomeLab</h1>
+        <p class="hero-subtitle">
+            Espace d'expérimentation : Analyse de données, Vision par ordinateur et Machine Learning
+        </p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
-            <span class='tech-badge'>🐍 Python</span>
+            <span class='tech-badge'>🐍 Python 3.12</span>
             <span class='tech-badge'>📊 Streamlit</span>
-            <span class='tech-badge'>🤖 Machine Learning</span>
-            <span class='tech-badge'>📈 Data Viz</span>
-            <span class='tech-badge'>🔬 Computer Vision</span>
+            <span class='tech-badge'>🤖 Scikit-learn</span>
+            <span class='tech-badge'>📈 Pandas</span>
+            <span class='tech-badge'>🔬 OpenCV</span>
             <span class='tech-badge'>🎨 Plotly</span>
         </div>
     </div>
