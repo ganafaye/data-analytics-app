@@ -65,13 +65,17 @@ def login_sidebar():
             st.markdown("#### Identification")
             email = st.text_input("Email", placeholder="admin@datalab.sn", key="email_auth")
             if st.button("Authentification", use_container_width=True):
-                # Utilise "allowed_emails" car tu l'as mis à la racine des secrets
-                if email in st.secrets["allowed_emails"]:
-                    st.session_state["is_logged_in"] = True
-                    st.session_state["user_email"] = email
-                    st.rerun()
-                else:
-                    st.error("Accès refusé")
+                # CORRECTION ICI : On pointe sur st.secrets["auth"]["allowed_emails"]
+                try:
+                    allowed_list = st.secrets["auth"]["allowed_emails"]
+                    if email in allowed_list:
+                        st.session_state["is_logged_in"] = True
+                        st.session_state["user_email"] = email
+                        st.rerun()
+                    else:
+                        st.error("Accès refusé : email non autorisé.")
+                except KeyError:
+                    st.error("Erreur de configuration : section [auth] introuvable.")
     else:
         # BADGE DE SESSION TYPE "DASHBOARD"
         st.sidebar.markdown(f"""
