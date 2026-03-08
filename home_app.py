@@ -939,4 +939,7 @@ st.markdown("""
 current_year = datetime.now().year
 st.markdown(f"""
     <div class='footer'>
-        <strong>🚀 Gana's AI & Data HomeLab</strong> · Conçu avec passion par Gana
+        <strong>🚀 Gana's AI & Data HomeLab</strong> · Conçu avec passion par Gana Faye<br>
+        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 4.0</span>
+    </div>
+""", unsafe_allow_html=True)
