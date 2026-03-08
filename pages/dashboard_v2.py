@@ -13,7 +13,7 @@ st.set_page_config(
     page_icon="🇸🇳",
     initial_sidebar_state="expanded"
 )
-
+local_css()
 # --- STYLE CSS AUX COULEURS DU SÉNÉGAL ---
 st.markdown("""
     <style>

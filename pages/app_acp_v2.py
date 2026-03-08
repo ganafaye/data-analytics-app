@@ -15,6 +15,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+local_css()
 st.markdown("""
     <style>
     /* 1. Cibler le bouton de la Sidebar (Ouverture/Fermeture) */

@@ -98,6 +98,7 @@ if 'show_problem_details' not in st.session_state:
     st.session_state.show_problem_details = True
 
 # --- STYLE CSS AMÉLIORÉ AVEC SIDEBAR BLANC STYLISÉE ---
+local_css()
 st.markdown("""
     <style>
     /* Import des polices */
