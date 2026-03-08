@@ -2,7 +2,7 @@
 
 Ce dépôt regroupe l'ensemble de mes travaux académiques, projets personnels et Travaux Pratiques (TP) réalisés durant mon cursus de **Master en Informatique**. C'est une plateforme interactive conçue pour démontrer mes compétences en ingénierie des données et intelligence artificielle.
 
-🔗 **Accès au Datalab :** [https://ganafaye-analytics-data.streamlit.app/](https://ganafaye-analytics-data.streamlit.app/)
+🔗 **Accès au Datalab :** [https://gana-data-homelab.streamlit.app//](https://gana-data-homelab.streamlit.app/)
 
 ---
 
