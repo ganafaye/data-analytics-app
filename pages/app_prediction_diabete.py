@@ -36,6 +36,29 @@ st.markdown("""
     .risk-low { background: #dcfce7; color: #16a34a; }
     .metric-card { background: #f8fafc; border-radius: 12px; padding: 1rem; text-align: center; border: 1px solid #e2e8f0; }
     .metric-value { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
+    
+     /* 1. On garde le header mais on le rend invisible (transparent) */
+    header[data-testid="stHeader"] {
+        background-color: rgba(0,0,0,0) !important;
+        color: transparent !important;
+    }
+
+    /* 2. On masque spécifiquement les boutons de droite (Deploy, Menu, etc.) */
+    header[data-testid="stHeader"] div:first-child > div:nth-child(2) {
+        display: none !important;
+    }
+
+    /* 3. On s'assure que le bouton de la sidebar reste visible et blanc/couleur voulue */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        color: white !important; /* Change en 'black' si ton fond est clair */
+    }
+
+    /* 4. On réduit la marge pour que le contenu remonte */
+    .main .block-container {
+        padding-top: 2rem !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
