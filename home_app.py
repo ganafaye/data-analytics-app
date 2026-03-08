@@ -973,86 +973,58 @@ if 'image_grise' not in st.session_state:
     st.session_state.image_grise = None
 
 # --- BANNIÈRE PRINCIPALE ---
+# --- BANNIÈRE PRINCIPALE MISE À JOUR ---
 st.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">🚀 Gana’s AI & Data HomeLab</h1>
-        <p class="hero-subtitle">
-            Espace d'expérimentation : Analyse de données, Vision par ordinateur et Machine Learning
-        </p>
+        <h1 class="hero-title">🚀 Gana's AI & Data HomeLab</h1>
+        <p class="hero-subtitle">Espace d'expérimentation : Analyse de données, Vision par ordinateur et Machine Learning</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
             <span class='tech-badge'>🐍 Python 3.12</span>
             <span class='tech-badge'>📊 Streamlit</span>
             <span class='tech-badge'>🤖 Scikit-learn</span>
             <span class='tech-badge'>📈 Pandas</span>
             <span class='tech-badge'>🔬 OpenCV</span>
-            <span class='tech-badge'>🎨 Plotly</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- SECTION DES APPLICATIONS ---
-st.markdown("## ✨ Nos Applications")
+st.markdown("## ✨ Mes Projets de Master")
 
-# Première ligne : 3 applications (au lieu de 2)
+# Utilisation de 3 colonnes pour un meilleur équilibre visuel
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("""
         <div class='app-card'>
-            <div class='app-icon'>📊</div>
-            <h2 class='app-title'>Data Quality Analyzer</h2>
-            <p class='app-description'>Analyse intelligente de la qualité des données avec recommandations ML.</p>
-            <ul class='feature-list'>
-                <li>Classification automatique</li>
-                <li>Détection des outliers</li>
-                <li>Feature engineering</li>
-                <li>Export de rapports</li>
-            </ul>
-            <span class='app-badge badge-primary'>🤖 Machine Learning</span>
+            <div class='app-icon'>🏙️</div>
+            <h2 class='app-title'>Dakar Immo AI</h2>
+            <p class='app-description'>Prédiction des loyers à Dakar via <b>Random Forest (R² = 55%)</b>.</p>
         </div>
     """, unsafe_allow_html=True)
-
-    if st.button("🚀 Lancer Data Quality Analyzer", key="btn_data", use_container_width=True):
-        st.switch_page("pages/analyse_data_traitement.py")
+    if st.button("Lancer Dakar Rent", key="rent_lab"):
+        st.switch_page("pages/app_prediction_prix_loyer.py")
 
 with col2:
     st.markdown("""
         <div class='app-card'>
-            <div class='app-icon'>🔬</div>
-            <h2 class='app-title'>PCA Vision Pro</h2>
-            <p class='app-description'>Analyse d'images par décomposition en composantes principales.</p>
-            <ul class='feature-list'>
-                <li>Compression intelligente</li>
-                <li>Analyse de variance</li>
-                <li>Tests multi-niveaux</li>
-                <li>Matrice comparative</li>
-            </ul>
-            <span class='app-badge badge-success'>🔬 Traitement d'images</span>
+            <div class='app-icon'>📊</div>
+            <h2 class='app-title'>Data Quality</h2>
+            <p class='app-description'>Analyse complète et nettoyage des datasets avant traitement.</p>
         </div>
     """, unsafe_allow_html=True)
-
-    if st.button("🔬 Lancer PCA Vision Pro", key="btn_pca", use_container_width=True):
-        st.switch_page("pages/app_acp_v2.py")
+    if st.button("Lancer Analyzer", key="data_lab"):
+        st.switch_page("pages/analyse_data_traitement.py")
 
 with col3:
     st.markdown("""
-        <div class='app-card app-card-rent'>
-            <div class='app-icon app-icon-rent'>🏠</div>
-            <h2 class='app-title'>Dakar Immo AI</h2>
-            <p class='app-description'>Estimation intelligente des loyers à Dakar basée sur l'IA et l'analyse du marché local.</p>
-            <ul class='feature-list'>
-                <li>Prédiction en temps réel</li>
-                <li>Analyse par quartier</li>
-                <li>Impact des options</li>
-                <li>Visualisations interactives</li>
-            </ul>
-            <span class='app-badge badge-rent'>🏠 Immobilier intelligent</span>
+        <div class='app-card'>
+            <div class='app-icon'>🔬</div>
+            <h2 class='app-title'>PCA Vision</h2>
+            <p class='app-description'>Analyse d'images et réduction de dimensionnalité via l'ACP.</p>
         </div>
     """, unsafe_allow_html=True)
-
-    if st.button("🏠 Lancer Dakar immo AI", key="btn_rent", use_container_width=True):
-        st.switch_page("pages/app_prediction_prix_loyer.py")
-
+    if st.button("Lancer PCA Pro", key="pca_lab"):
+        st.switch_page("pages/app_acp_v2.py")
 # --- SECTION STATISTIQUES (mise à jour) ---
 st.markdown("""
     <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0;'>
