@@ -861,7 +861,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- SIDEBAR HARMONISÉE ---
-# --- SIDEBAR HARMONISÉE MISE À JOUR ---
 with st.sidebar:
     st.markdown("""
         <div class="sidebar-header">
@@ -870,7 +869,7 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-    # Section Navigation (Mise à jour avec la nouvelle icône)
+    # Section Navigation
     st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
@@ -888,10 +887,6 @@ with st.sidebar:
                 <span class="sidebar-item-icon">🔬</span>
                 <span>PCA Vision Pro</span>
             </div>
-            <div class="sidebar-item">
-                <span class="sidebar-item-icon">🏙️</span>
-                <span>Dakar Rent AI</span>
-            </div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -903,10 +898,6 @@ with st.sidebar:
             </div>
     """, unsafe_allow_html=True)
 
-    # Bouton pour ton nouveau module de prédiction
-    if st.button("🏙️ Lancer Dakar Rent AI", use_container_width=True, key="sidebar_rent"):
-        st.switch_page("pages/app_prediction_prix_loyer.py")
-
     if st.button("📊 Lancer Data Quality", use_container_width=True, key="sidebar_data"):
         st.switch_page("pages/analyse_data_traitement.py")
 
@@ -915,7 +906,39 @@ with st.sidebar:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # ... (le reste de tes sections Paramètres et Informations reste inchangé)
+    # Section Paramètres
+    st.markdown("""
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span>⚙️</span> Paramètres
+            </div>
+    """, unsafe_allow_html=True)
+
+    theme = st.selectbox("Thème", ["Clair", "Sombre"], key="sidebar_theme")
+    notifications = st.checkbox("Notifications", value=True)
+    autosave = st.checkbox("Sauvegarde auto", value=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Section Informations
+    st.markdown("""
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span>ℹ️</span> Informations
+            </div>
+            <div style='padding: 0.4rem 0; color: #334155; font-size: 0.85rem;'>
+                <p><strong>Version:</strong> 4.0</p>
+                <p><strong>Mise à jour:</strong> Fév 2026</p>
+                <p><strong>Auteur:</strong> Gana Faye</p>
+            </div>
+            <div style='display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem;'>
+                <span class='sidebar-badge'>Python</span>
+                <span class='sidebar-badge'>Streamlit</span>
+                <span class='sidebar-badge'>ML</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
     # Footer de la sidebar
     st.markdown("""
         <div class="sidebar-footer">
