@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from auth_utils import apply_custom_style, is_authorized, login_header
+from auth_utils import apply_custom_style, is_authorized, login_sidebar
 apply_custom_style()
 # On place la connexion tout en haut de la page
-login_header()
+login_sidebar()
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
     page_title="Gana's AI & Data HomeLab",
