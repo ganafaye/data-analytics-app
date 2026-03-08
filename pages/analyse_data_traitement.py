@@ -1111,72 +1111,670 @@ def profil_donnees_rapide(df):
 
 # --- 3. FONCTIONS DE REPORTING AVANCÉ ---
 
-def generer_rapport_html(analyse, historique=None):
+def generer_rapport_html(analyse, comparaison=None, historique=None):
     """
-    Génère un rapport HTML complet
+    Génère un rapport HTML complet avec graphiques et comparaison
     """
+    # Créer les graphiques en base64 pour les inclure dans le HTML
+    import io
+    import base64
+    import matplotlib.pyplot as plt
+
+    # Fonction pour convertir un graphique Plotly en image base64
+    def fig_to_base64(fig):
+        buf = io.BytesIO()
+        fig.write_image(buf, format='png', width=800, height=400)
+        buf.seek(0)
+        return base64.b64encode(buf.getvalue()).decode()
+
+    # Créer les graphiques avec Plotly
+    # Graphique 1: Distribution des types de variables
+    type_counts = {
+        'Quantitatives': len(analyse['classification']['quantitative']),
+        'Qualitatives': len(analyse['classification']['qualitative']),
+        'Dates': len(analyse['classification']['dates'])
+    }
+    fig1 = px.pie(values=list(type_counts.values()), names=list(type_counts.keys()),
+                  title="Types de variables", color_discrete_sequence=['#48bb78', '#667eea', '#ed8936'])
+    fig1.update_layout(height=400)
+
+    # Graphique 2: Top valeurs manquantes
+    if analyse['missing_cols']:
+        missing_df = pd.DataFrame({
+            'Colonne': list(analyse['missing_cols'].keys()),
+            'Manquantes': list(analyse['missing_cols'].values())
+        }).sort_values('Manquantes', ascending=False).head(10)
+        fig2 = px.bar(missing_df, x='Manquantes', y='Colonne', orientation='h',
+                      title="Top 10 valeurs manquantes", color='Manquantes',
+                      color_continuous_scale='Reds')
+        fig2.update_layout(height=400)
+    else:
+        fig2 = None
+
+    # Graphique 3: Matrice de corrélation (si disponible)
+    if len(analyse['classification']['quantitative']) > 1:
+        # Reconstruire un DataFrame pour la corrélation (simplifié)
+        # Dans un cas réel, vous auriez besoin du DataFrame original
+        fig3 = None
+    else:
+        fig3 = None
+
+    # Graphique 4: Évolution du score (si comparaison)
+    if comparaison:
+        fig4 = go.Figure()
+        categories = ['Score qualité', 'Complétude', 'Unicité']
+        avant_values = [
+            analyse['quality_score'],
+            100 - analyse['pct_missing'],
+            100 - analyse['pct_duplicates']
+        ]
+        apres_values = [
+            comparaison['apres']['quality_score'],
+            100 - comparaison['apres']['pct_missing'],
+            100 - comparaison['apres']['pct_duplicates']
+        ]
+
+        fig4.add_trace(go.Scatterpolar(
+            r=avant_values + [avant_values[0]],
+            theta=categories + [categories[0]],
+            fill='toself',
+            name='Avant',
+            line_color='#e53e3e'
+        ))
+
+        fig4.add_trace(go.Scatterpolar(
+            r=apres_values + [apres_values[0]],
+            theta=categories + [categories[0]],
+            fill='toself',
+            name='Après',
+            line_color='#48bb78'
+        ))
+
+        fig4.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+            showlegend=True,
+            height=400,
+            title="Comparaison Avant/Après"
+        )
+    else:
+        fig4 = None
+
+    # Convertir les graphiques en base64
+    fig1_base64 = fig_to_base64(fig1) if fig1 else ""
+    fig2_base64 = fig_to_base64(fig2) if fig2 else ""
+    fig4_base64 = fig_to_base64(fig4) if fig4 else ""
+
+    # Déterminer la catégorie de qualité
+    quality_badge_class = analyse['quality_badge'].replace('badge-', '')
+
     html = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Rapport Data Quality - {analyse['nom']}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-            body {{ font-family: 'Arial', sans-serif; margin: 40px; background: #f8fafc; }}
-            .header {{ background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }}
-            .section {{ background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }}
-            .score {{ font-size: 3rem; font-weight: bold; }}
-            .badge {{ display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; }}
-            .badge-excellent {{ background: #48bb78; color: white; }}
-            .badge-good {{ background: #667eea; color: white; }}
-            .badge-fair {{ background: #ed8936; color: white; }}
-            .badge-poor {{ background: #e53e3e; color: white; }}
-            table {{ width: 100%; border-collapse: collapse; }}
-            th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }}
-            th {{ background: #f7fafc; }}
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+            * {{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }}
+
+            body {{ 
+                font-family: 'Inter', sans-serif;
+                background: linear-gradient(135deg, #f6f9f8 0%, #edf3f0 100%);
+                margin: 0;
+                padding: 20px;
+                color: #1e293b;
+            }}
+
+            .container {{
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 30px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }}
+
+            .header {{ 
+                background: linear-gradient(135deg, #667eea, #764ba2); 
+                color: white; 
+                padding: 40px 30px; 
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }}
+
+            .header::before {{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            }}
+
+            .header::after {{
+                content: '📊';
+                position: absolute;
+                bottom: -20px;
+                right: -20px;
+                font-size: 8rem;
+                opacity: 0.1;
+                transform: rotate(-15deg);
+            }}
+
+            .header h1 {{
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 10px;
+                position: relative;
+                z-index: 1;
+            }}
+
+            .header p {{
+                font-size: 1.1rem;
+                opacity: 0.9;
+                position: relative;
+                z-index: 1;
+            }}
+
+            .section {{ 
+                background: white; 
+                padding: 30px; 
+                margin: 20px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                border: 1px solid #e2e8f0;
+                transition: transform 0.3s ease;
+            }}
+
+            .section:hover {{
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+            }}
+
+            .section-title {{
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: #2d3748;
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #e2e8f0;
+            }}
+
+            .section-title span {{
+                font-size: 2rem;
+            }}
+
+            .score-container {{
+                text-align: center;
+                padding: 20px;
+                background: linear-gradient(135deg, #f8fafc, #ffffff);
+                border-radius: 15px;
+                margin-bottom: 20px;
+            }}
+
+            .score {{ 
+                font-size: 5rem; 
+                font-weight: 800; 
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                line-height: 1;
+                display: inline-block;
+                filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.2));
+            }}
+
+            .badge {{ 
+                display: inline-block; 
+                padding: 10px 25px; 
+                border-radius: 50px; 
+                font-weight: 600; 
+                font-size: 1.1rem;
+                margin: 10px 0;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }}
+
+            .badge-excellent {{ background: linear-gradient(135deg, #48bb78, #38a169); color: white; }}
+            .badge-good {{ background: linear-gradient(135deg, #667eea, #5a67d8); color: white; }}
+            .badge-fair {{ background: linear-gradient(135deg, #ed8936, #dd6b20); color: white; }}
+            .badge-poor {{ background: linear-gradient(135deg, #e53e3e, #c53030); color: white; }}
+
+            .stats-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                margin: 20px 0;
+            }}
+
+            .stat-card {{
+                background: #f8fafc;
+                padding: 20px;
+                border-radius: 15px;
+                text-align: center;
+                border: 1px solid #e2e8f0;
+                transition: all 0.3s ease;
+            }}
+
+            .stat-card:hover {{
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+                border-color: #667eea;
+            }}
+
+            .stat-number {{
+                font-size: 2.2rem;
+                font-weight: 700;
+                color: #667eea;
+                line-height: 1.2;
+            }}
+
+            .stat-label {{
+                color: #64748b;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-top: 5px;
+                font-weight: 500;
+            }}
+
+            .progress-container {{
+                background: #edf2f7;
+                height: 10px;
+                border-radius: 20px;
+                overflow: hidden;
+                margin: 10px 0;
+            }}
+
+            .progress-bar {{
+                height: 100%;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+                border-radius: 20px;
+                transition: width 0.3s ease;
+            }}
+
+            table {{ 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin: 15px 0;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }}
+
+            th, td {{ 
+                padding: 15px; 
+                text-align: left; 
+                border-bottom: 1px solid #e2e8f0; 
+            }}
+
+            th {{ 
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                font-weight: 600;
+            }}
+
+            tr:hover {{
+                background: #f8fafc;
+            }}
+
+            .chart-container {{
+                background: white;
+                padding: 20px;
+                border-radius: 15px;
+                margin: 20px 0;
+                border: 1px solid #e2e8f0;
+            }}
+
+            .chart-title {{
+                color: #2d3748;
+                font-weight: 600;
+                margin-bottom: 15px;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }}
+
+            .chart-title span {{
+                font-size: 1.5rem;
+            }}
+
+            .chart-image {{
+                width: 100%;
+                height: auto;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }}
+
+            .comparison-grid {{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin: 20px 0;
+            }}
+
+            .comparison-card {{
+                background: #f8fafc;
+                padding: 20px;
+                border-radius: 15px;
+                border: 1px solid #e2e8f0;
+            }}
+
+            .comparison-card h4 {{
+                color: #2d3748;
+                margin-bottom: 15px;
+                font-size: 1.1rem;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 10px;
+            }}
+
+            .metric-improvement {{
+                font-size: 1rem;
+                font-weight: 600;
+                margin-left: 5px;
+            }}
+
+            .improvement-positive {{
+                color: #48bb78;
+            }}
+
+            .improvement-negative {{
+                color: #e53e3e;
+            }}
+
+            .footer {{ 
+                text-align: center; 
+                padding: 30px; 
+                background: linear-gradient(135deg, #f8fafc, #ffffff);
+                color: #64748b;
+                font-size: 0.9rem;
+                border-top: 1px solid #e2e8f0;
+            }}
+
+            .footer strong {{
+                color: #667eea;
+            }}
+
+            @media print {{
+                body {{
+                    background: white;
+                    padding: 0;
+                }}
+                .container {{
+                    box-shadow: none;
+                }}
+                .section {{
+                    break-inside: avoid;
+                }}
+            }}
         </style>
     </head>
     <body>
-        <div class="header">
-            <h1>📊 Rapport d'analyse - {analyse['nom']}</h1>
-            <p>Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
-        </div>
+        <div class="container">
+            <div class="header">
+                <h1>📊 Rapport d'analyse - {analyse['nom']}</h1>
+                <p>Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+            </div>
 
-        <div class="section">
-            <h2>📈 Score de qualité</h2>
-            <div class="score">{analyse['quality_score']:.1f}/100</div>
-            <span class="badge badge-{analyse['quality_badge'].replace('badge-', '')}">{analyse['quality_category']}</span>
-        </div>
+            <div class="section">
+                <div class="section-title">
+                    <span>📈</span> Score de qualité
+                </div>
+                <div class="score-container">
+                    <div class="score">{analyse['quality_score']:.1f}/100</div>
+                    <span class="badge badge-{quality_badge_class}">{analyse['quality_category']}</span>
+                </div>
 
-        <div class="section">
-            <h2>📊 Informations générales</h2>
-            <table>
-                <tr><td>Lignes</td><td>{analyse['total_lignes']:,}</td></tr>
-                <tr><td>Colonnes</td><td>{analyse['total_colonnes']}</td></tr>
-                <tr><td>Mémoire</td><td>{analyse['memoire']:.2f} MB</td></tr>
-                <tr><td>Valeurs manquantes</td><td>{analyse['total_missing']} ({analyse['pct_missing']:.1f}%)</td></tr>
-                <tr><td>Doublons</td><td>{analyse['duplicates']} ({analyse['pct_duplicates']:.1f}%)</td></tr>
-            </table>
-        </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{analyse['total_lignes']:,}</div>
+                        <div class="stat-label">Lignes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{analyse['total_colonnes']}</div>
+                        <div class="stat-label">Colonnes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{analyse['memoire']:.2f}</div>
+                        <div class="stat-label">MB</div>
+                    </div>
+                </div>
 
-        <div class="section">
-            <h2>⚠️ Problèmes détectés</h2>
-            <table>
-                <tr>
-                    <th>Colonne</th>
-                    <th>Problèmes</th>
-                </tr>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{analyse['total_missing']:,}</div>
+                        <div class="stat-label">Valeurs manquantes</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width:{analyse['pct_missing']}%"></div>
+                        </div>
+                        <small>{analyse['pct_missing']:.1f}%</small>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{analyse['duplicates']:,}</div>
+                        <div class="stat-label">Doublons</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width:{analyse['pct_duplicates']}%"></div>
+                        </div>
+                        <small>{analyse['pct_duplicates']:.1f}%</small>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{len(analyse['problem_columns'])}</div>
+                        <div class="stat-label">Problèmes détectés</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <span>📊</span> Types de données
+                </div>
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Nombre</th>
+                        <th>Pourcentage</th>
+                    </tr>
     """
 
-    for prob in analyse['problem_columns'][:10]:
+    for dtype, count in analyse['dtypes_summary'].items():
+        pct = (count / analyse['total_colonnes']) * 100
         html += f"""
-                <tr>
-                    <td><strong>{prob['colonne']}</strong></td>
-                    <td>{', '.join(prob['issues'])}</td>
-                </tr>
+                    <tr>
+                        <td>{dtype}</td>
+                        <td>{count}</td>
+                        <td>{pct:.1f}%</td>
+                    </tr>
         """
 
     html += """
-            </table>
+                </table>
+            </div>
+    """
+
+    # Ajouter les graphiques
+    if fig1_base64:
+        html += f"""
+            <div class="section">
+                <div class="section-title">
+                    <span>🥧</span> Distribution des variables
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{fig1_base64}" class="chart-image" alt="Distribution des variables">
+                </div>
+            </div>
+        """
+
+    if fig2_base64 and analyse['missing_cols']:
+        html += f"""
+            <div class="section">
+                <div class="section-title">
+                    <span>⚠️</span> Top valeurs manquantes
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{fig2_base64}" class="chart-image" alt="Valeurs manquantes">
+                </div>
+            </div>
+        """
+
+    # Section problèmes détectés
+    if analyse['problem_columns']:
+        html += """
+            <div class="section">
+                <div class="section-title">
+                    <span>⚠️</span> Problèmes détectés
+                </div>
+                <table>
+                    <tr>
+                        <th>Colonne</th>
+                        <th>Problèmes</th>
+                    </tr>
+        """
+
+        for prob in analyse['problem_columns'][:15]:
+            html += f"""
+                    <tr>
+                        <td><strong>{prob['colonne']}</strong></td>
+                        <td>{', '.join(prob['issues'])}</td>
+                    </tr>
+            """
+
+        if len(analyse['problem_columns']) > 15:
+            html += f"""
+                    <tr>
+                        <td colspan="2" style="text-align: center; font-style: italic;">
+                            ... et {len(analyse['problem_columns']) - 15} autres problèmes
+                        </td>
+                    </tr>
+            """
+
+        html += """
+                </table>
+            </div>
+        """
+
+    # Section comparaison (si disponible)
+    if comparaison:
+        html += f"""
+            <div class="section">
+                <div class="section-title">
+                    <span>🔄</span> Comparaison Original vs Nettoyé
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <h4>📋 Dataset Original</h4>
+                        <table style="margin:0;">
+                            <tr><td>Score qualité</td><td><strong>{comparaison['avant']['quality_score']:.1f}</strong></td></tr>
+                            <tr><td>Lignes</td><td>{comparaison['avant']['total_lignes']:,}</td></tr>
+                            <tr><td>Colonnes</td><td>{comparaison['avant']['total_colonnes']}</td></tr>
+                            <tr><td>Valeurs manquantes</td><td>{comparaison['avant']['total_missing']} ({comparaison['avant']['pct_missing']:.1f}%)</td></tr>
+                            <tr><td>Doublons</td><td>{comparaison['avant']['duplicates']} ({comparaison['avant']['pct_duplicates']:.1f}%)</td></tr>
+                            <tr><td>Problèmes</td><td>{len(comparaison['avant']['problem_columns'])}</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="comparison-card">
+                        <h4>✨ Dataset Nettoyé</h4>
+                        <table style="margin:0;">
+                            <tr><td>Score qualité</td><td><strong>{comparaison['apres']['quality_score']:.1f}</strong></td></tr>
+                            <tr><td>Lignes</td><td>{comparaison['apres']['total_lignes']:,}</td></tr>
+                            <tr><td>Colonnes</td><td>{comparaison['apres']['total_colonnes']}</td></tr>
+                            <tr><td>Valeurs manquantes</td><td>{comparaison['apres']['total_missing']} ({comparaison['apres']['pct_missing']:.1f}%)</td></tr>
+                            <tr><td>Doublons</td><td>{comparaison['apres']['duplicates']} ({comparaison['apres']['pct_duplicates']:.1f}%)</td></tr>
+                            <tr><td>Problèmes</td><td>{len(comparaison['apres']['problem_columns'])}</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; padding:20px; background:#f8fafc; border-radius:15px;">
+                    <h4 style="margin-bottom:15px;">📊 Bilan du nettoyage</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">{comparaison['amelioration_score']:+.1f}</div>
+                            <div class="stat-label">Amélioration score</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">{comparaison['reduction_lignes']}</div>
+                            <div class="stat-label">Lignes supprimées</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">{comparaison['reduction_missing']}</div>
+                            <div class="stat-label">Manquantes en moins</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">{comparaison['reduction_duplicates']}</div>
+                            <div class="stat-label">Doublons supprimés</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">{comparaison['reduction_problemes']:+d}</div>
+                            <div class="stat-label">Problèmes résolus</div>
+                        </div>
+                    </div>
+                </div>
+        """
+
+        if fig4_base64:
+            html += f"""
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <span>📊</span> Évolution de la qualité
+                    </div>
+                    <img src="data:image/png;base64,{fig4_base64}" class="chart-image" alt="Comparaison radar">
+                </div>
+            """
+
+        html += """
+            </div>
+        """
+
+    # Section historique (si disponible)
+    if historique:
+        html += """
+            <div class="section">
+                <div class="section-title">
+                    <span>📜</span> Historique des traitements
+                </div>
+                <table>
+                    <tr>
+                        <th>Étape</th>
+                        <th>Score avant</th>
+                        <th>Score après</th>
+                        <th>Amélioration</th>
+                    </tr>
+        """
+
+        for i, h in enumerate(historique):
+            amelioration = h.get('amelioration', 0)
+            color_class = "improvement-positive" if amelioration > 0 else "improvement-negative" if amelioration < 0 else ""
+            html += f"""
+                    <tr>
+                        <td>{h.get('etape', f'Étape {i + 1}')}</td>
+                        <td>{h.get('score_avant', 0):.1f}</td>
+                        <td>{h.get('score_apres', 0):.1f}</td>
+                        <td class="{color_class}">{amelioration:+.1f}</td>
+                    </tr>
+            """
+
+        html += """
+                </table>
+            </div>
+        """
+
+    html += """
+            <div class="footer">
+                <strong>Data Quality Analyzer v3.0</strong> · Rapport généré automatiquement<br>
+                <span style="opacity: 0.7;">© 2026 - Tous droits réservés</span>
+            </div>
         </div>
     </body>
     </html>
@@ -2324,7 +2922,12 @@ if file_avant:
 
         # --- SECTION : GÉNÉRATION DE RAPPORT ---
         if st.session_state.generate_report:
-            rapport_html = generer_rapport_html(analyse_avant)
+            # Inclure la comparaison si disponible
+            if analyse_apres and comparaison:
+                rapport_html = generer_rapport_html(analyse_avant, comparaison, st.session_state.changes_log)
+            else:
+                rapport_html = generer_rapport_html(analyse_avant)
+
             st.download_button(
                 label="📥 Télécharger rapport HTML",
                 data=rapport_html,
