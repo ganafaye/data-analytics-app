@@ -1,216 +1,105 @@
-# 🚀 Data & Image Analytics Hub
 
-Bienvenue dans **Data & Image Analytics Hub** — une application web interactive pour l’analyse avancée des datasets et des images, avec **détection automatisée de types de variables**, **exploration statistique**, **Analyse en Composantes Principales (ACP/SVD)**, et **visualisation scientifique**.
+# 🚀 Gana's Datalab : Data & Real Estate Analytics Hub
 
-🔗 **App en ligne :**  
+Bienvenue dans **Gana's Datalab** — une plateforme analytique avancée conçue pour l'exploration de données, l'analyse d'images via SVD, et l'étude prédictive du marché immobilier à Dakar.
 
-👉 https://ganafaye-analytics-data.streamlit.app/
-
----
-
-## 📌 Fonctionnalités Principales
-
-### 📊 Analyse de Datasets
-
-L’application analyse des données tabulaires pour :
-
-- 👁️ Détecter automatiquement :
-  - Types de variables (numérique / catégorique / datetime / texte)
-  - Valeurs manquantes
-  - Outliers (valeurs aberrantes)
-- 📈 Fournir des métriques statistiques détaillées
-- 🔍 Préparer les données pour l’ACP
-- 🧠 Explorer les relations entre variables
-
-📌 Exemple de formats supportés :  
-`CSV`, `Excel`, `TSV`, etc.
+🔗 **Accès Live :** [https://ganafaye-analytics-data.streamlit.app/](https://ganafaye-analytics-data.streamlit.app/)
 
 ---
 
-### 🔬 Analyse d’Images et ACP
+## 🛡️ Nouveauté : Sécurité & UI Premium
 
-Pour les **images médicales ou standards** :
+L'application intègre désormais un système d'authentification sécurisé et une interface **Glassmorphism** moderne :
 
-- 📥 Import de fichiers image
-- 🧮 Décomposition matricielle SVD (ACP appliqué à l’image)
-- 🔢 Choix du nombre de composantes principales
-- 🖼 Reconstruction de l’image compressée
-- 📊 Visualisation des résidus et histogrammes
-- 📈 Indicateurs de qualité :
-  - Variance expliquée
-  - PSNR (Peak Signal-to-Noise Ratio)
-  - Matrice différence
+* **Contrôle d'accès :** Restriction par Whitelist d'emails (via Streamlit Secrets).
+* **Interface Intuitive :** Sidebar personnalisée avec menu de connexion escamotable (Popover).
+* **Indicateurs d'état :** Badge de session active avec monitoring "Live" (🟢).
 
 ---
 
-## 🧠 Principe Méthodologique
+## 📌 Fonctionnalités Clés
 
-### 📊 ACP pour les datasets
+### 🏙️ Analyse Immobilière (Dakar)
 
-L’Analyse en Composantes Principales transforme un jeu de variables potentiellement corrélées en un ensemble de composantes non corrélées :
+Module dédié à l'étude du marché local sénégalais :
 
+* **Nettoyage Avancé :** Traitement des valeurs aberrantes (ex: loyers plafonnés à 2M FCFA).
+* **Exploration Statistique :** Visualisation des prix par quartier (Almadies, Plateau, Mamelles, etc.).
+* **Modélisation Prédictive :** Estimation des prix via algorithmes **Random Forest** et **KNN**.
 
----
+### 📊 Analyse de Datasets (Général)
 
-### 🧮 ACP sur Images via SVD
+* **Auto-Détection :** Identification intelligente des types (Numérique, Catégorique, Datetime).
+* **Qualité des Données :** Rapport sur les valeurs manquantes et distribution.
+* **Visualisation Scientifique :** Heatmaps de corrélation et graphiques interactifs Plotly.
 
-Pour une image représentée par une matrice \(X \in \mathbb{R}^{m \times n}\), l’ACP s’appuie sur :
+### 🔬 Traitement d'Images & SVD
 
-\[
-X = U \Sigma V^T
-\]
+Utilisation de la Décomposition en Valeurs Singulières (SVD) pour la compression :
 
-et la reconstruction partielle :
-
-\[
-X_k = U_k \Sigma_k V_k^T
-\]
-
-Les premières composantes capturent l’essentiel de l’information (formes, structures), tandis que les dernières contiennent bruit et petits détails.
-
----
-
-## 🛠️ Technologies Utilisées
-
-| Catégorie | Stack |
-|-----------|-------|
-| Langage | Python 3 |
-| Web App | Streamlit |
-| Data | Pandas, NumPy |
-| ML / DSP | Scikit-Learn, OpenCV |
-| Visualisation | Plotly, Matplotlib |
-| DevOps | GitHub Actions (CI) |
-| Déploiement | Streamlit Community Cloud |
+* **Reconstruction Matricielle :** $X_k = U_k \Sigma_k V_k^T$.
+* **Métriques de Qualité :** Calcul de la variance expliquée et du **PSNR**.
+* **Analyse des Résidus :** Comparaison entre image originale et compressée.
 
 ---
 
-## 📂 Organisation du Répertoire
+## 🛠️ Stack Technique
 
-```
+| Domaine | Technologie |
+| --- | --- |
+| **Framework Web** | Streamlit (Python) |
+| **Data Science** | Pandas, NumPy, Scikit-Learn |
+| **Visualisation** | Plotly, Matplotlib, Seaborn |
+| **Image Processing** | OpenCV |
+| **Sécurité** | Streamlit Secrets (TOML) |
+| **DevOps** | GitHub Actions (CI/CD) |
 
-├── app.py
+---
+
+## 📂 Architecture du Projet
+
+```text
+├── home_app.py              # Point d'entrée principal (Datalab)
+├── auth_utils.py            # Module de sécurité & UI Glassmorphism
 ├── pages/
-│   ├── analyse_data_traitement.py
-│   └── app_acp_v2.py
-├── requirements.txt
-├── README.md
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+│   ├── dakar_immo.py        # Analyse immobilière Dakar
+│   ├── analyse_traitement.py # Exploration de datasets
+│   └── app_acp_v2.py        # SVD & Compression d'images
+├── requirements.txt         # Dépendances Python
+└── README.md                # Documentation
 
-````
-
----
-
-## 🚀 Installation Locale
-
-### 1️⃣ Cloner le dépôt
-
-```bash
-git clone https://github.com/votre-utilisateur/nom-du-depot.git
-cd nom-du-depot
-````
-
-### 2️⃣ Installer les dépendances
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3️⃣ Lancer l’application
-
-```bash
-streamlit run app.py
 ```
 
 ---
 
-## 🔄 Intégration Continue (CI)
+## 🚀 Installation & Test Local
 
-Le workflow GitHub Actions vérifie automatiquement :
+1. **Clonage :**
+```bash
+git clone https://github.com/ganafaye/data-analytics-app.git
+cd data-analytics-app
 
-✔ Installation Python
-✔ Installation des dépendances
-✔ Exécution basique du code
-✔ Import des modules principaux
-
-Extrait du fichier CI (`.github/workflows/ci.yml`) :
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.10
-    - run: pip install -r requirements.txt
-    - run: python -c "import streamlit, pandas, numpy"
 ```
 
----
 
-## 🧪 Déploiement Continu (CD)
+2. **Configuration des secrets (Optionnel pour test local) :**
 
-* L’application se déploie automatiquement avec **Streamlit Community Cloud**
-* À chaque push sur la branche principale :
 
-  * Streamlit reconstruit l’environnement
-  * L’application est redéployée
-  * Pas de configuration supplémentaire requise
 
----
+3. **Lancement :**
+```bash
+streamlit run home_app.py
 
-## 🧾 Rapport de Qualité
+```
 
-Chaque analyse fournit :
 
-* ✔ Indicateurs statistiques
-* ✔ Graphiques interactifs
-* ✔ Préparation de données
-* ✔ Visualisation ACP
-* ✔ Options de téléchargement des résultats
-
----
-
-## 📈 Analyse Illustrée
-
-### Dataset
-
-📊 Détection de types de variables
-📊 Synthèse des statistiques
-📊 Corrélations et relations
-📊 Préparation pour ACP
-
----
-
-### Image
-
-🖼 <img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/df468919-6b7f-402c-aa7f-3510a7cefdfa" />
 
 ---
 
 ## 📄 Auteur
 
-**Gana Faye**
-Master 1 – Système d’Information
-Développeur Python & Data Scientist
+**Gana Faye** *Master en Informatique* Expert en Data Engineering & Systèmes d'Information
 
 📍 Dakar, Sénégal
-
----
-
-## 📜 Licence
-
-Ce projet est distribué sous la licence MIT.
-Voir le fichier `LICENSE` pour plus de détails.
 
 ---
