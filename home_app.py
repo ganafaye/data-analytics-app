@@ -1080,36 +1080,6 @@ st.markdown("""
         </div>
         <h2 class='author-name'>Gana Faye</h2>
         <div class='author-title'>Data Scientist & Passionné par l'IA</div>
-
-        <div class='skills-container'>
-            <span class='skill-tag'>Python</span>
-            <span class='skill-tag'>Streamlit</span>
-            <span class='skill-tag'>Machine Learning</span>
-            <span class='skill-tag'>Computer Vision</span>
-            <span class='skill-tag'>Data Analysis</span>
-            <span class='skill-tag'>SQL</span>
-        </div>
-
-        <div class='author-quote'>
-            <span class='quote-mark'>"</span>
-            Transformer les données en décisions intelligentes, une ligne de code à la fois.
-            <span class='quote-mark'>"</span>
-        </div>
-
-        <div class='social-links'>
-            <a href='#' class='social-link'><span class='social-icon'>📧</span><span class='social-text'>Email</span></a>
-            <a href='#' class='social-link'><span class='social-icon'>💼</span><span class='social-text'>LinkedIn</span></a>
-            <a href='#' class='social-link'><span class='social-icon'>🐙</span><span class='social-text'>GitHub</span></a>
-            <a href='#' class='social-link'><span class='social-icon'>🐦</span><span class='social-text'>Twitter</span></a>
-        </div>
-
-        <div class='author-footer'>
-            <span class='institution'>UCAD - FST</span>
-            <span class='separator'>•</span>
-            <span class='promo'>Promo 2026</span>
-            <span class='separator'>•</span>
-            <span class='promo'>Master 1 SI</span>
-        </div>
     </div>
 """, unsafe_allow_html=True)
 
