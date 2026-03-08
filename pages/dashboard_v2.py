@@ -5,7 +5,17 @@ import plotly.graph_objects as go
 import numpy as np
 from datetime import datetime
 import plotly.subplots as sp
+from auth_utils import is_authorized, apply_custom_style
 
+# Appliquer le style (masquer menu natif)
+apply_custom_style()
+# Vérifier l'autorisation dès le chargement
+if not is_authorized():
+    st.error("🚫 Accès refusé. Vous n'avez pas l'autorisation de consulter cette page directement.")
+    st.info("Veuillez vous identifier sur la page d'accueil avec un email valide.")
+    if st.button("Retour à l'accueil"):
+        st.switch_page("home_app.py")
+    st.stop() # Arrête le script ici !
 # 1. Configuration de la page
 st.set_page_config(
     page_title="HospitAnalytics Sénégal v2.0",

@@ -13,7 +13,17 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler
 from scipy import stats  # IMPORTANT: garder 'stats' pour scipy.stats
 import base64
 import warnings
+from auth_utils import is_authorized, apply_custom_style
 
+# Appliquer le style (masquer menu natif)
+apply_custom_style()
+# Vérifier l'autorisation dès le chargement
+if not is_authorized():
+    st.error("🚫 Accès refusé. Vous n'avez pas l'autorisation de consulter cette page directement.")
+    st.info("Veuillez vous identifier sur la page d'accueil avec un email valide.")
+    if st.button("Retour à l'accueil"):
+        st.switch_page("home_app.py")
+    st.stop() # Arrête le script ici !
 warnings.filterwarnings('ignore')
 
 # Pour le profiling (optionnel)

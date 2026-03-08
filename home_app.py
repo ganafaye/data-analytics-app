@@ -2,7 +2,19 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from auth_utils import apply_custom_style, is_authorized, login_sidebar
 
+# 1. Application du design et masquage du menu natif
+apply_custom_style()
+
+# 2. Gestion de la connexion dans la sidebar
+if not is_authorized():
+    login_sidebar()
+else:
+    st.sidebar.success(f"Connecté en tant que : {st.session_state.get('user_email')}")
+    if st.sidebar.button("Se déconnecter"):
+        st.session_state["is_logged_in"] = False
+        st.rerun()
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
     page_title="Gana's AI & Data HomeLab",
@@ -903,7 +915,10 @@ with col_ia1:
         </div>
     """, unsafe_allow_html=True)
     if st.button("🚀 Lancer Dakar Immo", key="rent_lab", use_container_width=True):
-        st.switch_page("pages/app_prediction_prix_loyer.py")
+        if is_authorized():
+            st.switch_page("pages/app_prediction_prix_loyer.py")
+        else:
+            st.warning("⚠️ Accès restreint. Veuillez vous identifier par email dans la barre latérale.")
 
 with col_ia2:
     st.markdown("""
@@ -921,7 +936,10 @@ with col_ia2:
         </div>
     """, unsafe_allow_html=True)
     if st.button("🩸 Lancer Diabetes Predictor", key="diabetes_lab", use_container_width=True):
-        st.switch_page("pages/app_prediction_diabete.py")
+        if is_authorized():
+            st.switch_page("pages/app_prediction_diabete.py")
+        else:
+            st.warning("⚠️ Cette application nécessite une autorisation par email.")
 
 # --- SECTION 2 : DATA ANALYTICS ---
 st.markdown("""
@@ -950,7 +968,10 @@ with col_ana1:
         </div>
     """, unsafe_allow_html=True)
     if st.button("📊 Lancer Data Quality", key="data_lab", use_container_width=True):
-        st.switch_page("pages/analyse_data_traitement.py")
+        if is_authorized():
+            st.switch_page("pages/analyse_data_traitement.py")
+        else:
+            st.warning("⚠️ Accès réservé aux utilisateurs autorisés.")
 
 with col_ana2:
     st.markdown("""
@@ -968,7 +989,10 @@ with col_ana2:
         </div>
     """, unsafe_allow_html=True)
     if st.button("🔬 Lancer PCA Vision", key="pca_lab", use_container_width=True):
-        st.switch_page("pages/app_acp_v2.py")
+        if is_authorized():
+            st.switch_page("pages/app_acp_v2.py")
+        else:
+            st.warning("⚠️ Veuillez vous connecter pour accéder aux outils d'analyse.")
 
 # --- SECTION 3 : DASHBOARDS ---
 st.markdown("""
@@ -996,7 +1020,10 @@ with col_dash1:
         </div>
     """, unsafe_allow_html=True)
     if st.button("📊 Ouvrir le Dashboard", key="dash_lab", use_container_width=True, help="Lancer Travaux Dashboard"):
-        st.switch_page("pages/dashboard_v2.py")
+        if is_authorized():
+            st.switch_page("pages/dashboard_v2.py")
+        else:
+            st.warning("⚠️ Dashboard sécurisé. Identifiez-vous pour consulter les statistiques.")
 
 # --- SECTION RÉALISATEUR ---
 st.markdown("""
