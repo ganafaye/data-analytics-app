@@ -362,7 +362,7 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Navigation Projets")
 
-    if st.button("🏙️ Dakar Rent AI", use_container_width=True):
+    if st.button("🏙️ Dakar Immo AI", use_container_width=True):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
     if st.button("📊 Data Quality", use_container_width=True):
