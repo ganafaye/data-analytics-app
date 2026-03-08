@@ -5,7 +5,7 @@ from datetime import datetime
 from auth_utils import apply_custom_style, is_authorized, login_sidebar
 apply_custom_style()
 # On place la connexion tout en haut de la page
-login_sidebar()
+#login_sidebar()
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
     page_title="Gana's AI & Data HomeLab",
@@ -746,7 +746,7 @@ with st.sidebar:
             <p>Navigation par domaine</p>
         </div>
     """, unsafe_allow_html=True)
-
+    login_sidebar()
     # Section Navigation
     st.markdown("""
         <div class="sidebar-section">
