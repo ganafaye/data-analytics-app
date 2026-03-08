@@ -728,8 +728,13 @@ with st.sidebar:
         st.switch_page("pages/app_acp_v2.py")
 
     # Application 3 : Dakar Immo AI
-    if st.button("🏠 Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
+    if st.button("🏙️ Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
         st.switch_page("pages/app_prediction_prix_loyer.py")
+
+    # --- NOUVELLE APPLICATION : Diabetes Predictor ---
+    if st.button("🩸 Diabetes Predictor", use_container_width=True, key="sidebar_diabete"):
+        # Assure-toi que le nom du fichier correspond exactement à celui sur GitHub
+        st.switch_page("pages/app_prediction_diabete.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -754,16 +759,14 @@ with st.sidebar:
                 <span>ℹ️</span> Informations
             </div>
             <div style='padding: 0.4rem 0; color: #334155; font-size: 0.85rem;'>
-                <p><strong>Version:</strong> 4.0</p>
-                <p><strong>Mise à jour:</strong> Mars 2026</p>
+                <p><strong>Version:</strong> 4.1</p> <p><strong>Mise à jour:</strong> Mars 2026</p>
                 <p><strong>Auteur:</strong> Gana Faye</p>
             </div>
             <div style='display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem;'>
                 <span class='sidebar-badge'>Python</span>
                 <span class='sidebar-badge'>Streamlit</span>
                 <span class='sidebar-badge'>ML</span>
-                <span class='sidebar-badge'>Dashboard</span>
-            </div>
+                <span class='sidebar-badge'>HealthTech</span> </div>
         </div>
     """, unsafe_allow_html=True)
 
