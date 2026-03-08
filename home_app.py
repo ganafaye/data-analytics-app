@@ -1049,7 +1049,7 @@ with col3:
     """, unsafe_allow_html=True)
 
     if st.button("🏠 Lancer Dakar Rent AI", key="btn_rent", use_container_width=True):
-        st.switch_page("app_prediction_prix_loyer.py")
+        st.switch_page("pages/app_prediction_prix_loyer.py")
 
 # --- SECTION STATISTIQUES (mise à jour) ---
 st.markdown("""
