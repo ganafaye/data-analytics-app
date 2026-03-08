@@ -1,216 +1,40 @@
-# 🚀 Data & Image Analytics Hub
+# 🚀 Gana Faye - AI & Data Science Portfolio Hub
 
-Bienvenue dans **Data & Image Analytics Hub** — une application web interactive pour l’analyse avancée des datasets et des images, avec **détection automatisée de types de variables**, **exploration statistique**, **Analyse en Composantes Principales (ACP/SVD)**, et **visualisation scientifique**.
+Ce dépôt regroupe l'ensemble de mes travaux académiques, projets personnels et Travaux Pratiques (TP) réalisés durant mon cursus de **Master en Informatique**. C'est une plateforme interactive conçue pour démontrer mes compétences en ingénierie des données et intelligence artificielle.
 
-🔗 **App en ligne :**  
-
-👉 https://ganafaye-analytics-data.streamlit.app/
+🔗 **Accès au Datalab :** [https://gana-data-homelab.streamlit.app//](https://gana-data-homelab.streamlit.app/)
 
 ---
 
-## 📌 Fonctionnalités Principales
+## 📂 Organisation du Hub
 
-### 📊 Analyse de Datasets
+L'application est divisée en plusieurs pôles spécialisés :
 
-L’application analyse des données tabulaires pour :
+### 1. 🏙️ Real Estate Analytics (TP & Projet)
+* **Analyse du marché de Dakar** : Nettoyage de données réelles, gestion des outliers et statistiques descriptives.
+* **Machine Learning** : Modèles de prédiction des loyers utilisant **Random Forest** et **K-Nearest Neighbors (KNN)**.
 
-- 👁️ Détecter automatiquement :
-  - Types de variables (numérique / catégorique / datetime / texte)
-  - Valeurs manquantes
-  - Outliers (valeurs aberrantes)
-- 📈 Fournir des métriques statistiques détaillées
-- 🔍 Préparer les données pour l’ACP
-- 🧠 Explorer les relations entre variables
+### 2. 🔬 Vision par Ordinateur (TP Traitement d'Image)
+* **Algorithmique** : Implémentation de la **SVD (Singular Value Decomposition)** pour la compression d'images.
+* **Analyse de performance** : Calcul de la variance expliquée et du PSNR pour évaluer la reconstruction.
 
-📌 Exemple de formats supportés :  
-`CSV`, `Excel`, `TSV`, etc.
-
----
-
-### 🔬 Analyse d’Images et ACP
-
-Pour les **images médicales ou standards** :
-
-- 📥 Import de fichiers image
-- 🧮 Décomposition matricielle SVD (ACP appliqué à l’image)
-- 🔢 Choix du nombre de composantes principales
-- 🖼 Reconstruction de l’image compressée
-- 📊 Visualisation des résidus et histogrammes
-- 📈 Indicateurs de qualité :
-  - Variance expliquée
-  - PSNR (Peak Signal-to-Noise Ratio)
-  - Matrice différence
+### 3. 📊 Data Engineering & Analytics (Outils)
+* **Exploration automatique** : Détection de types, analyse de corrélation et préparation de datasets pour l'ACP.
+* **Architecture logicielle** : Sécurisation des accès (Auth Center) et déploiement continu via GitHub Actions.
 
 ---
 
-## 🧠 Principe Méthodologique
-
-### 📊 ACP pour les datasets
-
-L’Analyse en Composantes Principales transforme un jeu de variables potentiellement corrélées en un ensemble de composantes non corrélées :
+## 🛠️ Stack Technique & Compétences
 
 
----
 
-### 🧮 ACP sur Images via SVD
-
-Pour une image représentée par une matrice \(X \in \mathbb{R}^{m \times n}\), l’ACP s’appuie sur :
-
-\[
-X = U \Sigma V^T
-\]
-
-et la reconstruction partielle :
-
-\[
-X_k = U_k \Sigma_k V_k^T
-\]
-
-Les premières composantes capturent l’essentiel de l’information (formes, structures), tandis que les dernières contiennent bruit et petits détails.
+* **Langage :** Python (Pandas, Numpy, Scikit-Learn, OpenCV)
+* **Data Viz :** Plotly, Matplotlib, Seaborn
+* **Infrastructure :** Streamlit Cloud, GitHub Actions (CI/CD), Supabase
+* **Sécurité :** Gestion des secrets et contrôle d'accès (RBAC)
 
 ---
 
-## 🛠️ Technologies Utilisées
-
-| Catégorie | Stack |
-|-----------|-------|
-| Langage | Python 3 |
-| Web App | Streamlit |
-| Data | Pandas, NumPy |
-| ML / DSP | Scikit-Learn, OpenCV |
-| Visualisation | Plotly, Matplotlib |
-| DevOps | GitHub Actions (CI) |
-| Déploiement | Streamlit Community Cloud |
-
----
-
-## 📂 Organisation du Répertoire
-
-```
-
-├── app.py
-├── pages/
-│   ├── analyse_data_traitement.py
-│   └── app_acp_v2.py
-├── requirements.txt
-├── README.md
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-
-````
-
----
-
-## 🚀 Installation Locale
-
-### 1️⃣ Cloner le dépôt
-
-```bash
-git clone https://github.com/votre-utilisateur/nom-du-depot.git
-cd nom-du-depot
-````
-
-### 2️⃣ Installer les dépendances
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3️⃣ Lancer l’application
-
-```bash
-streamlit run app.py
-```
-
----
-
-## 🔄 Intégration Continue (CI)
-
-Le workflow GitHub Actions vérifie automatiquement :
-
-✔ Installation Python
-✔ Installation des dépendances
-✔ Exécution basique du code
-✔ Import des modules principaux
-
-Extrait du fichier CI (`.github/workflows/ci.yml`) :
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.10
-    - run: pip install -r requirements.txt
-    - run: python -c "import streamlit, pandas, numpy"
-```
-
----
-
-## 🧪 Déploiement Continu (CD)
-
-* L’application se déploie automatiquement avec **Streamlit Community Cloud**
-* À chaque push sur la branche principale :
-
-  * Streamlit reconstruit l’environnement
-  * L’application est redéployée
-  * Pas de configuration supplémentaire requise
-
----
-
-## 🧾 Rapport de Qualité
-
-Chaque analyse fournit :
-
-* ✔ Indicateurs statistiques
-* ✔ Graphiques interactifs
-* ✔ Préparation de données
-* ✔ Visualisation ACP
-* ✔ Options de téléchargement des résultats
-
----
-
-## 📈 Analyse Illustrée
-
-### Dataset
-
-📊 Détection de types de variables
-📊 Synthèse des statistiques
-📊 Corrélations et relations
-📊 Préparation pour ACP
-
----
-
-### Image
-
-🖼 <img width="1920" height="1048" alt="image" src="https://github.com/user-attachments/assets/df468919-6b7f-402c-aa7f-3510a7cefdfa" />
-
----
-
-## 📄 Auteur
-
-**Gana Faye**
-Master 1 – Système d’Information
-Développeur Python & Data Scientist
-
-📍 Dakar, Sénégal
-
----
-
-## 📜 Licence
-
-Ce projet est distribué sous la licence MIT.
-Voir le fichier `LICENSE` pour plus de détails.
-
----
+## 🛡️ Accès Sécurisé
+Pour protéger les ressources de calcul et les données sensibles, l'accès est restreint. 
+> **Note :** Si vous êtes un recruteur ou un professeur, merci de me contacter pour être ajouté à la Whitelist d'accès.
