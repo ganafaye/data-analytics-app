@@ -35,12 +35,13 @@ st.markdown("""
         --gray-lighter: #e2e8f0;
         --light: #f8fafc;
         --white: #ffffff;
-        --gradient-primary: linear-gradient(135deg, #4361ee, #7209b7);
-        --gradient-accent: linear-gradient(135deg, #f72585, #b5179e);
-        --gradient-success: linear-gradient(135deg, #4cc9f0, #4895ef);
-        --gradient-rent: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047);
-        --gradient-dashboard: linear-gradient(135deg, #f59e0b, #d97706);
-        --gradient-diabetes: linear-gradient(135deg, #e63946, #c91e2c); /* Nouveau dégradé pour l'app diabète */
+
+        /* Dégradés par domaine */
+        --gradient-ia: linear-gradient(135deg, #6d28d9, #8b5cf6);
+        --gradient-analyse: linear-gradient(135deg, #2563eb, #3b82f6);
+        --gradient-dashboard: linear-gradient(135deg, #d97706, #f59e0b);
+        --gradient-immo: linear-gradient(135deg, #059669, #10b981);
+        --gradient-sante: linear-gradient(135deg, #dc2626, #ef4444);
     }
 
     /* ===== MASQUAGE DES ÉLÉMENTS INDÉSIRABLES ===== */
@@ -74,7 +75,7 @@ st.markdown("""
     }
 
     .sidebar-header {
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
         padding: 1.5rem 1.2rem;
         margin: -1rem -1rem 1.2rem -1rem;
         position: relative;
@@ -89,7 +90,7 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: var(--gradient-accent);
+        background: linear-gradient(90deg, #f72585, #b5179e);
         opacity: 0.5;
     }
 
@@ -146,7 +147,7 @@ st.markdown("""
     }
 
     .sidebar-section-title span {
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
         color: var(--white);
         width: 24px;
         height: 24px;
@@ -186,7 +187,7 @@ st.markdown("""
         border-radius: 20px;
         font-size: 0.7rem;
         font-weight: 500;
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
         color: var(--white);
         margin: 0.1rem;
         border: none;
@@ -213,13 +214,13 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 4px;
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
     }
 
     .hero-title {
         font-size: 2.8rem;
         font-weight: 800;
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
@@ -254,45 +255,50 @@ st.markdown("""
         box-shadow: 0 8px 16px rgba(67, 97, 238, 0.1);
     }
 
-    /* ===== CATÉGORIES ===== */
-    .category-header {
+    /* ===== EN-TÊTE DE SECTION PAR DOMAINE ===== */
+    .domain-header {
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin: 2rem 0 1.5rem 0;
-        padding-bottom: 0.8rem;
-        border-bottom: 3px solid var(--gray-lighter);
+        margin: 2.5rem 0 1.5rem 0;
+        padding: 1rem 1.5rem;
+        border-radius: 60px;
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border: 1px solid var(--gray-lighter);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
     }
 
-    .category-icon {
-        font-size: 2.2rem;
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .domain-icon {
+        font-size: 2.5rem;
     }
 
-    .category-title {
+    .domain-title {
         font-size: 1.8rem;
         font-weight: 700;
         color: var(--dark);
         font-family: 'Space Grotesk', sans-serif;
+        flex-grow: 1;
     }
 
-    .category-badge {
-        background: var(--gradient-primary);
+    .domain-badge {
+        background: var(--gradient-ia);
         color: white;
-        padding: 0.3rem 1.2rem;
-        border-radius: 30px;
+        padding: 0.5rem 1.5rem;
+        border-radius: 40px;
         font-size: 0.9rem;
         font-weight: 600;
-        margin-left: 0.5rem;
+        white-space: nowrap;
     }
 
-    .category-badge-app {
-        background: var(--gradient-primary);
+    .domain-badge-ia {
+        background: var(--gradient-ia);
     }
 
-    .category-badge-dash {
+    .domain-badge-analyse {
+        background: var(--gradient-analyse);
+    }
+
+    .domain-badge-dashboard {
         background: var(--gradient-dashboard);
     }
 
@@ -314,58 +320,44 @@ st.markdown("""
         position: absolute;
         top: 0;
         left: 0;
-        width: 3px;
+        width: 4px;
         height: 100%;
-        background: var(--gradient-primary);
         transition: width 0.3s ease;
     }
 
     .app-card:hover {
-        transform: translateY(-3px);
+        transform: translateY(-5px);
         box-shadow: 0 20px 40px rgba(67, 97, 238, 0.1);
-        border-color: var(--primary-light);
     }
 
     .app-card:hover::before {
-        width: 4px;
+        width: 6px;
     }
 
-    .app-card-rent::before {
-        background: var(--gradient-rent) !important;
+    /* Cartes par domaine */
+    .app-card-ia::before {
+        background: var(--gradient-ia);
     }
 
-    .app-card-diabetes::before {
-        background: var(--gradient-diabetes) !important;
+    .app-card-analyse::before {
+        background: var(--gradient-analyse);
     }
 
     .app-card-dashboard::before {
-        background: var(--gradient-dashboard) !important;
+        background: var(--gradient-dashboard);
+    }
+
+    .app-card-immo::before {
+        background: var(--gradient-immo);
+    }
+
+    .app-card-sante::before {
+        background: var(--gradient-sante);
     }
 
     .app-icon {
         font-size: 2.2rem;
         margin-bottom: 0.8rem;
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .app-icon-rent {
-        background: var(--gradient-rent) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-    }
-
-    .app-icon-diabetes {
-        background: var(--gradient-diabetes) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-    }
-
-    .app-icon-dashboard {
-        background: var(--gradient-dashboard) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
     }
 
     .app-title {
@@ -419,24 +411,24 @@ st.markdown("""
         margin-top: 0.6rem;
     }
 
-    .badge-primary {
-        background: var(--gradient-primary);
+    .badge-ia {
+        background: var(--gradient-ia);
     }
 
-    .badge-success {
-        background: var(--gradient-success);
-    }
-
-    .badge-rent {
-        background: var(--gradient-rent);
-    }
-
-    .badge-diabetes {
-        background: var(--gradient-diabetes);
+    .badge-analyse {
+        background: var(--gradient-analyse);
     }
 
     .badge-dashboard {
         background: var(--gradient-dashboard);
+    }
+
+    .badge-immo {
+        background: var(--gradient-immo);
+    }
+
+    .badge-sante {
+        background: var(--gradient-sante);
     }
 
     /* ===== CARTES DE DASHBOARD ===== */
@@ -524,7 +516,7 @@ st.markdown("""
         width: 90px;
         height: 90px;
         margin: 0 auto 0.8rem auto;
-        background: linear-gradient(135deg, #4361ee, #7209b7);
+        background: var(--gradient-ia);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -543,7 +535,7 @@ st.markdown("""
     .author-name {
         font-size: 1.6rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #4361ee, #7209b7);
+        background: var(--gradient-ia);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0.2rem 0 0.1rem 0;
@@ -616,12 +608,12 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 2px;
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
     }
 
     /* ===== BOUTONS ===== */
     .stButton > button {
-        background: var(--gradient-primary);
+        background: var(--gradient-ia);
         color: var(--white);
         border: none;
         border-radius: 20px;
@@ -638,16 +630,20 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
     }
 
+    .btn-analyse > button {
+        background: var(--gradient-analyse) !important;
+    }
+
     .btn-dashboard > button {
         background: var(--gradient-dashboard) !important;
     }
 
-    .btn-rent > button {
-        background: var(--gradient-rent) !important;
+    .btn-immo > button {
+        background: var(--gradient-immo) !important;
     }
 
-    .btn-diabetes > button {
-        background: var(--gradient-diabetes) !important;
+    .btn-sante > button {
+        background: var(--gradient-sante) !important;
     }
 
     /* ===== RESPONSIVE ===== */
@@ -660,6 +656,9 @@ st.markdown("""
         }
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+        .domain-header {
+            flex-wrap: wrap;
         }
     }
     </style>
@@ -719,7 +718,7 @@ with st.sidebar:
     st.markdown("""
         <div class="sidebar-header">
             <h3>🚀 Menu</h3>
-            <p>Navigation et paramètres</p>
+            <p>Navigation par domaine</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -736,29 +735,35 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-    # Section Applications
+    # Section Applications - Intelligence Artificielle
     st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>🚀</span> Applications
+                <span>🧠</span> Intelligence Artificielle
             </div>
     """, unsafe_allow_html=True)
 
-    # Application 1 : Data Quality
-    if st.button("📊 Data Quality Analyzer", use_container_width=True, key="sidebar_data"):
-        st.switch_page("pages/analyse_data_traitement.py")
-
-    # Application 2 : PCA Vision
-    if st.button("🔬 PCA Vision Pro", use_container_width=True, key="sidebar_pca"):
-        st.switch_page("pages/app_acp_v2.py")
-
-    # Application 3 : Dakar Immo AI
     if st.button("🏙️ Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
-    # Application 4 : Diabetes Predictor
     if st.button("🩸 Diabetes Predictor", use_container_width=True, key="sidebar_diabete"):
         st.switch_page("pages/app_prediction_diabete.py")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Section Applications - Data Analytics
+    st.markdown("""
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">
+                <span>📊</span> Data Analytics
+            </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("📊 Data Quality Analyzer", use_container_width=True, key="sidebar_data"):
+        st.switch_page("pages/analyse_data_traitement.py")
+
+    if st.button("🔬 PCA Vision Pro", use_container_width=True, key="sidebar_pca"):
+        st.switch_page("pages/app_acp_v2.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -766,11 +771,10 @@ with st.sidebar:
     st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>📊</span> Dashboards
+                <span>📈</span> Dashboards
             </div>
     """, unsafe_allow_html=True)
 
-    # Dashboard 1 : Travaux Dashboard
     if st.button("📈 Travaux Dashboard", use_container_width=True, key="sidebar_dash"):
         st.switch_page("pages/dashboard_v2.py")
 
@@ -783,7 +787,7 @@ with st.sidebar:
                 <span>ℹ️</span> Informations
             </div>
             <div style='padding: 0.4rem 0; color: #334155; font-size: 0.85rem;'>
-                <p><strong>Version:</strong> 4.1</p>
+                <p><strong>Version:</strong> 5.0</p>
                 <p><strong>Mise à jour:</strong> Mars 2026</p>
                 <p><strong>Auteur:</strong> Gana Faye</p>
             </div>
@@ -791,7 +795,9 @@ with st.sidebar:
                 <span class='sidebar-badge'>Python</span>
                 <span class='sidebar-badge'>Streamlit</span>
                 <span class='sidebar-badge'>ML</span>
-                <span class='sidebar-badge'>HealthTech</span>
+                <span class='sidebar-badge'>IA</span>
+                <span class='sidebar-badge'>Data</span>
+                <span class='sidebar-badge'>Dashboard</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -814,14 +820,14 @@ if 'image_grise' not in st.session_state:
 st.markdown("""
     <div class="hero-section">
         <h1 class="hero-title">🚀 Gana's AI & Data HomeLab</h1>
-        <p class="hero-subtitle">Espace d'expérimentation : Analyse de données, Vision par ordinateur, Machine Learning et Visualisation</p>
+        <p class="hero-subtitle">Espace d'expérimentation : Intelligence Artificielle, Data Analytics, Visualisation et Machine Learning</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
-            <span class='tech-badge'>🐍 Python 3.12</span>
-            <span class='tech-badge'>📊 Streamlit</span>
-            <span class='tech-badge'>🤖 Scikit-learn</span>
-            <span class='tech-badge'>📈 Pandas</span>
-            <span class='tech-badge'>🔬 OpenCV</span>
-            <span class='tech-badge'>📊 Plotly</span>
+            <span class='tech-badge'>🧠 IA</span>
+            <span class='tech-badge'>📊 Data Analytics</span>
+            <span class='tech-badge'>📈 Dashboards</span>
+            <span class='tech-badge'>🤖 ML</span>
+            <span class='tech-badge'>🔬 Computer Vision</span>
+            <span class='tech-badge'>🩸 HealthTech</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
@@ -830,40 +836,39 @@ st.markdown("""
 st.markdown("""
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-number">4</div>
-            <div class="stat-label">Applications</div>
+            <div class="stat-number">2</div>
+            <div class="stat-label">IA Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Data Analytics</div>
         </div>
         <div class="stat-card">
             <div class="stat-number">1</div>
             <div class="stat-label">Dashboard</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">40+</div>
+            <div class="stat-number">50+</div>
             <div class="stat-label">Fonctionnalités</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">15+</div>
-            <div class="stat-label">Types de fichiers</div>
-        </div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- SECTION APPLICATIONS ---
+# --- SECTION 1 : INTELLIGENCE ARTIFICIELLE ---
 st.markdown("""
-    <div class="category-header">
-        <span class="category-icon">⚡</span>
-        <span class="category-title">Applications Interactives</span>
-        <span class="category-badge category-badge-app">4 apps</span>
+    <div class="domain-header">
+        <span class="domain-icon">🧠</span>
+        <span class="domain-title">Intelligence Artificielle & Machine Learning</span>
+        <span class="domain-badge domain-badge-ia">2 applications</span>
     </div>
 """, unsafe_allow_html=True)
 
-# Passage à 4 colonnes pour accueillir la nouvelle application
-col1, col2, col3, col4 = st.columns(4)
+col_ia1, col_ia2 = st.columns(2)
 
-with col1:
+with col_ia1:
     st.markdown("""
-        <div class='app-card app-card-rent'>
-            <div class='app-icon app-icon-rent'>🏙️</div>
+        <div class='app-card app-card-immo'>
+            <div class='app-icon'>🏙️</div>
             <h2 class='app-title'>Dakar Immo AI</h2>
             <p class='app-description'>Prédiction intelligente des loyers à Dakar basée sur Random Forest avec visualisations interactives et analyse de marché.</p>
             <ul class='feature-list'>
@@ -872,15 +877,44 @@ with col1:
                 <li>Matrice Surface × Chambres</li>
                 <li>Comparaison des options</li>
             </ul>
-            <span class='app-badge badge-rent'>🏠 Immobilier</span>
+            <span class='app-badge badge-immo'>🏠 Immobilier</span>
         </div>
     """, unsafe_allow_html=True)
     if st.button("🚀 Lancer Dakar Immo", key="rent_lab", use_container_width=True):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
-with col2:
+with col_ia2:
     st.markdown("""
-        <div class='app-card'>
+        <div class='app-card app-card-sante'>
+            <div class='app-icon'>🩸</div>
+            <h2 class='app-title'>Diabetes Predictor</h2>
+            <p class='app-description'>Prédiction du risque de diabète basée sur les données cliniques avec algorithmes de machine learning.</p>
+            <ul class='feature-list'>
+                <li>Prédiction en temps réel</li>
+                <li>Analyse des facteurs de risque</li>
+                <li>Interprétation des résultats</li>
+                <li>Recommandations personnalisées</li>
+            </ul>
+            <span class='app-badge badge-sante'>🩸 Santé</span>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("🩸 Lancer Diabetes Predictor", key="diabetes_lab", use_container_width=True):
+        st.switch_page("pages/app_prediction_diabete.py")
+
+# --- SECTION 2 : DATA ANALYTICS ---
+st.markdown("""
+    <div class="domain-header">
+        <span class="domain-icon">📊</span>
+        <span class="domain-title">Data Analytics & Traitement</span>
+        <span class="domain-badge domain-badge-analyse">2 applications</span>
+    </div>
+""", unsafe_allow_html=True)
+
+col_ana1, col_ana2 = st.columns(2)
+
+with col_ana1:
+    st.markdown("""
+        <div class='app-card app-card-analyse'>
             <div class='app-icon'>📊</div>
             <h2 class='app-title'>Data Quality Analyzer</h2>
             <p class='app-description'>Analyse complète de la qualité des données avec détection automatique des problèmes et suggestions de nettoyage.</p>
@@ -890,15 +924,15 @@ with col2:
                 <li>Matrice de corrélation</li>
                 <li>Recommandations ML</li>
             </ul>
-            <span class='app-badge badge-primary'>📈 Data Science</span>
+            <span class='app-badge badge-analyse'>📈 Data Science</span>
         </div>
     """, unsafe_allow_html=True)
     if st.button("📊 Lancer Data Quality", key="data_lab", use_container_width=True):
         st.switch_page("pages/analyse_data_traitement.py")
 
-with col3:
+with col_ana2:
     st.markdown("""
-        <div class='app-card'>
+        <div class='app-card app-card-analyse'>
             <div class='app-icon'>🔬</div>
             <h2 class='app-title'>PCA Vision Pro</h2>
             <p class='app-description'>Analyse d'images par décomposition en composantes principales avec visualisation de la reconstruction.</p>
@@ -908,40 +942,22 @@ with col3:
                 <li>Reconstruction progressive</li>
                 <li>Tests multi-niveaux</li>
             </ul>
-            <span class='app-badge badge-success'>👁️ Computer Vision</span>
+            <span class='app-badge badge-analyse'>👁️ Computer Vision</span>
         </div>
     """, unsafe_allow_html=True)
     if st.button("🔬 Lancer PCA Vision", key="pca_lab", use_container_width=True):
         st.switch_page("pages/app_acp_v2.py")
 
-with col4:
-    st.markdown("""
-        <div class='app-card app-card-diabetes'>
-            <div class='app-icon app-icon-diabetes'>🩸</div>
-            <h2 class='app-title'>Diabetes Predictor</h2>
-            <p class='app-description'>Prédiction du risque de diabète basée sur les données cliniques avec algorithmes de machine learning.</p>
-            <ul class='feature-list'>
-                <li>Prédiction en temps réel</li>
-                <li>Analyse des facteurs de risque</li>
-                <li>Interprétation des résultats</li>
-                <li>Recommandations personnalisées</li>
-            </ul>
-            <span class='app-badge badge-diabetes'>🩸 Santé</span>
-        </div>
-    """, unsafe_allow_html=True)
-    if st.button("🩸 Lancer Diabetes Predictor", key="diabetes_lab", use_container_width=True):
-        st.switch_page("pages/app_prediction_diabete.py")
-
-# --- SECTION DASHBOARDS ---
+# --- SECTION 3 : DASHBOARDS ---
 st.markdown("""
-    <div class="category-header">
-        <span class="category-icon">📊</span>
-        <span class="category-title">Dashboards & Visualisations</span>
-        <span class="category-badge category-badge-dash">1 dashboard</span>
+    <div class="domain-header">
+        <span class="domain-icon">📈</span>
+        <span class="domain-title">Dashboards & Visualisations</span>
+        <span class="domain-badge domain-badge-dashboard">1 dashboard</span>
     </div>
 """, unsafe_allow_html=True)
 
-col_dash1, col_dash2, col_dash3, col_dash4 = st.columns(4)
+col_dash1, col_dash2 = st.columns([1, 1])
 
 with col_dash1:
     st.markdown("""
@@ -953,6 +969,7 @@ with col_dash1:
                 <span class='dashboard-tag'>KPIs</span>
                 <span class='dashboard-tag'>Graphiques</span>
                 <span class='dashboard-tag'>Temps réel</span>
+                <span class='dashboard-tag'>Santé</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -967,12 +984,12 @@ st.markdown("""
         </div>
         <h2 class='author-name'>Gana Faye</h2>
         <div class='author-title'>Master 1 - Système d'Information | Data Scientist & Passionné par l'IA</div>
-        <div style='display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;'>
-            <span class='tech-badge'>🐍 Python</span>
-            <span class='tech-badge'>📊 Streamlit</span>
+        <div style='display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;'>
+            <span class='tech-badge'>🧠 IA</span>
+            <span class='tech-badge'>📊 Data</span>
+            <span class='tech-badge'>📈 Dashboard</span>
             <span class='tech-badge'>🤖 ML</span>
-            <span class='tech-badge'>🔬 Computer Vision</span>
-            <span class='tech-badge'>🩸 HealthTech</span>
+            <span class='tech-badge'>🐍 Python</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
@@ -982,6 +999,6 @@ current_year = datetime.now().year
 st.markdown(f"""
     <div class='footer'>
         <strong>🚀 Gana's AI & Data HomeLab</strong> · Conçu avec passion par Gana Faye<br>
-        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 4.1</span>
+        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 5.0</span>
     </div>
 """, unsafe_allow_html=True)
