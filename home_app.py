@@ -1001,7 +1001,7 @@ with col1:
             <p class='app-description'>Prédiction des loyers à Dakar via <b>Random Forest (R² = 55%)</b>.</p>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("Lancer Dakar Rent", key="rent_lab"):
+    if st.button("Lancer Dakar Immo prédiction", key="rent_lab"):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
 with col2:

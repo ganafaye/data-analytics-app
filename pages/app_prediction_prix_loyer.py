@@ -15,6 +15,45 @@ st.set_page_config(
 )
 
 # --- STYLE CSS PERSONNALISÉ AVEC AMÉLIORATIONS ---
+import streamlit as st
+
+st.markdown("""
+    <style>
+    /* 1. Masquer la liste des fichiers bruts en haut du sidebar */
+    [data-testid="stSidebarNav"] {
+        display: none !important;
+    }
+
+    /* 2. Styliser l'icône d'ouverture/fermeture (Toggle) */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        background: rgba(67, 97, 238, 0.1) !important;
+        border: 1px solid rgba(67, 97, 238, 0.2) !important;
+        border-radius: 10px !important;
+        color: #4361ee !important;
+        transition: all 0.3s ease;
+    }
+
+    button[data-testid="stBaseButton-headerNoPadding"]:hover {
+        background: #4361ee !important;
+        color: white !important;
+        transform: scale(1.1);
+    }
+
+    /* 3. Style pour le titre du Lab dans la sidebar */
+    .nav-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4361ee, #7209b7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding: 1rem 0;
+        text-align: center;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 1rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -313,7 +352,24 @@ st.markdown("""
 
     </style>
     """, unsafe_allow_html=True)
+with st.sidebar:
+    st.markdown('<div class="nav-title">🚀 Gana\'s HomeLab</div>', unsafe_allow_html=True)
 
+    # Liens de navigation manuels avec switch_page
+    if st.button("🏠 Retour à l'Accueil", use_container_width=True):
+        st.switch_page("home_app.py")
+
+    st.markdown("---")
+    st.caption("Navigation Projets")
+
+    if st.button("🏙️ Dakar Rent AI", use_container_width=True):
+        st.switch_page("pages/app_prediction_prix_loyer.py")
+
+    if st.button("📊 Data Quality", use_container_width=True):
+        st.switch_page("pages/analyse_data_traitement.py")
+
+    if st.button("🔬 PCA Vision", use_container_width=True):
+        st.switch_page("pages/app_acp_v2.py")
 
 # --- CHARGEMENT DU MODÈLE ---
 @st.cache_resource
