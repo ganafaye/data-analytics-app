@@ -1048,7 +1048,7 @@ with col3:
         </div>
     """, unsafe_allow_html=True)
 
-    if st.button("🏠 Lancer Dakar Rent AI", key="btn_rent", use_container_width=True):
+    if st.button("🏠 Lancer Dakar immo AI", key="btn_rent", use_container_width=True):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
 # --- SECTION STATISTIQUES (mise à jour) ---
