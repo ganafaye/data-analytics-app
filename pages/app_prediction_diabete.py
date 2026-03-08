@@ -83,6 +83,13 @@ st.markdown("""
             }
         </style>
     """, unsafe_allow_html=True)
+with st.sidebar:
+    st.markdown('<div class="nav-title">🚀 Gana\'s HomeLab</div>', unsafe_allow_html=True)
+
+    # Liens de navigation manuels avec switch_page
+    if st.button("🏠 Retour à l'Accueil", use_container_width=True):
+        st.switch_page("home_app.py")
+
 # --- STYLE CSS PERSONNALISÉ ---
 st.markdown("""
     <style>
