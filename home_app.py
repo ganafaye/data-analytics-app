@@ -3,9 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from auth_utils import apply_custom_style, is_authorized, login_header
-
 apply_custom_style()
-
 # On place la connexion tout en haut de la page
 login_header()
 # --- CONFIGURATION DE LA PAGE ---
