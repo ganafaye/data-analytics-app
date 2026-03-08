@@ -7,6 +7,23 @@ from plotly.subplots import make_subplots
 import io
 import re
 from datetime import datetime
+# NOUVEAUX IMPORTS - CORRECTION
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler
+from scipy import stats  # IMPORTANT: garder 'stats' pour scipy.stats
+import base64
+import warnings
+
+warnings.filterwarnings('ignore')
+
+# Pour le profiling (optionnel)
+try:
+    from ydata_profiling import ProfileReport
+    import streamlit.components.v1 as components
+
+    PROFILING_AVAILABLE = True
+except ImportError:
+    PROFILING_AVAILABLE = False
 
 # Configuration de la page
 st.set_page_config(
@@ -15,6 +32,70 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# ============================================================
+# INITIALISATION COMPLÈTE DE SESSION STATE (AJOUT IMPORTANT)
+# ============================================================
+
+# Variables de contrôle
+if 'apply_cleaning' not in st.session_state:
+    st.session_state.apply_cleaning = False
+if 'generate_report' not in st.session_state:
+    st.session_state.generate_report = False
+
+# Variables pour les données nettoyées
+if 'df_avant_cleaned' not in st.session_state:
+    st.session_state.df_avant_cleaned = None
+if 'changes_log' not in st.session_state:
+    st.session_state.changes_log = []
+
+# Variables pour les options de nettoyage
+if 'clean_names' not in st.session_state:
+    st.session_state.clean_names = False
+if 'missing_strategy' not in st.session_state:
+    st.session_state.missing_strategy = "Aucun"
+if 'encoding_strategy' not in st.session_state:
+    st.session_state.encoding_strategy = "Aucun"
+if 'detect_outliers' not in st.session_state:
+    st.session_state.detect_outliers = False
+if 'outlier_contamination' not in st.session_state:  # AJOUT CRITIQUE
+    st.session_state.outlier_contamination = 0.1
+if 'standardize_method' not in st.session_state:
+    st.session_state.standardize_method = "Aucun"
+
+# Variables pour l'analyse avancée
+if 'show_correlation' not in st.session_state:
+    st.session_state.show_correlation = True
+if 'corr_threshold' not in st.session_state:
+    st.session_state.corr_threshold = 0.8
+if 'show_normality' not in st.session_state:
+    st.session_state.show_normality = False
+if 'show_quick_profile' not in st.session_state:
+    st.session_state.show_quick_profile = True
+if 'show_full_profile' not in st.session_state:
+    st.session_state.show_full_profile = False
+
+# Variables pour le reporting
+if 'generate_html_report' not in st.session_state:
+    st.session_state.generate_html_report = False
+if 'include_history' not in st.session_state:
+    st.session_state.include_history = True
+
+# Variables pour les filtres
+if 'filtre_seuil_missing' not in st.session_state:
+    st.session_state.filtre_seuil_missing = 10
+if 'filtre_outliers' not in st.session_state:
+    st.session_state.filtre_outliers = False
+if 'filtre_constantes' not in st.session_state:
+    st.session_state.filtre_constantes = False
+
+# Variables pour les options existantes
+if 'show_details' not in st.session_state:
+    st.session_state.show_details = True
+if 'threshold_missing' not in st.session_state:
+    st.session_state.threshold_missing = 10
+if 'show_problem_details' not in st.session_state:
+    st.session_state.show_problem_details = True
 
 # --- STYLE CSS AMÉLIORÉ AVEC SIDEBAR BLANC STYLISÉE ---
 st.markdown("""
@@ -795,6 +876,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 st.markdown("""
     <style>
     /* 1. Cibler le bouton de la Sidebar (Ouverture/Fermeture) */
@@ -844,7 +926,308 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FONCTIONS D'ANALYSE DE DONNÉES (inchangées) ---
+
+# ============================================================
+# NOUVELLES FONCTIONS AJOUTÉES (SANS MODIFIER L'EXISTANT)
+# ============================================================
+
+# --- 1. FONCTIONS DE TRAITEMENT AUTOMATISÉ (DATA CLEANING) ---
+
+def nettoyer_noms_colonnes(df):
+    """
+    Standardise les noms de colonnes :
+    - minuscules
+    - underscores au lieu d'espaces
+    - supprime caractères spéciaux
+    """
+    df_clean = df.copy()
+    nouveau_noms = {}
+    for col in df_clean.columns:
+        # Conversion en minuscules
+        new_col = col.lower().strip()
+        # Remplacer espaces et caractères spéciaux par underscores
+        new_col = re.sub(r'[^a-z0-9]', '_', new_col)
+        # Supprimer les underscores multiples
+        new_col = re.sub(r'_+', '_', new_col)
+        # Supprimer les underscores en début/fin
+        new_col = new_col.strip('_')
+        nouveau_noms[col] = new_col
+
+    df_clean.rename(columns=nouveau_noms, inplace=True)
+    return df_clean, nouveau_noms
+
+
+def imputer_valeurs_manquantes(df, colonnes, methode='moyenne'):
+    """
+    Impute les valeurs manquantes selon la méthode choisie
+    """
+    df_imp = df.copy()
+    stats_imp = {}
+
+    for col in colonnes:
+        if col in df_imp.columns:
+            if methode == 'moyenne' and pd.api.types.is_numeric_dtype(df_imp[col]):
+                valeur = df_imp[col].mean()
+                stats_imp[col] = {'methode': 'moyenne', 'valeur': valeur}
+                df_imp[col].fillna(valeur, inplace=True)
+            elif methode == 'mediane' and pd.api.types.is_numeric_dtype(df_imp[col]):
+                valeur = df_imp[col].median()
+                stats_imp[col] = {'methode': 'médiane', 'valeur': valeur}
+                df_imp[col].fillna(valeur, inplace=True)
+            elif methode == 'mode':
+                valeur = df_imp[col].mode()[0] if not df_imp[col].mode().empty else None
+                if valeur is not None:
+                    stats_imp[col] = {'methode': 'mode', 'valeur': valeur}
+                    df_imp[col].fillna(valeur, inplace=True)
+
+    return df_imp, stats_imp
+
+
+def encoder_variables(df, colonnes, methode='label'):
+    """
+    Encode les variables qualitatives
+    """
+    df_enc = df.copy()
+    encoders = {}
+
+    for col in colonnes:
+        if col in df_enc.columns:
+            if methode == 'label':
+                le = LabelEncoder()
+                df_enc[col + '_encoded'] = le.fit_transform(df_enc[col].astype(str))
+                encoders[col] = le
+            elif methode == 'onehot':
+                dummies = pd.get_dummies(df_enc[col], prefix=col, drop_first=True)
+                df_enc = pd.concat([df_enc, dummies], axis=1)
+                df_enc.drop(col, axis=1, inplace=True)
+
+    return df_enc, encoders
+
+
+def detecter_outliers_multivaries(df, contamination=0.1):
+    """
+    Détection d'outliers multivariés avec Isolation Forest
+    """
+    df_num = df.select_dtypes(include=[np.number])
+
+    if len(df_num.columns) < 2:
+        return pd.Series([False] * len(df))
+
+    iso_forest = IsolationForest(contamination=contamination, random_state=42)
+    outliers = iso_forest.fit_predict(df_num.fillna(df_num.mean()))
+
+    return pd.Series(outliers == -1, index=df.index)
+
+
+def standardiser_donnees(df, colonnes, methode='zscore'):
+    """
+    Standardisation (Z-score) ou Normalisation (MinMax) des variables numériques
+    """
+    df_std = df.copy()
+
+    if colonnes:
+        if methode == 'zscore':
+            scaler = StandardScaler()
+            df_std[colonnes] = scaler.fit_transform(df_std[colonnes])
+        elif methode == 'minmax':
+            scaler = MinMaxScaler()
+            df_std[colonnes] = scaler.fit_transform(df_std[colonnes])
+
+    return df_std
+
+
+# --- 2. FONCTIONS D'ANALYSE STATISTIQUE AVANCÉE ---
+
+def matrice_correlation(df, seuil=0.8):
+    """
+    Calcule et retourne la matrice de corrélation avec identification des fortes corrélations
+    """
+    df_num = df.select_dtypes(include=[np.number])
+
+    if len(df_num.columns) < 2:
+        return None, []
+
+    corr_matrix = df_num.corr()
+
+    # Identifier les paires fortement corrélées
+    high_corr = []
+    for i in range(len(corr_matrix.columns)):
+        for j in range(i + 1, len(corr_matrix.columns)):
+            if abs(corr_matrix.iloc[i, j]) > seuil:
+                high_corr.append({
+                    'col1': corr_matrix.columns[i],
+                    'col2': corr_matrix.columns[j],
+                    'correlation': corr_matrix.iloc[i, j]
+                })
+
+    return corr_matrix, high_corr
+
+
+def test_normalite(df, colonnes, alpha=0.05):
+    """
+    Test de Shapiro-Wilk pour la normalité
+    """
+    results = []
+
+    for col in colonnes:
+        if col in df.columns and pd.api.types.is_numeric_dtype(df[col]):
+            # Échantillonner si trop grand (Shapiro-Wilk max 5000)
+            data = df[col].dropna()
+            if len(data) > 5000:
+                data = data.sample(5000, random_state=42)
+
+            if len(data) >= 3:
+                # CORRECTION: utiliser stats.shapiro (pas stats['shapiro'])
+                statistic, p_value = stats.shapiro(data)
+                normal = p_value > alpha
+                results.append({
+                    'colonne': col,
+                    'statistique': statistic,
+                    'p_value': p_value,
+                    'normal': normal,
+                    'interpretation': 'Normale' if normal else 'Non normale'
+                })
+
+    return results
+
+
+def profil_donnees_rapide(df):
+    """
+    Génère un profil rapide des données
+    """
+    profil = {
+        'lignes': len(df),
+        'colonnes': len(df.columns),
+        'memoire': df.memory_usage(deep=True).sum() / 1024 ** 2,
+        'types': df.dtypes.value_counts().to_dict(),
+        'colonnes_manquantes': df.isnull().any().sum(),
+        'total_manquantes': df.isnull().sum().sum(),
+        'colonnes_constantes': sum(df.nunique() == 1),
+        'colonnes_uniques': sum(df.nunique() == len(df))
+    }
+
+    return profil
+
+
+# --- 3. FONCTIONS DE REPORTING AVANCÉ ---
+
+def generer_rapport_html(analyse, historique=None):
+    """
+    Génère un rapport HTML complet
+    """
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Rapport Data Quality - {analyse['nom']}</title>
+        <style>
+            body {{ font-family: 'Arial', sans-serif; margin: 40px; background: #f8fafc; }}
+            .header {{ background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }}
+            .section {{ background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }}
+            .score {{ font-size: 3rem; font-weight: bold; }}
+            .badge {{ display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; }}
+            .badge-excellent {{ background: #48bb78; color: white; }}
+            .badge-good {{ background: #667eea; color: white; }}
+            .badge-fair {{ background: #ed8936; color: white; }}
+            .badge-poor {{ background: #e53e3e; color: white; }}
+            table {{ width: 100%; border-collapse: collapse; }}
+            th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }}
+            th {{ background: #f7fafc; }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>📊 Rapport d'analyse - {analyse['nom']}</h1>
+            <p>Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+        </div>
+
+        <div class="section">
+            <h2>📈 Score de qualité</h2>
+            <div class="score">{analyse['quality_score']:.1f}/100</div>
+            <span class="badge badge-{analyse['quality_badge'].replace('badge-', '')}">{analyse['quality_category']}</span>
+        </div>
+
+        <div class="section">
+            <h2>📊 Informations générales</h2>
+            <table>
+                <tr><td>Lignes</td><td>{analyse['total_lignes']:,}</td></tr>
+                <tr><td>Colonnes</td><td>{analyse['total_colonnes']}</td></tr>
+                <tr><td>Mémoire</td><td>{analyse['memoire']:.2f} MB</td></tr>
+                <tr><td>Valeurs manquantes</td><td>{analyse['total_missing']} ({analyse['pct_missing']:.1f}%)</td></tr>
+                <tr><td>Doublons</td><td>{analyse['duplicates']} ({analyse['pct_duplicates']:.1f}%)</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>⚠️ Problèmes détectés</h2>
+            <table>
+                <tr>
+                    <th>Colonne</th>
+                    <th>Problèmes</th>
+                </tr>
+    """
+
+    for prob in analyse['problem_columns'][:10]:
+        html += f"""
+                <tr>
+                    <td><strong>{prob['colonne']}</strong></td>
+                    <td>{', '.join(prob['issues'])}</td>
+                </tr>
+        """
+
+    html += """
+            </table>
+        </div>
+    </body>
+    </html>
+    """
+
+    return html
+
+
+def split_view_comparaison(df_avant, df_apres, changes):
+    """
+    Affiche une vue comparative avec mise en évidence des changements
+    """
+    st.markdown("### 🔍 Vue comparative (Avant vs Après)")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**📋 Dataset AVANT**")
+        st.dataframe(df_avant.head(10), use_container_width=True)
+
+    with col2:
+        st.markdown("**✨ Dataset APRÈS**")
+        st.dataframe(df_apres.head(10), use_container_width=True)
+
+    if changes:
+        st.markdown("**📝 Modifications effectuées :**")
+        for change in changes:
+            st.success(f"✅ {change}")
+
+
+def afficher_filtres_variables(analyse):
+    """
+    Affiche des filtres pour les variables problématiques
+    """
+    st.markdown("### 🔍 Filtres rapides")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        seuil_missing = st.slider("Seuil valeurs manquantes (%)", 0, 100, 10, key="filtre_seuil_missing")
+
+    with col2:
+        show_outliers = st.checkbox("Afficher uniquement les colonnes avec outliers", key="filtre_outliers")
+
+    with col3:
+        show_constantes = st.checkbox("Afficher les colonnes constantes", key="filtre_constantes")
+
+    return seuil_missing, show_outliers, show_constantes
+
+
+# --- FONCTIONS D'ANALYSE DE DONNÉES EXISTANTES (inchangées) ---
 def detecter_type_fichier(nom_fichier):
     ext = nom_fichier.split('.')[-1].lower() if '.' in nom_fichier else ''
     types = {
@@ -966,7 +1349,7 @@ def analyser_qualite_dataset(df, nom_dataset="Dataset"):
 
     col_stats = []
     for col in df.columns:
-        stats = {
+        stats_col = {
             'nom': col,
             'type': str(df[col].dtype),
             'classification': 'quantitative' if col in classification['quantitative'] else 'qualitative' if col in
@@ -974,57 +1357,57 @@ def analyser_qualite_dataset(df, nom_dataset="Dataset"):
                                                                                                                 'qualitative'] else 'date',
             'non_nulles': df[col].count(),
             'nulles': df[col].isnull().sum(),
-            'pct_nulles': (df[col].isnull().sum() / total_lignes) * 100,
+            'pct_nulles': (df[col].isnull().sum() / total_lignes) * 100 if total_lignes > 0 else 0,
             'uniques': df[col].nunique(),
-            'pct_uniques': (df[col].nunique() / total_lignes) * 100
+            'pct_uniques': (df[col].nunique() / total_lignes) * 100 if total_lignes > 0 else 0
         }
 
         if col in classification['quantitative']:
-            stats['min'] = df[col].min()
-            stats['max'] = df[col].max()
-            stats['mean'] = df[col].mean()
-            stats['std'] = df[col].std()
-            stats['skew'] = df[col].skew()
+            stats_col['min'] = df[col].min() if not df[col].isnull().all() else None
+            stats_col['max'] = df[col].max() if not df[col].isnull().all() else None
+            stats_col['mean'] = df[col].mean() if not df[col].isnull().all() else None
+            stats_col['std'] = df[col].std() if not df[col].isnull().all() else None
+            stats_col['skew'] = df[col].skew() if not df[col].isnull().all() else None
 
-            Q1 = df[col].quantile(0.25)
-            Q3 = df[col].quantile(0.75)
-            IQR = Q3 - Q1
-            outliers = ((df[col] < (Q1 - 1.5 * IQR)) | (df[col] > (Q3 + 1.5 * IQR))).sum()
-            stats['outliers'] = outliers
-            stats['pct_outliers'] = (outliers / total_lignes) * 100
+            if not df[col].isnull().all():
+                Q1 = df[col].quantile(0.25)
+                Q3 = df[col].quantile(0.75)
+                IQR = Q3 - Q1
+                outliers = ((df[col] < (Q1 - 1.5 * IQR)) | (df[col] > (Q3 + 1.5 * IQR))).sum()
+                stats_col['outliers'] = outliers
+                stats_col['pct_outliers'] = (outliers / total_lignes) * 100 if total_lignes > 0 else 0
 
-        col_stats.append(stats)
+        col_stats.append(stats_col)
 
     missing_values = df.isnull().sum()
     missing_cols = missing_values[missing_values > 0]
     total_missing = missing_values.sum()
-    pct_missing = (total_missing / (total_lignes * total_colonnes)) * 100
+    pct_missing = (total_missing / (total_lignes * total_colonnes)) * 100 if (total_lignes * total_colonnes) > 0 else 0
 
     duplicates = df.duplicated().sum()
-    pct_duplicates = (duplicates / total_lignes) * 100
+    pct_duplicates = (duplicates / total_lignes) * 100 if total_lignes > 0 else 0
 
     problem_columns = []
-    for stats in col_stats:
+    for stats_col in col_stats:
         issues = []
 
-        if ' ' in stats['nom'] or any(c in stats['nom'] for c in '!@#$%^&*()+='):
+        if ' ' in stats_col['nom'] or any(c in stats_col['nom'] for c in '!@#$%^&*()+='):
             issues.append("Nom non standard")
-        if stats['uniques'] == 1:
+        if stats_col['uniques'] == 1:
             issues.append("Constante")
-        if stats['uniques'] == total_lignes:
+        if stats_col['uniques'] == total_lignes:
             issues.append("Potentiel ID")
-        if stats['pct_nulles'] > 30:
-            issues.append(f"{stats['pct_nulles']:.1f}% manquantes")
-        if df[stats['nom']].apply(type).nunique() > 1:
-            issues.append("Types mixtes")
-        if 'outliers' in stats and stats['pct_outliers'] > 5:
-            issues.append(f"{stats['pct_outliers']:.1f}% outliers")
-        if 'skew' in stats and abs(stats['skew']) > 1:
-            issues.append(f"Asymétrie ({stats['skew']:.2f})")
+        if stats_col['pct_nulles'] > 30:
+            issues.append(f"{stats_col['pct_nulles']:.1f}% manquantes")
+        # Vérification simplifiée des types mixtes
+        if 'outliers' in stats_col and stats_col['pct_outliers'] > 5:
+            issues.append(f"{stats_col['pct_outliers']:.1f}% outliers")
+        if 'skew' in stats_col and stats_col['skew'] is not None and abs(stats_col['skew']) > 1:
+            issues.append(f"Asymétrie ({stats_col['skew']:.2f})")
 
         if issues:
             problem_columns.append({
-                'colonne': stats['nom'],
+                'colonne': stats_col['nom'],
                 'issues': issues,
                 'severity': len(issues)
             })
@@ -1121,40 +1504,41 @@ def generer_recommandations_feature_engineering(analyse):
     recommandations = []
     if analyse['classification']['quantitative']:
         for col in analyse['classification']['quantitative'][:5]:
-            stats = next((s for s in analyse['col_stats'] if s['nom'] == col), None)
-            if stats:
-                if stats['std'] > 10:
+            stats_col = next((s for s in analyse['col_stats'] if s['nom'] == col), None)
+            if stats_col:
+                if stats_col['std'] > 10:
                     recommandations.append({
                         'type': 'feature_engineering',
                         'categorie': 'Normalisation',
                         'colonne': col,
                         'technique': 'StandardScaler ou MinMaxScaler',
-                        'raison': f"Grande échelle (std={stats['std']:.2f})",
+                        'raison': f"Grande échelle (std={stats_col['std']:.2f})",
                         'impact': 'Améliore la convergence des modèles',
                         'pour_ACP': True,
                         'priority': 'MOYENNE'
                     })
 
-                if 'pct_outliers' in stats and stats['pct_outliers'] > 5:
+                if 'pct_outliers' in stats_col and stats_col['pct_outliers'] > 5:
                     recommandations.append({
                         'type': 'feature_engineering',
                         'categorie': 'Outliers',
                         'colonne': col,
                         'technique': 'Winsorisation ou transformation logarithmique',
-                        'raison': f"{stats['pct_outliers']:.1f}% d'outliers",
+                        'raison': f"{stats_col['pct_outliers']:.1f}% d'outliers",
                         'impact': 'Réduit l\'influence des valeurs extrêmes',
                         'pour_ACP': True,
                         'priority': 'MOYENNE'
                     })
 
-                if 'skew' in stats and abs(stats['skew']) > 1:
-                    transformation = 'log' if stats['skew'] > 1 else 'square' if stats['skew'] < -1 else 'box-cox'
+                if 'skew' in stats_col and abs(stats_col['skew']) > 1:
+                    transformation = 'log' if stats_col['skew'] > 1 else 'square' if stats_col[
+                                                                                         'skew'] < -1 else 'box-cox'
                     recommandations.append({
                         'type': 'feature_engineering',
                         'categorie': 'Transformation',
                         'colonne': col,
                         'technique': f'Transformation {transformation}',
-                        'raison': f"Asymétrie = {stats['skew']:.2f}",
+                        'raison': f"Asymétrie = {stats_col['skew']:.2f}",
                         'impact': 'Rend la distribution plus normale',
                         'pour_ACP': True,
                         'priority': 'MOYENNE'
@@ -1247,7 +1631,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
+# --- SIDEBAR AMÉLIORÉE AVEC NOUVELLES OPTIONS ---
 with st.sidebar:
     st.markdown("""
         <div class="sidebar-header">
@@ -1284,10 +1668,69 @@ with st.sidebar:
 
     st.markdown("---")
 
-    st.markdown("### ⚙️ Options")
-    show_details = st.checkbox("Afficher les détails par colonne", value=True)
-    threshold_missing = st.slider("Seuil d'alerte valeurs manquantes (%)", 0, 50, 10)
-    show_problem_details = st.checkbox("Afficher les détails des problèmes", value=True)
+    # --- SECTION : OPTIONS DE TRAITEMENT AUTOMATISÉ ---
+    with st.expander("🧹 Options de nettoyage automatique", expanded=False):
+        st.markdown("**🏷️ Noms de colonnes**")
+        clean_names = st.checkbox("Standardiser les noms (minuscules, underscores)", value=False, key="clean_names")
+
+        st.markdown("**📉 Gestion des valeurs manquantes**")
+        missing_strategy = st.radio(
+            "Stratégie d'imputation",
+            ["Aucun", "Supprimer lignes", "Moyenne", "Médiane", "Mode"],
+            key="missing_strategy"
+        )
+
+        st.markdown("**🔄 Encodage des variables qualitatives**")
+        encoding_strategy = st.radio(
+            "Méthode d'encodage",
+            ["Aucun", "Label Encoding", "One-Hot Encoding"],
+            key="encoding_strategy"
+        )
+
+        st.markdown("**📊 Détection d'outliers**")
+        detect_outliers = st.checkbox("Détection multivariée (Isolation Forest)", value=False, key="detect_outliers")
+        if detect_outliers:
+            outlier_contamination = st.slider("Taux de contamination", 0.01, 0.3, 0.1, 0.01,
+                                              key="outlier_contamination")
+
+        st.markdown("**⚖️ Standardisation**")
+        standardize_method = st.radio(
+            "Méthode",
+            ["Aucun", "Z-score", "Min-Max"],
+            key="standardize_method"
+        )
+
+        # CORRECTION: Ne pas modifier st.session_state.apply_cleaning ici
+        if st.button("🚀 Appliquer le nettoyage", key="apply_cleaning_btn"):
+            st.session_state.apply_cleaning = True
+
+    # --- SECTION : ANALYSE STATISTIQUE AVANCÉE ---
+    with st.expander("📈 Analyse avancée", expanded=False):
+        show_correlation = st.checkbox("Afficher matrice de corrélation", value=True, key="show_correlation")
+        if show_correlation:
+            corr_threshold = st.slider("Seuil de corrélation", 0.5, 0.95, 0.8, 0.05, key="corr_threshold")
+
+        show_normality = st.checkbox("Tester la normalité des variables", value=False, key="show_normality")
+        show_quick_profile = st.checkbox("Afficher profil rapide", value=True, key="show_quick_profile")
+
+        if PROFILING_AVAILABLE:
+            show_full_profile = st.checkbox("Générer rapport complet (ydata-profiling)", value=False,
+                                            key="show_full_profile")
+
+    # --- SECTION : REPORTING ---
+    with st.expander("📄 Reporting", expanded=False):
+        generate_html_report = st.checkbox("Générer rapport HTML", value=False, key="generate_html_report")
+        include_history = st.checkbox("Inclure historique dans le rapport", value=True, key="include_history")
+
+        if st.button("📥 Générer rapport maintenant", key="generate_report_btn"):
+            st.session_state.generate_report = True
+
+    st.markdown("---")
+
+    st.markdown("### ⚙️ Options existantes")
+    show_details = st.checkbox("Afficher les détails par colonne", value=True, key="show_details")
+    threshold_missing = st.slider("Seuil d'alerte valeurs manquantes (%)", 0, 50, 10, key="threshold_missing")
+    show_problem_details = st.checkbox("Afficher les détails des problèmes", value=True, key="show_problem_details")
 
 if file_avant:
     df_avant, error_avant = charger_fichier(file_avant)
@@ -1295,6 +1738,87 @@ if file_avant:
     if error_avant:
         st.error(f"Erreur chargement original : {error_avant}")
     else:
+        # CORRECTION: Récupérer les valeurs des widgets
+        clean_names = st.session_state.clean_names
+        missing_strategy = st.session_state.missing_strategy
+        encoding_strategy = st.session_state.encoding_strategy
+        detect_outliers = st.session_state.detect_outliers
+        outlier_contamination = st.session_state.outlier_contamination  # Maintenant cette ligne fonctionne
+        standardize_method = st.session_state.standardize_method
+        show_correlation = st.session_state.show_correlation
+        corr_threshold = st.session_state.corr_threshold
+        show_normality = st.session_state.show_normality
+        show_quick_profile = st.session_state.show_quick_profile
+        show_full_profile = st.session_state.show_full_profile
+        show_details = st.session_state.show_details
+        threshold_missing = st.session_state.threshold_missing
+        show_problem_details = st.session_state.show_problem_details
+
+        # Application du nettoyage automatique si demandé
+        if st.session_state.apply_cleaning:
+            df_avant_original = df_avant.copy()
+            changes_log = []
+
+            # 1. Standardisation des noms
+            if clean_names:
+                df_avant, name_changes = nettoyer_noms_colonnes(df_avant)
+                changes_log.append(f"Noms standardisés : {len(name_changes)} colonnes modifiées")
+
+            # 2. Gestion des valeurs manquantes
+            if missing_strategy != "Aucun":
+                if missing_strategy == "Supprimer lignes":
+                    avant = len(df_avant)
+                    df_avant = df_avant.dropna()
+                    apres = len(df_avant)
+                    if apres < avant:
+                        changes_log.append(f"Lignes supprimées : {avant - apres}")
+                elif missing_strategy in ["Moyenne", "Médiane", "Mode"]:
+                    methode_map = {"Moyenne": "moyenne", "Médiane": "mediane", "Mode": "mode"}
+                    cols_numeriques = df_avant.select_dtypes(include=[np.number]).columns
+                    df_avant, impute_stats = imputer_valeurs_manquantes(df_avant, cols_numeriques,
+                                                                        methode_map[missing_strategy])
+                    if impute_stats:
+                        changes_log.append(f"Imputation {missing_strategy.lower()} : {len(impute_stats)} colonnes")
+
+            # 3. Encodage
+            if encoding_strategy != "Aucun":
+                qualitatives = classifier_variables(df_avant)['qualitative']
+                if qualitatives:
+                    methode = 'label' if encoding_strategy == "Label Encoding" else 'onehot'
+                    df_avant, encoders = encoder_variables(df_avant, qualitatives, methode)
+                    changes_log.append(f"Encodage {encoding_strategy} : {len(qualitatives)} colonnes")
+
+            # 4. Détection d'outliers
+            if detect_outliers:
+                outliers = detecter_outliers_multivaries(df_avant, outlier_contamination)
+                n_outliers = outliers.sum()
+                if n_outliers > 0:
+                    changes_log.append(f"Outliers détectés : {n_outliers} lignes")
+                    # Option pour filtrer les outliers
+                    remove_outliers_checkbox = st.checkbox("Supprimer les outliers détectés", key="remove_outliers")
+                    if remove_outliers_checkbox:
+                        df_avant = df_avant[~outliers]
+                        changes_log.append(f"Outliers supprimés : {n_outliers} lignes")
+
+            # 5. Standardisation
+            if standardize_method != "Aucun":
+                cols_numeriques = df_avant.select_dtypes(include=[np.number]).columns.tolist()
+                if cols_numeriques:
+                    methode = 'zscore' if standardize_method == "Z-score" else 'minmax'
+                    df_avant = standardiser_donnees(df_avant, cols_numeriques, methode)
+                    changes_log.append(f"Standardisation {standardize_method} : {len(cols_numeriques)} colonnes")
+
+            # Afficher les changements
+            if changes_log:
+                with st.expander("📝 Modifications appliquées"):
+                    for change in changes_log:
+                        st.success(change)
+
+            # Sauvegarder dans session state pour comparaison
+            st.session_state.df_avant_cleaned = df_avant
+            st.session_state.changes_log = changes_log
+            st.session_state.apply_cleaning = False
+
         with st.spinner("🔍 Analyse du dataset original..."):
             analyse_avant = analyser_qualite_dataset(df_avant, "Original")
 
@@ -1358,13 +1882,15 @@ if file_avant:
                 </div>
             """, unsafe_allow_html=True)
 
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        # --- TABS ---
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
             "📋 Aperçu général",
             "🔢 Classification variables",
             "🔍 Détails colonnes",
             "⚠️ Problèmes détectés",
             "📈 Visualisations",
-            "💡 Recommandations ML"
+            "💡 Recommandations ML",
+            "📊 Analyse avancée"  # NOUVEAU TAB
         ])
 
         with tab1:
@@ -1411,8 +1937,8 @@ if file_avant:
                 if analyse_avant['classification']['quantitative']:
                     st.markdown(f"**{len(analyse_avant['classification']['quantitative'])} variables**")
                     for col in analyse_avant['classification']['quantitative'][:10]:
-                        stats = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
-                        outliers = f" · {stats['pct_outliers']:.1f}% outliers" if stats and 'pct_outliers' in stats else ""
+                        stats_col = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
+                        outliers = f" · {stats_col['pct_outliers']:.1f}% outliers" if stats_col and 'pct_outliers' in stats_col else ""
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
@@ -1420,7 +1946,7 @@ if file_avant:
                                     <span class='badge-quantitative'>QN</span>
                                 </div>
                                 <div class='variable-stats'>
-                                    {stats['uniques']} valeurs · min={stats['min']:.1f} · max={stats['max']:.1f}{outliers}
+                                    {stats_col['uniques']} valeurs · min={stats_col['min']:.1f} · max={stats_col['max']:.1f}{outliers}
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
@@ -1436,7 +1962,7 @@ if file_avant:
                 if analyse_avant['classification']['qualitative']:
                     st.markdown(f"**{len(analyse_avant['classification']['qualitative'])} variables**")
                     for col in analyse_avant['classification']['qualitative'][:10]:
-                        stats = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
+                        stats_col = next((s for s in analyse_avant['col_stats'] if s['nom'] == col), None)
                         st.markdown(f"""
                             <div class='variable-item'>
                                 <div class='variable-name'>
@@ -1444,7 +1970,7 @@ if file_avant:
                                     <span class='badge-qualitative'>QL</span>
                                 </div>
                                 <div class='variable-stats'>
-                                    {stats['uniques']} catégories · {stats['non_nulles']} non-nulles
+                                    {stats_col['uniques']} catégories · {stats_col['non_nulles']} non-nulles
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
@@ -1485,25 +2011,25 @@ if file_avant:
 
         with tab3:
             if show_details:
-                for stats in analyse_avant['col_stats'][:20]:
-                    with st.expander(f"📊 {stats['nom']} ({stats['type']})"):
+                for stats_col in analyse_avant['col_stats'][:20]:
+                    with st.expander(f"📊 {stats_col['nom']} ({stats_col['type']})"):
                         col_d1, col_d2, col_d3 = st.columns(3)
 
                         with col_d1:
-                            st.metric("Non-nulles", f"{stats['non_nulles']:,}")
-                            st.metric("Nulles", f"{stats['nulles']:,} ({stats['pct_nulles']:.1f}%)")
+                            st.metric("Non-nulles", f"{stats_col['non_nulles']:,}")
+                            st.metric("Nulles", f"{stats_col['nulles']:,} ({stats_col['pct_nulles']:.1f}%)")
 
                         with col_d2:
-                            st.metric("Valeurs uniques", f"{stats['uniques']:,}")
-                            st.metric("Taux unicité", f"{stats['pct_uniques']:.1f}%")
+                            st.metric("Valeurs uniques", f"{stats_col['uniques']:,}")
+                            st.metric("Taux unicité", f"{stats_col['pct_uniques']:.1f}%")
 
                         with col_d3:
-                            if 'min' in stats:
-                                st.metric("Min", f"{stats['min']:.2f}")
-                                st.metric("Max", f"{stats['max']:.2f}")
-                                st.metric("Moyenne", f"{stats['mean']:.2f}")
-                                if 'outliers' in stats:
-                                    st.metric("Outliers", f"{stats['outliers']} ({stats['pct_outliers']:.1f}%)")
+                            if 'min' in stats_col:
+                                st.metric("Min", f"{stats_col['min']:.2f}")
+                                st.metric("Max", f"{stats_col['max']:.2f}")
+                                st.metric("Moyenne", f"{stats_col['mean']:.2f}")
+                                if 'outliers' in stats_col:
+                                    st.metric("Outliers", f"{stats_col['outliers']} ({stats_col['pct_outliers']:.1f}%)")
 
         with tab4:
             if analyse_avant['problem_columns']:
@@ -1612,6 +2138,70 @@ if file_avant:
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
+
+        # --- NOUVEAU TAB : ANALYSE STATISTIQUE AVANCÉE ---
+        with tab7:
+            st.markdown("### 📊 Analyse statistique avancée")
+
+            # Matrice de corrélation
+            if show_correlation:
+                st.markdown("#### 🔗 Matrice de corrélation")
+                corr_matrix, high_corr = matrice_correlation(df_avant, corr_threshold)
+
+                if corr_matrix is not None:
+                    fig_corr = px.imshow(corr_matrix, text_auto=True, aspect="auto",
+                                         color_continuous_scale='RdBu_r')
+                    fig_corr.update_layout(height=600)
+                    st.plotly_chart(fig_corr, use_container_width=True)
+
+                    if high_corr:
+                        st.warning(f"⚠️ {len(high_corr)} paires fortement corrélées (> {corr_threshold})")
+                        for hc in high_corr[:5]:
+                            st.info(f"📊 {hc['col1']} ↔ {hc['col2']} : {hc['correlation']:.2f}")
+                else:
+                    st.info("Pas assez de variables numériques pour la corrélation")
+
+            # Test de normalité
+            if show_normality:
+                st.markdown("#### 📈 Test de normalité (Shapiro-Wilk)")
+                cols_num = df_avant.select_dtypes(include=[np.number]).columns[:10]
+                if len(cols_num) > 0:
+                    norm_results = test_normalite(df_avant, cols_num)
+                    for res in norm_results:
+                        emoji = "✅" if res['normal'] else "❌"
+                        st.write(f"{emoji} **{res['colonne']}** : {res['interpretation']} (p={res['p_value']:.4f})")
+                else:
+                    st.info("Pas de variables numériques pour le test")
+
+            # Profilage rapide
+            if show_quick_profile:
+                st.markdown("#### 📋 Profilage rapide")
+                profil = profil_donnees_rapide(df_avant)
+
+                col_p1, col_p2 = st.columns(2)
+                with col_p1:
+                    st.metric("Colonnes constantes", profil['colonnes_constantes'])
+                    st.metric("Colonnes uniques (ID)", profil['colonnes_uniques'])
+                with col_p2:
+                    st.metric("Colonnes avec manquantes", profil['colonnes_manquantes'])
+                    st.metric("Total valeurs manquantes", profil['total_manquantes'])
+
+            # Profilage complet ydata
+            if show_full_profile and PROFILING_AVAILABLE:
+                st.markdown("#### 📑 Profilage complet")
+                if st.button("Générer le rapport complet", key="generate_full_profile"):
+                    with st.spinner("Génération du rapport en cours..."):
+                        profile = ProfileReport(df_avant, title="Rapport Data Quality")
+                        profile.to_file("rapport_complet.html")
+                        st.success("Rapport généré !")
+                        with open("rapport_complet.html", "r") as f:
+                            html_data = f.read()
+                            st.download_button(
+                                label="📥 Télécharger rapport HTML",
+                                data=html_data,
+                                file_name=f"rapport_complet_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
+                                mime="text/html"
+                            )
 
         if analyse_apres:
             st.markdown("---")
@@ -1732,6 +2322,29 @@ if file_avant:
 
             st.plotly_chart(fig_progress, width='stretch', key="plot_comparison_radar")
 
+        # --- SECTION : GÉNÉRATION DE RAPPORT ---
+        if st.session_state.generate_report:
+            rapport_html = generer_rapport_html(analyse_avant)
+            st.download_button(
+                label="📥 Télécharger rapport HTML",
+                data=rapport_html,
+                file_name=f"rapport_qualite_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
+                mime="text/html"
+            )
+            st.session_state.generate_report = False
+
+        # --- SECTION : RÉSULTAT DU NETTOYAGE AUTOMATIQUE ---
+        if st.session_state.df_avant_cleaned is not None:
+            st.markdown("---")
+            st.markdown("## 🔍 Résultat du nettoyage automatique")
+
+            seuil, show_out, show_const = afficher_filtres_variables(analyse_avant)
+            split_view_comparaison(
+                st.session_state.df_avant_cleaned,
+                df_avant,
+                st.session_state.changes_log
+            )
+
 else:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -1749,9 +2362,9 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown("""K
     <div class='footer'>
-        <strong>Data Quality Analyzer v2.0</strong> · Analyse complète pour Machine Learning · Feature Engineering · Préparation ACP<br>
+        <strong>Data Quality Analyzer v3.0</strong> · Analyse complète pour Machine Learning · Feature Engineering · Préparation ACP · Nettoyage Automatisé<br>
         <span style='opacity: 0.6; font-size: 0.8rem;'>Développé pour l'optimisation des pipelines de données</span>
     </div>
 """, unsafe_allow_html=True)
