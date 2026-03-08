@@ -973,7 +973,7 @@ if 'image_grise' not in st.session_state:
     st.session_state.image_grise = None
 
 # --- BANNIÈRE PRINCIPALE ---
-t.markdown("""
+st.markdown("""
     <div class="hero-section">
         <h1 class="hero-title">🚀 Gana’s AI & Data HomeLab</h1>
         <p class="hero-subtitle">
