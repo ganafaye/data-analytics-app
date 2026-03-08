@@ -1,105 +1,40 @@
+# 🚀 Gana Faye - AI & Data Science Portfolio Hub
 
-# 🚀 Gana's Datalab : Data & Real Estate Analytics Hub
+Ce dépôt regroupe l'ensemble de mes travaux académiques, projets personnels et Travaux Pratiques (TP) réalisés durant mon cursus de **Master en Informatique**. C'est une plateforme interactive conçue pour démontrer mes compétences en ingénierie des données et intelligence artificielle.
 
-Bienvenue dans **Gana's Datalab** — une plateforme analytique avancée conçue pour l'exploration de données, l'analyse d'images via SVD, et l'étude prédictive du marché immobilier à Dakar.
-
-🔗 **Accès Live :** [https://ganafaye-analytics-data.streamlit.app/](https://ganafaye-analytics-data.streamlit.app/)
-
----
-
-## 🛡️ Nouveauté : Sécurité & UI Premium
-
-L'application intègre désormais un système d'authentification sécurisé et une interface **Glassmorphism** moderne :
-
-* **Contrôle d'accès :** Restriction par Whitelist d'emails (via Streamlit Secrets).
-* **Interface Intuitive :** Sidebar personnalisée avec menu de connexion escamotable (Popover).
-* **Indicateurs d'état :** Badge de session active avec monitoring "Live" (🟢).
+🔗 **Accès au Datalab :** [https://ganafaye-analytics-data.streamlit.app/](https://ganafaye-analytics-data.streamlit.app/)
 
 ---
 
-## 📌 Fonctionnalités Clés
+## 📂 Organisation du Hub
 
-### 🏙️ Analyse Immobilière (Dakar)
+L'application est divisée en plusieurs pôles spécialisés :
 
-Module dédié à l'étude du marché local sénégalais :
+### 1. 🏙️ Real Estate Analytics (TP & Projet)
+* **Analyse du marché de Dakar** : Nettoyage de données réelles, gestion des outliers et statistiques descriptives.
+* **Machine Learning** : Modèles de prédiction des loyers utilisant **Random Forest** et **K-Nearest Neighbors (KNN)**.
 
-* **Nettoyage Avancé :** Traitement des valeurs aberrantes (ex: loyers plafonnés à 2M FCFA).
-* **Exploration Statistique :** Visualisation des prix par quartier (Almadies, Plateau, Mamelles, etc.).
-* **Modélisation Prédictive :** Estimation des prix via algorithmes **Random Forest** et **KNN**.
+### 2. 🔬 Vision par Ordinateur (TP Traitement d'Image)
+* **Algorithmique** : Implémentation de la **SVD (Singular Value Decomposition)** pour la compression d'images.
+* **Analyse de performance** : Calcul de la variance expliquée et du PSNR pour évaluer la reconstruction.
 
-### 📊 Analyse de Datasets (Général)
-
-* **Auto-Détection :** Identification intelligente des types (Numérique, Catégorique, Datetime).
-* **Qualité des Données :** Rapport sur les valeurs manquantes et distribution.
-* **Visualisation Scientifique :** Heatmaps de corrélation et graphiques interactifs Plotly.
-
-### 🔬 Traitement d'Images & SVD
-
-Utilisation de la Décomposition en Valeurs Singulières (SVD) pour la compression :
-
-* **Reconstruction Matricielle :** $X_k = U_k \Sigma_k V_k^T$.
-* **Métriques de Qualité :** Calcul de la variance expliquée et du **PSNR**.
-* **Analyse des Résidus :** Comparaison entre image originale et compressée.
+### 3. 📊 Data Engineering & Analytics (Outils)
+* **Exploration automatique** : Détection de types, analyse de corrélation et préparation de datasets pour l'ACP.
+* **Architecture logicielle** : Sécurisation des accès (Auth Center) et déploiement continu via GitHub Actions.
 
 ---
 
-## 🛠️ Stack Technique
+## 🛠️ Stack Technique & Compétences
 
-| Domaine | Technologie |
-| --- | --- |
-| **Framework Web** | Streamlit (Python) |
-| **Data Science** | Pandas, NumPy, Scikit-Learn |
-| **Visualisation** | Plotly, Matplotlib, Seaborn |
-| **Image Processing** | OpenCV |
-| **Sécurité** | Streamlit Secrets (TOML) |
-| **DevOps** | GitHub Actions (CI/CD) |
+
+
+* **Langage :** Python (Pandas, Numpy, Scikit-Learn, OpenCV)
+* **Data Viz :** Plotly, Matplotlib, Seaborn
+* **Infrastructure :** Streamlit Cloud, GitHub Actions (CI/CD), Supabase
+* **Sécurité :** Gestion des secrets et contrôle d'accès (RBAC)
 
 ---
 
-## 📂 Architecture du Projet
-
-```text
-├── home_app.py              # Point d'entrée principal (Datalab)
-├── auth_utils.py            # Module de sécurité & UI Glassmorphism
-├── pages/
-│   ├── dakar_immo.py        # Analyse immobilière Dakar
-│   ├── analyse_traitement.py # Exploration de datasets
-│   └── app_acp_v2.py        # SVD & Compression d'images
-├── requirements.txt         # Dépendances Python
-└── README.md                # Documentation
-
-```
-
----
-
-## 🚀 Installation & Test Local
-
-1. **Clonage :**
-```bash
-git clone https://github.com/ganafaye/data-analytics-app.git
-cd data-analytics-app
-
-```
-
-
-2. **Configuration des secrets (Optionnel pour test local) :**
-
-
-
-3. **Lancement :**
-```bash
-streamlit run home_app.py
-
-```
-
-
-
----
-
-## 📄 Auteur
-
-**Gana Faye** *Master en Informatique* Expert en Data Engineering & Systèmes d'Information
-
-📍 Dakar, Sénégal
-
----
+## 🛡️ Accès Sécurisé
+Pour protéger les ressources de calcul et les données sensibles, l'accès est restreint. 
+> **Note :** Si vous êtes un recruteur ou un professeur, merci de me contacter pour être ajouté à la Whitelist d'accès.
