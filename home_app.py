@@ -5,7 +5,7 @@ from datetime import datetime
 
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
-    page_title="Data & Image Analytics Hub | Gana Faye",
+    page_title="Gana's AI & Data HomeLab",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -38,7 +38,8 @@ st.markdown("""
         --gradient-primary: linear-gradient(135deg, #4361ee, #7209b7);
         --gradient-accent: linear-gradient(135deg, #f72585, #b5179e);
         --gradient-success: linear-gradient(135deg, #4cc9f0, #4895ef);
-        --gradient-rent: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047); /* Nouveau dégradé pour l'app immo */
+        --gradient-rent: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047);
+        --gradient-dashboard: linear-gradient(135deg, #f59e0b, #d97706);
     }
 
     /* ===== MASQUAGE DES ÉLÉMENTS INDÉSIRABLES ===== */
@@ -191,70 +192,6 @@ st.markdown("""
         box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
     }
 
-    section[data-testid="stSidebar"] .stSelectbox label {
-        color: var(--dark) !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
-    }
-
-    section[data-testid="stSidebar"] .stSelectbox > div > div {
-        background: var(--white) !important;
-        border: 1px solid var(--gray-lighter) !important;
-        border-radius: 12px !important;
-        padding: 0.2rem 0.8rem !important;
-        transition: all 0.3s ease !important;
-    }
-
-    section[data-testid="stSidebar"] .stSelectbox > div > div:hover {
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1) !important;
-    }
-
-    section[data-testid="stSidebar"] .stCheckbox > div {
-        border-radius: 6px !important;
-        padding: 0.2rem !important;
-    }
-
-    section[data-testid="stSidebar"] .stCheckbox > div:hover {
-        background: rgba(67, 97, 238, 0.05) !important;
-    }
-
-    section[data-testid="stSidebar"] .stSlider > div > div > div > div {
-        background: var(--gradient-primary) !important;
-    }
-
-    section[data-testid="stSidebar"] .stButton > button {
-        background: var(--gradient-primary);
-        color: var(--white);
-        border: none;
-        border-radius: 12px;
-        padding: 0.5rem 1rem;
-        font-weight: 500;
-        font-size: 0.85rem;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-    }
-
-    section[data-testid="stSidebar"] .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
-    }
-
-    .sidebar-footer {
-        padding: 0.8rem;
-        margin-top: 1.5rem;
-        text-align: center;
-        border-top: 1px solid var(--gray-lighter);
-        font-size: 0.7rem;
-        color: var(--gray);
-    }
-
-    .sidebar-footer strong {
-        color: var(--primary);
-        font-weight: 600;
-    }
-
     /* ===== BANNIÈRE PRINCIPALE ===== */
     .hero-section {
         background: var(--white);
@@ -316,7 +253,49 @@ st.markdown("""
         box-shadow: 0 8px 16px rgba(67, 97, 238, 0.1);
     }
 
-    /* ===== CARTES DES APPLICATIONS REDIMENSIONNÉES ===== */
+    /* ===== CATÉGORIES ===== */
+    .category-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 2rem 0 1.5rem 0;
+        padding-bottom: 0.8rem;
+        border-bottom: 3px solid var(--gray-lighter);
+    }
+
+    .category-icon {
+        font-size: 2.2rem;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .category-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .category-badge {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 0.3rem 1.2rem;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    .category-badge-app {
+        background: var(--gradient-primary);
+    }
+
+    .category-badge-dash {
+        background: var(--gradient-dashboard);
+    }
+
+    /* ===== CARTES DES APPLICATIONS ===== */
     .app-card {
         background: var(--white);
         padding: 1.2rem;
@@ -354,6 +333,10 @@ st.markdown("""
         background: var(--gradient-rent) !important;
     }
 
+    .app-card-dashboard::before {
+        background: var(--gradient-dashboard) !important;
+    }
+
     .app-icon {
         font-size: 2.2rem;
         margin-bottom: 0.8rem;
@@ -362,8 +345,8 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
     }
 
-    .app-icon-rent {
-        background: var(--gradient-rent) !important;
+    .app-icon-dashboard {
+        background: var(--gradient-dashboard) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
     }
@@ -431,7 +414,77 @@ st.markdown("""
         background: var(--gradient-rent);
     }
 
-    /* ===== SECTION RÉALISATEUR REDIMENSIONNÉE ===== */
+    .badge-dashboard {
+        background: var(--gradient-dashboard);
+    }
+
+    /* ===== CARTES DE DASHBOARD ===== */
+    .dashboard-card {
+        background: linear-gradient(135deg, #ffffff, #fef9e7);
+        padding: 1.2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        border: 1px solid #fed7aa;
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--gradient-dashboard);
+        transition: width 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px rgba(245, 158, 11, 0.1);
+        border-color: #f59e0b;
+    }
+
+    .dashboard-card:hover::before {
+        width: 4px;
+    }
+
+    .dashboard-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+        background: var(--gradient-dashboard);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .dashboard-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #92400e;
+        margin-bottom: 0.6rem;
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .dashboard-meta {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin: 0.5rem 0;
+    }
+
+    .dashboard-tag {
+        background: #fef3c7;
+        color: #92400e;
+        padding: 0.2rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    /* ===== SECTION RÉALISATEUR ===== */
     .author-section {
         background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
         padding: 1.5rem 1.2rem;
@@ -443,27 +496,6 @@ st.markdown("""
         overflow: hidden;
         text-align: center;
         transition: all 0.3s ease;
-    }
-
-    .author-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 80px;
-        background: linear-gradient(135deg, rgba(67, 97, 238, 0.03) 0%, rgba(114, 9, 183, 0.03) 100%);
-        border-radius: 20px 20px 50% 50%;
-    }
-
-    .author-section::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 3px;
-        height: 100%;
-        background: linear-gradient(135deg, #f72585, #b5179e);
     }
 
     .author-avatar {
@@ -482,31 +514,9 @@ st.markdown("""
         z-index: 2;
     }
 
-    .author-avatar:hover {
-        transform: scale(1.05);
-        box-shadow: 0 20px 40px rgba(67, 97, 238, 0.4);
-    }
-
     .author-avatar-icon {
         font-size: 3rem;
         filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
-    }
-
-    .author-badge-container {
-        margin-bottom: 0.6rem;
-    }
-
-    .author-badge {
-        display: inline-block;
-        padding: 0.3rem 1rem;
-        background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
-        color: #4361ee;
-        font-size: 0.7rem;
-        font-weight: 600;
-        border-radius: 30px;
-        border: 1px solid rgba(67, 97, 238, 0.3);
-        backdrop-filter: blur(5px);
-        letter-spacing: 0.5px;
     }
 
     .author-name {
@@ -524,188 +534,16 @@ st.markdown("""
         font-size: 0.9rem;
         margin-bottom: 1.2rem;
         font-weight: 400;
-        position: relative;
-        display: inline-block;
     }
 
-    .author-title::after {
-        content: '';
-        position: absolute;
-        bottom: -6px;
-        left: 25%;
-        width: 50%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #4361ee, #7209b7, transparent);
+    /* ===== STATS CARDS ===== */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
     }
 
-    .author-stats {
-        display: flex;
-        justify-content: space-around;
-        margin: 1.2rem 0;
-        padding: 0.8rem 0;
-        border-top: 1px dashed rgba(67, 97, 238, 0.2);
-        border-bottom: 1px dashed rgba(67, 97, 238, 0.2);
-    }
-
-    .author-stats .stat-item {
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-
-    .author-stats .stat-item:hover {
-        transform: translateY(-3px);
-    }
-
-    .author-stats .stat-number {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #4361ee;
-        line-height: 1;
-    }
-
-    .author-stats .stat-label {
-        font-size: 0.6rem;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: 0.2rem;
-    }
-
-    .skills-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        justify-content: center;
-        margin: 1rem 0;
-    }
-
-    .skill-tag {
-        background: #f1f5f9;
-        color: #334155;
-        padding: 0.2rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 500;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-
-    .skill-tag:hover {
-        background: linear-gradient(135deg, #4361ee, #7209b7);
-        color: white;
-        border-color: transparent;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-    }
-
-    .social-links {
-        display: flex;
-        justify-content: center;
-        gap: 0.6rem;
-        margin: 1.2rem 0;
-        flex-wrap: wrap;
-    }
-
-    .social-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 0.4rem 1rem;
-        border-radius: 30px;
-        background: #f8fafc;
-        color: #334155;
-        text-decoration: none;
-        font-size: 0.8rem;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-
-    .social-link:hover {
-        background: linear-gradient(135deg, #4361ee, #7209b7);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(67, 97, 238, 0.25);
-        border-color: transparent;
-    }
-
-    .social-icon {
-        font-size: 1rem;
-    }
-
-    .social-text {
-        font-weight: 500;
-        font-size: 0.75rem;
-    }
-
-    .author-quote {
-        margin: 1.2rem 0 0.8rem 0;
-        padding: 0.8rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-        border-radius: 16px;
-        border-left: 3px solid #4361ee;
-        color: #475569;
-        font-style: italic;
-        font-size: 0.8rem;
-        line-height: 1.5;
-        position: relative;
-    }
-
-    .quote-mark {
-        color: #4361ee;
-        font-size: 1rem;
-        font-weight: 700;
-        opacity: 0.5;
-        margin: 0 0.2rem;
-    }
-
-    .author-footer {
-        margin-top: 1rem;
-        padding-top: 0.8rem;
-        border-top: 1px solid #e2e8f0;
-        font-size: 0.7rem;
-        color: #64748b;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        flex-wrap: wrap;
-    }
-
-    .institution {
-        font-weight: 500;
-        color: #4361ee;
-    }
-
-    .separator {
-        color: #cbd5e1;
-    }
-
-    .promo {
-        font-weight: 400;
-    }
-
-    /* Responsive pour la section auteur */
-    @media (max-width: 768px) {
-        .author-avatar {
-            width: 70px;
-            height: 70px;
-        }
-
-        .author-avatar-icon {
-            font-size: 2.5rem;
-        }
-
-        .author-name {
-            font-size: 1.4rem;
-        }
-
-        .social-link {
-            padding: 0.3rem 0.8rem;
-            font-size: 0.7rem;
-        }
-    }
-
-    /* ===== STATS CARDS REDIMENSIONNÉES ===== */
     .stat-card {
         background: var(--white);
         padding: 1.2rem;
@@ -760,7 +598,7 @@ st.markdown("""
         background: var(--gradient-primary);
     }
 
-    /* ===== BOUTONS PRINCIPAUX ===== */
+    /* ===== BOUTONS ===== */
     .stButton > button {
         background: var(--gradient-primary);
         color: var(--white);
@@ -779,7 +617,10 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
     }
 
-    /* Bouton spécifique pour l'app immo */
+    .btn-dashboard > button {
+        background: var(--gradient-dashboard) !important;
+    }
+
     .btn-rent > button {
         background: var(--gradient-rent) !important;
     }
@@ -789,48 +630,16 @@ st.markdown("""
         .hero-title {
             font-size: 2rem;
         }
-
         .app-title {
             font-size: 1.2rem;
         }
-
-        .app-card {
-            padding: 1rem;
-        }
-
-        .stat-card {
-            padding: 1rem;
-        }
-
-        .stat-number {
-            font-size: 1.4rem;
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
-/* 1. On garde le header mais on le rend invisible (transparent) */
-    header[data-testid="stHeader"] {
-        background-color: rgba(0,0,0,0) !important;
-        color: transparent !important;
-    }
-
-    /* 2. On masque spécifiquement les boutons de droite (Deploy, Menu, etc.) */
-    header[data-testid="stHeader"] div:first-child > div:nth-child(2) {
-        display: none !important;
-    }
-
-    /* 3. On s'assure que le bouton de la sidebar reste visible et blanc/couleur voulue */
-    button[data-testid="stBaseButton-headerNoPadding"] {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        border-radius: 10px !important;
-        color: white !important; /* Change en 'black' si ton fond est clair */
-    }
-
-    /* 4. On réduit la marge pour que le contenu remonte */
-    .main .block-container {
-        padding-top: 2rem !important;
-    }
-
     </style>
 """, unsafe_allow_html=True)
+
 st.markdown("""
     <style>
     /* 1. Cibler le bouton de la Sidebar (Ouverture/Fermeture) */
@@ -852,7 +661,7 @@ st.markdown("""
     /* 2. Effet au survol (Hover) */
     button[data-testid="stBaseButton-headerNoPadding"]:hover {
         background: rgba(255, 255, 255, 0.2) !important;
-        border: 1px solid #60a5fa !important; /* Bordure bleue comme ton titre */
+        border: 1px solid #60a5fa !important;
         transform: scale(1.1) rotate(5deg) !important;
         box-shadow: 0 0 20px rgba(96, 165, 250, 0.4) !important;
     }
@@ -864,12 +673,12 @@ st.markdown("""
         height: 24px !important;
     }
 
-    /* 4. Ajustement pour que l'icône reste visible même si le header est transparent */
+    /* 4. Ajustement pour que l'icône reste visible */
     header[data-testid="stHeader"] {
         background-color: transparent !important;
     }
 
-    /* Optionnel : Animation d'apparition douce */
+    /* 5. Animation d'apparition douce */
     @keyframes fadeInIcon {
         from { opacity: 0; transform: translateX(-20px); }
         to { opacity: 1; transform: translateX(0); }
@@ -918,28 +727,23 @@ with st.sidebar:
     if st.button("🔬 PCA Vision Pro", use_container_width=True, key="sidebar_pca"):
         st.switch_page("pages/app_acp_v2.py")
 
-    # Application 3 : Dakar Rent AI (NOUVELLE)
+    # Application 3 : Dakar Immo AI
     if st.button("🏠 Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
-    # --- AJOUT DANS LA SIDEBAR (Ligne ~270) ---
-    # Application 4 : Business Dashboard (NOUVELLE)
-    if st.button("📊 Travaux Dashboard", use_container_width=True, key="sidebar_dash"):
-        st.switch_page("pages/dashboard_v2.py")
-
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Section Paramètres
+    # Section Dashboards
     st.markdown("""
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>⚙️</span> Paramètres
+                <span>📊</span> Dashboards
             </div>
     """, unsafe_allow_html=True)
 
-    theme = st.selectbox("Thème", ["Clair", "Sombre"], key="sidebar_theme")
-    notifications = st.checkbox("Notifications", value=True)
-    autosave = st.checkbox("Sauvegarde auto", value=True)
+    # Dashboard 1 : Travaux Dashboard
+    if st.button("📈 Travaux Dashboard", use_container_width=True, key="sidebar_dash"):
+        st.switch_page("pages/dashboard_v2.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -958,7 +762,7 @@ with st.sidebar:
                 <span class='sidebar-badge'>Python</span>
                 <span class='sidebar-badge'>Streamlit</span>
                 <span class='sidebar-badge'>ML</span>
-                <span class='sidebar-badge'>Prédiction Prix loyer immobilier a Dakar </span>
+                <span class='sidebar-badge'>Dashboard</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -966,7 +770,7 @@ with st.sidebar:
     # Footer de la sidebar
     st.markdown("""
         <div class="sidebar-footer">
-            <strong>Data & Image Hub</strong><br>
+            <strong>Gana's AI & Data Lab</strong><br>
             <span style='font-size: 0.6rem;'>© 2026 Gana Faye</span>
         </div>
     """, unsafe_allow_html=True)
@@ -978,95 +782,161 @@ if 'image_grise' not in st.session_state:
     st.session_state.image_grise = None
 
 # --- BANNIÈRE PRINCIPALE ---
-# --- BANNIÈRE PRINCIPALE MISE À JOUR ---
 st.markdown("""
     <div class="hero-section">
         <h1 class="hero-title">🚀 Gana's AI & Data HomeLab</h1>
-        <p class="hero-subtitle">Espace d'expérimentation : Analyse de données, Vision par ordinateur et Machine Learning</p>
+        <p class="hero-subtitle">Espace d'expérimentation : Analyse de données, Vision par ordinateur, Machine Learning et Visualisation</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
             <span class='tech-badge'>🐍 Python 3.12</span>
             <span class='tech-badge'>📊 Streamlit</span>
             <span class='tech-badge'>🤖 Scikit-learn</span>
             <span class='tech-badge'>📈 Pandas</span>
             <span class='tech-badge'>🔬 OpenCV</span>
+            <span class='tech-badge'>📊 Plotly</span>
         </div>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("## ✨ Mes Projets DATA et IA")
+# --- STATISTIQUES GLOBALES ---
+st.markdown("""
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">1</div>
+            <div class="stat-label">Dashboard</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">30+</div>
+            <div class="stat-label">Fonctionnalités</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Types de fichiers</div>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
 
-# Utilisation de 3 colonnes pour un meilleur équilibre visuel
+# --- SECTION APPLICATIONS ---
+st.markdown("""
+    <div class="category-header">
+        <span class="category-icon">⚡</span>
+        <span class="category-title">Applications Interactives</span>
+        <span class="category-badge category-badge-app">3 apps</span>
+    </div>
+""", unsafe_allow_html=True)
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("""
-        <div class='app-card'>
+        <div class='app-card app-card-rent'>
             <div class='app-icon'>🏙️</div>
             <h2 class='app-title'>Dakar Immo AI</h2>
-            <p class='app-description'>Prédiction des loyers à Dakar via <b>Random Forest (R² = 55%)</b>.</p>
+            <p class='app-description'>Prédiction intelligente des loyers à Dakar basée sur Random Forest avec visualisations interactives et analyse de marché.</p>
+            <ul class='feature-list'>
+                <li>Prédiction en temps réel</li>
+                <li>Analyse par quartier</li>
+                <li>Matrice Surface × Chambres</li>
+                <li>Comparaison des options</li>
+            </ul>
+            <span class='app-badge badge-rent'>🏠 Immobilier</span>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("Lancer Dakar Immo prédiction", key="rent_lab"):
+    if st.button("🚀 Lancer Dakar Immo", key="rent_lab", use_container_width=True):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
 with col2:
     st.markdown("""
         <div class='app-card'>
             <div class='app-icon'>📊</div>
-            <h2 class='app-title'>Data Quality</h2>
-            <p class='app-description'>Analyse complète et nettoyage des datasets avant traitement.</p>
+            <h2 class='app-title'>Data Quality Analyzer</h2>
+            <p class='app-description'>Analyse complète de la qualité des données avec détection automatique des problèmes et suggestions de nettoyage.</p>
+            <ul class='feature-list'>
+                <li>Classification des variables</li>
+                <li>Détection des outliers</li>
+                <li>Matrice de corrélation</li>
+                <li>Recommandations ML</li>
+            </ul>
+            <span class='app-badge badge-primary'>📈 Data Science</span>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("Lancer Analyzer", key="data_lab"):
+    if st.button("📊 Lancer Data Quality", key="data_lab", use_container_width=True):
         st.switch_page("pages/analyse_data_traitement.py")
 
 with col3:
     st.markdown("""
         <div class='app-card'>
             <div class='app-icon'>🔬</div>
-            <h2 class='app-title'>PCA Vision</h2>
-            <p class='app-description'>Analyse d'images et réduction de dimensionnalité via l'ACP.</p>
+            <h2 class='app-title'>PCA Vision Pro</h2>
+            <p class='app-description'>Analyse d'images par décomposition en composantes principales avec visualisation de la reconstruction.</p>
+            <ul class='feature-list'>
+                <li>Compression d'images</li>
+                <li>Analyse de variance</li>
+                <li>Reconstruction progressive</li>
+                <li>Tests multi-niveaux</li>
+            </ul>
+            <span class='app-badge badge-success'>👁️ Computer Vision</span>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("Lancer PCA Pro", key="pca_lab"):
+    if st.button("🔬 Lancer PCA Vision", key="pca_lab", use_container_width=True):
         st.switch_page("pages/app_acp_v2.py")
-# --- SECTION STATISTIQUES (mise à jour) ---
+
+# --- SECTION DASHBOARDS ---
 st.markdown("""
-    <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0;'>
-        <div class='stat-card'>
-            <div class='stat-number'>3</div>
-            <div class='stat-label'>Applications</div>
-        </div>
-        <div class='stat-card'>
-            <div class='stat-number'>30+</div>
-            <div class='stat-label'>Fonctionnalités</div>
-        </div>
-        <div class='stat-card'>
-            <div class='stat-number'>15+</div>
-            <div class='stat-label'>Types de fichiers</div>
-        </div>
+    <div class="category-header">
+        <span class="category-icon">📊</span>
+        <span class="category-title">Dashboards & Visualisations</span>
+        <span class="category-badge category-badge-dash">1 dashboard</span>
     </div>
 """, unsafe_allow_html=True)
 
-# --- SECTION RÉALISATEUR COMPLÈTE ---
+col_dash1, col_dash2, col_dash3 = st.columns([1, 1, 1])
+
+with col_dash1:
+    st.markdown("""
+        <div class='dashboard-card'>
+            <div class='dashboard-icon'>📈</div>
+            <h2 class='dashboard-title'>Travaux Dashboard</h2>
+            <p class='app-description'>Tableau de bord interactif pour le suivi et la visualisation des travaux et projets.</p>
+            <div class='dashboard-meta'>
+                <span class='dashboard-tag'>KPIs</span>
+                <span class='dashboard-tag'>Graphiques</span>
+                <span class='dashboard-tag'>Temps réel</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("📊 Ouvrir le Dashboard", key="dash_lab", use_container_width=True, help="Lancer Travaux Dashboard"):
+        st.switch_page("pages/dashboard_v2.py")
+
+# Espaces vides pour aligner
+with col_dash2:
+    st.markdown("""<div style='height: 100%;'></div>""", unsafe_allow_html=True)
+
+with col_dash3:
+    st.markdown("""<div style='height: 100%;'></div>""", unsafe_allow_html=True)
+
+# --- SECTION RÉALISATEUR ---
 st.markdown("""
     <div class='author-section'>
         <div class='author-avatar'>
             <span class='author-avatar-icon'>👨‍🎓</span>
         </div>
-        <div class='author-badge-container'>
-            <span class='author-badge'>Master 1 - Système d'Information</span>
-        </div>
         <h2 class='author-name'>Gana Faye</h2>
-        <div class='author-title'>Data Scientist & Passionné par l'IA</div>
+        <div class='author-title'>Master 1 - Système d'Information | Data Scientist & Passionné par l'IA</div>
+        <div style='display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;'>
+            <span class='tech-badge'>🐍 Python</span>
+            <span class='tech-badge'>📊 Streamlit</span>
+            <span class='tech-badge'>🤖 ML</span>
+            <span class='tech-badge'>🔬 Computer Vision</span>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
-# --- FOOTER AVEC COPYRIGHT DYNAMIQUE ---
+# --- FOOTER ---
 current_year = datetime.now().year
 st.markdown(f"""
     <div class='footer'>
-        <strong>🚀 Data & Image Analytics Hub</strong> · Conçu avec passion par Gana Faye<br>
-        <span style='opacity: 0.7; font-size: 0.7rem;'>© {current_year} - Tous droits réservés · Version 4.0</span>
-    </div>
-""", unsafe_allow_html=True)
+        <strong>🚀 Gana's AI & Data HomeLab</strong> · Conçu avec passion par Gana
