@@ -900,7 +900,7 @@ with col_dash1:
         <div class='dashboard-card'>
             <div class='dashboard-icon'>📈</div>
             <h2 class='dashboard-title'>Travaux Dashboard</h2>
-            <p class='app-description'>Tableau de bord interactif pour le suivi et la visualisation des travaux et projets.</p>
+            <p class='app-description'>Tableau de bord interactif de Pilotage Médical Analyse en temps réel des indicateurs de santé - République du Sénégal.</p>
             <div class='dashboard-meta'>
                 <span class='dashboard-tag'>KPIs</span>
                 <span class='dashboard-tag'>Graphiques</span>
