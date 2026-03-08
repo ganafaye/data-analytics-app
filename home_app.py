@@ -922,6 +922,11 @@ with st.sidebar:
     if st.button("🏠 Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
         st.switch_page("pages/app_prediction_prix_loyer.py")
 
+    # --- AJOUT DANS LA SIDEBAR (Ligne ~270) ---
+    # Application 4 : Business Dashboard (NOUVELLE)
+    if st.button("📊 Travaux Dashboard", use_container_width=True, key="sidebar_dash"):
+        st.switch_page("pages/dashboard_v2.py")
+
     st.markdown("</div>", unsafe_allow_html=True)
 
     # Section Paramètres
