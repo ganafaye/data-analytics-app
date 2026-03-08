@@ -919,7 +919,7 @@ with st.sidebar:
         st.switch_page("pages/app_acp_v2.py")
 
     # Application 3 : Dakar Rent AI (NOUVELLE)
-    if st.button("🏠 Dakar Rent AI", use_container_width=True, key="sidebar_rent"):
+    if st.button("🏠 Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
         st.switch_page("app_prediction_prix_loyer.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
@@ -1036,7 +1036,7 @@ with col3:
     st.markdown("""
         <div class='app-card app-card-rent'>
             <div class='app-icon app-icon-rent'>🏠</div>
-            <h2 class='app-title'>Dakar Rent AI</h2>
+            <h2 class='app-title'>Dakar Immo AI</h2>
             <p class='app-description'>Estimation intelligente des loyers à Dakar basée sur l'IA et l'analyse du marché local.</p>
             <ul class='feature-list'>
                 <li>Prédiction en temps réel</li>
