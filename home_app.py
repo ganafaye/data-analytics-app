@@ -2,19 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from auth_utils import apply_custom_style, is_authorized, login_sidebar
+from auth_utils import apply_custom_style, is_authorized, login_header
 
-# 1. Application du design et masquage du menu natif
 apply_custom_style()
 
-# 2. Gestion de la connexion dans la sidebar
-if not is_authorized():
-    login_sidebar()
-else:
-    st.sidebar.success(f"Connecté en tant que : {st.session_state.get('user_email')}")
-    if st.sidebar.button("Se déconnecter"):
-        st.session_state["is_logged_in"] = False
-        st.rerun()
+# On place la connexion tout en haut de la page
+login_header()
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(
     page_title="Gana's AI & Data HomeLab",
