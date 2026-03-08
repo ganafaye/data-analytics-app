@@ -920,7 +920,7 @@ with st.sidebar:
 
     # Application 3 : Dakar Rent AI (NOUVELLE)
     if st.button("🏠 Dakar Immo AI", use_container_width=True, key="sidebar_rent"):
-        st.switch_page("app_prediction_prix_loyer.py")
+        st.switch_page("pages/app_prediction_prix_loyer.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
