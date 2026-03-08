@@ -38,7 +38,6 @@ st.markdown("""
         --gradient-primary: linear-gradient(135deg, #4361ee, #7209b7);
         --gradient-accent: linear-gradient(135deg, #f72585, #b5179e);
         --gradient-success: linear-gradient(135deg, #4cc9f0, #4895ef);
-        --gradient-rent: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047); /* Nouveau dégradé pour l'app immo */
     }
 
     /* ===== MASQUAGE DES ÉLÉMENTS INDÉSIRABLES ===== */
@@ -350,22 +349,12 @@ st.markdown("""
         width: 4px;
     }
 
-    .app-card-rent::before {
-        background: var(--gradient-rent) !important;
-    }
-
     .app-icon {
         font-size: 2.2rem;
         margin-bottom: 0.8rem;
         background: var(--gradient-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-    }
-
-    .app-icon-rent {
-        background: var(--gradient-rent) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
     }
 
     .app-title {
@@ -425,10 +414,6 @@ st.markdown("""
 
     .badge-success {
         background: var(--gradient-success);
-    }
-
-    .badge-rent {
-        background: var(--gradient-rent);
     }
 
     /* ===== SECTION RÉALISATEUR REDIMENSIONNÉE ===== */
@@ -779,11 +764,6 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
     }
 
-    /* Bouton spécifique pour l'app immo */
-    .btn-rent > button {
-        background: var(--gradient-rent) !important;
-    }
-
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
         .hero-title {
@@ -828,7 +808,7 @@ st.markdown("""
     .main .block-container {
         padding-top: 2rem !important;
     }
-
+    
     </style>
 """, unsafe_allow_html=True)
 st.markdown("""
@@ -899,6 +879,14 @@ with st.sidebar:
                 <span class="sidebar-item-icon">🏠</span>
                 <span>Accueil</span>
             </div>
+            <div class="sidebar-item">
+                <span class="sidebar-item-icon">📊</span>
+                <span>Data Quality Analyzer</span>
+            </div>
+            <div class="sidebar-item">
+                <span class="sidebar-item-icon">🔬</span>
+                <span>PCA Vision Pro</span>
+            </div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -910,17 +898,11 @@ with st.sidebar:
             </div>
     """, unsafe_allow_html=True)
 
-    # Application 1 : Data Quality
-    if st.button("📊 Data Quality Analyzer", use_container_width=True, key="sidebar_data"):
+    if st.button("📊 Lancer Data Quality", use_container_width=True, key="sidebar_data"):
         st.switch_page("pages/analyse_data_traitement.py")
 
-    # Application 2 : PCA Vision
-    if st.button("🔬 PCA Vision Pro", use_container_width=True, key="sidebar_pca"):
+    if st.button("🔬 Lancer PCA Vision", use_container_width=True, key="sidebar_pca"):
         st.switch_page("pages/app_acp_v2.py")
-
-    # Application 3 : Dakar Rent AI (NOUVELLE)
-    if st.button("🏠 Dakar Rent AI", use_container_width=True, key="sidebar_rent"):
-        st.switch_page("app_prediction_prix_loyer.py")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -946,14 +928,13 @@ with st.sidebar:
             </div>
             <div style='padding: 0.4rem 0; color: #334155; font-size: 0.85rem;'>
                 <p><strong>Version:</strong> 4.0</p>
-                <p><strong>Mise à jour:</strong> Mars 2026</p>
+                <p><strong>Mise à jour:</strong> Fév 2026</p>
                 <p><strong>Auteur:</strong> Gana Faye</p>
             </div>
             <div style='display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.4rem;'>
                 <span class='sidebar-badge'>Python</span>
                 <span class='sidebar-badge'>Streamlit</span>
                 <span class='sidebar-badge'>ML</span>
-                <span class='sidebar-badge'>Immo</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -976,7 +957,7 @@ if 'image_grise' not in st.session_state:
 st.markdown("""
     <div class="hero-section">
         <h1 class="hero-title">🚀 Data & Image Analytics Hub</h1>
-        <p class="hero-subtitle">La plateforme ultime pour l'analyse et comparaison de données avant et après nettoyage et d'images</p>
+        <p class="hero-subtitle">La plateforme ultime pour l'analyse et comparaison de données avant et aprés nettoyage et d'images</p>
         <div style='display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem;'>
             <span class='tech-badge'>🐍 Python 3.12</span>
             <span class='tech-badge'>📊 Streamlit</span>
@@ -991,8 +972,7 @@ st.markdown("""
 # --- SECTION DES APPLICATIONS ---
 st.markdown("## ✨ Nos Applications")
 
-# Première ligne : 3 applications (au lieu de 2)
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("""
@@ -1032,43 +1012,6 @@ with col2:
     if st.button("🔬 Lancer PCA Vision Pro", key="btn_pca", use_container_width=True):
         st.switch_page("pages/app_acp_v2.py")
 
-with col3:
-    st.markdown("""
-        <div class='app-card app-card-rent'>
-            <div class='app-icon app-icon-rent'>🏠</div>
-            <h2 class='app-title'>Dakar Rent AI</h2>
-            <p class='app-description'>Estimation intelligente des loyers à Dakar basée sur l'IA et l'analyse du marché local.</p>
-            <ul class='feature-list'>
-                <li>Prédiction en temps réel</li>
-                <li>Analyse par quartier</li>
-                <li>Impact des options</li>
-                <li>Visualisations interactives</li>
-            </ul>
-            <span class='app-badge badge-rent'>🏠 Immobilier intelligent</span>
-        </div>
-    """, unsafe_allow_html=True)
-
-    if st.button("🏠 Lancer Dakar Rent AI", key="btn_rent", use_container_width=True):
-        st.switch_page("app_prediction_prix_loyer.py")
-
-# --- SECTION STATISTIQUES (mise à jour) ---
-st.markdown("""
-    <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0;'>
-        <div class='stat-card'>
-            <div class='stat-number'>3</div>
-            <div class='stat-label'>Applications</div>
-        </div>
-        <div class='stat-card'>
-            <div class='stat-number'>30+</div>
-            <div class='stat-label'>Fonctionnalités</div>
-        </div>
-        <div class='stat-card'>
-            <div class='stat-number'>15+</div>
-            <div class='stat-label'>Types de fichiers</div>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
-
 # --- SECTION RÉALISATEUR COMPLÈTE ---
 st.markdown("""
     <div class='author-section'>
@@ -1081,34 +1024,22 @@ st.markdown("""
         <h2 class='author-name'>Gana Faye</h2>
         <div class='author-title'>Data Scientist & Passionné par l'IA</div>
 
-        <div class='skills-container'>
-            <span class='skill-tag'>Python</span>
-            <span class='skill-tag'>Streamlit</span>
-            <span class='skill-tag'>Machine Learning</span>
-            <span class='skill-tag'>Computer Vision</span>
-            <span class='skill-tag'>Data Analysis</span>
-            <span class='skill-tag'>SQL</span>
-        </div>
+""", unsafe_allow_html=True)
 
-        <div class='author-quote'>
-            <span class='quote-mark'>"</span>
-            Transformer les données en décisions intelligentes, une ligne de code à la fois.
-            <span class='quote-mark'>"</span>
+# --- STATISTIQUES RAPIDES ---
+st.markdown("""
+    <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0;'>
+        <div class='stat-card'>
+            <div class='stat-number'>2</div>
+            <div class='stat-label'>Applications</div>
         </div>
-
-        <div class='social-links'>
-            <a href='#' class='social-link'><span class='social-icon'>📧</span><span class='social-text'>Email</span></a>
-            <a href='#' class='social-link'><span class='social-icon'>💼</span><span class='social-text'>LinkedIn</span></a>
-            <a href='#' class='social-link'><span class='social-icon'>🐙</span><span class='social-text'>GitHub</span></a>
-            <a href='#' class='social-link'><span class='social-icon'>🐦</span><span class='social-text'>Twitter</span></a>
+        <div class='stat-card'>
+            <div class='stat-number'>20+</div>
+            <div class='stat-label'>Fonctionnalités</div>
         </div>
-
-        <div class='author-footer'>
-            <span class='institution'>UCAD - FST</span>
-            <span class='separator'>•</span>
-            <span class='promo'>Promo 2026</span>
-            <span class='separator'>•</span>
-            <span class='promo'>Master 1 SI</span>
+        <div class='stat-card'>
+            <div class='stat-number'>10+</div>
+            <div class='stat-label'>Types de fichiers</div>
         </div>
     </div>
 """, unsafe_allow_html=True)
