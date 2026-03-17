@@ -986,59 +986,56 @@ with col_ana2:
             st.warning("⚠️ Veuillez vous connecter pour accéder aux outils d'analyse.")
 
 # --- SECTION 3 : DASHBOARDS ---
+# --- SECTION DASHBOARDS ---
 st.markdown("""
-    <div class="domain-header">
-        <span class="domain-icon">📈</span>
-        <span class="domain-title">Dashboards & Visualisations</span>
-        <span class="domain-badge domain-badge-dashboard">1 dashboard</span>
+    <div class='section-header'>
+        <div class='section-icon'>📈</div>
+        <h2 class='section-title'>Dashboards & Visualisations</h2>
+        <span class='section-count'>2 dashboards</span>
     </div>
 """, unsafe_allow_html=True)
 
-col_dash1, col_dash2 = st.columns([1, 1])
+col_dash1, col_dash2 = st.columns(2)
 
 with col_dash1:
     st.markdown("""
         <div class='dashboard-card'>
-            <div class='dashboard-icon'>📈</div>
-            <h2 class='dashboard-title'>Travaux Dashboard</h2>
-            <p class='app-description'>Tableau de bord interactif de Pilotage Médical. Analyse en temps réel des indicateurs de santé - République du Sénégal.</p>
-            <div class='dashboard-meta'>
+            <div class='dashboard-icon'>📊</div>
+            <h3 class='dashboard-title'>Travaux Dashboard</h3>
+            <p class='app-description'>Tableau de bord de pilotage médical avec indicateurs de santé en temps réel.</p>
+            <div class='dashboard-tags'>
                 <span class='dashboard-tag'>KPIs</span>
-                <span class='dashboard-tag'>Graphiques</span>
-                <span class='dashboard-tag'>Temps réel</span>
                 <span class='dashboard-tag'>Santé</span>
+                <span class='dashboard-tag'>Temps réel</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("📊 Ouvrir le Dashboard", key="dash_lab", use_container_width=True, help="Lancer Travaux Dashboard"):
+    if st.button("📊 Ouvrir Dashboard Médical", key="dash_med", use_container_width=True):
         if is_authorized():
             st.switch_page("pages/dashboard_v2.py")
         else:
-            st.warning("⚠️ Dashboard sécurisé. Identifiez-vous pour consulter les statistiques.")
+            st.warning("⚠️ Authentification requise")
+
 with col_dash2:
     st.markdown("""
         <div class='dashboard-card'>
             <div class='dashboard-icon'>🏠</div>
-            <h2 class='dashboard-title'>Dashboard Prix Immobilier • Dakar Immobilier</h2>
-            <p class='app-description'>Analyse intelligente du marché immobilier dakarois. Visualisation des prix par quartier, tendances du marché et prédictions IA (Modèle Champion R²=55%).</p>
-            <div class='dashboard-meta'>
+            <h3 class='dashboard-title'>Dakar Immobilier</h3>
+            <p class='app-description'>Analyse du marché immobilier dakarois avec carte interactive et tendances par quartier.</p>
+            <div class='dashboard-tags'>
                 <span class='dashboard-tag'>Immobilier</span>
-                <span class='dashboard-tag'>Carte interactive</span>
+                <span class='dashboard-tag'>Carte</span>
                 <span class='dashboard-tag'>Prix/m²</span>
-                <span class='dashboard-tag'>Machine Learning</span>
                 <span class='dashboard-tag'>Quartiers</span>
             </div>
-            <div style='margin-top: 0.75rem; font-size: 0.85rem; color: #10b981;'>
-                ⚡ Modèle Champion • R² = 55% • MAE = 256,845 FCFA
-            </div>
+            <div style='margin-top: 0.5rem; font-size:0.8rem; color:#10b981;'>Modèle Champion • R²=55% • MAE=256k</div>
         </div>
     """, unsafe_allow_html=True)
-    if st.button("🏠 Ouvrir Dashboar Immobilier Dakar", key="dash_immo", use_container_width=True, help="Lancer le dashboard immobilier"):
+    if st.button("🏠 Ouvrir Dashboard Immo", key="dash_immo", use_container_width=True):
         if is_authorized():
-            st.switch_page("pages/dashboard_prix_loyers.py")  # Adapte le nom du fichier
+            st.switch_page("pages/dashboard_prix_loyers.py")
         else:
-            st.warning("⚠️ Dashboard sécurisé. Identifiez-vous pour consulter les données immobilières.")
-
+            st.warning("⚠️ Authentification requise")
 # --- SECTION RÉALISATEUR ---
 st.markdown("""
     <div class='author-section'>
