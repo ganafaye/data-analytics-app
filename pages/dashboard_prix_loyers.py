@@ -10,6 +10,8 @@ import folium
 from streamlit_folium import folium_static
 import random
 import time
+from auth_utils import is_authorized, apply_custom_style
+
 apply_custom_style()
 # Vérifier l'autorisation dès le chargement
 if not is_authorized():
