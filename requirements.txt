@@ -10,6 +10,3 @@ joblib
 shap
 streamlit_folium
 folium
-statsmodels==0.14.1
-scipy==1.13.0
-patsy==0.5.6
