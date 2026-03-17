@@ -10,3 +10,4 @@ joblib
 shap
 streamlit_folium
 folium
+statsmodels==0.14.1
