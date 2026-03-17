@@ -835,7 +835,6 @@ with col_dash2:
                 <span class='dashboard-tag'>Prix/m²</span>
                 <span class='dashboard-tag'>Quartiers</span>
             </div>
-            <div style='margin-top: 0.5rem; font-size:0.8rem; color:#10b981;'>Modèle Champion • R²=55% • MAE=256k</div>
         </div>
     """, unsafe_allow_html=True)
     if st.button("🏠 Ouvrir Dashboard Immo", key="dash_immo", use_container_width=True):
