@@ -462,7 +462,58 @@ st.markdown("""
             }
         </style>
     """, unsafe_allow_html=True)
+with st.sidebar:
+    st.markdown('<div class="nav-title">🚀 Gana\'s HomeLab</div>', unsafe_allow_html=True)
 
+    # Liens de navigation manuels avec switch_page
+    if st.button("🏠 Retour à l'Accueil", use_container_width=True):
+        st.switch_page("home_app.py")
+
+# --- STYLE CSS PERSONNALISÉ ---
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+    .stApp { background-color: #f8fafc; }
+    .form-container, .results-container, .upload-container {
+        background: white; border-radius: 20px; padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); border: 1px solid #e2e8f0;
+    }
+    .section-header {
+        font-size: 1.1rem; font-weight: 600; color: #1e293b;
+        margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0;
+    }
+    .risk-badge { display: inline-block; padding: 0.3rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 600; }
+    .risk-high { background: #fee2e2; color: #dc2626; }
+    .risk-medium { background: #fef3c7; color: #d97706; }
+    .risk-low { background: #dcfce7; color: #16a34a; }
+    .metric-card { background: #f8fafc; border-radius: 12px; padding: 1rem; text-align: center; border: 1px solid #e2e8f0; }
+    .metric-value { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
+
+     /* 1. On garde le header mais on le rend invisible (transparent) */
+    header[data-testid="stHeader"] {
+        background-color: rgba(0,0,0,0) !important;
+        color: transparent !important;
+    }
+
+    /* 2. On masque spécifiquement les boutons de droite (Deploy, Menu, etc.) */
+    header[data-testid="stHeader"] div:first-child > div:nth-child(2) {
+        display: none !important;
+    }
+
+    /* 3. On s'assure que le bouton de la sidebar reste visible et blanc/couleur voulue */
+    button[data-testid="stBaseButton-headerNoPadding"] {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        color: white !important; /* Change en 'black' si ton fond est clair */
+    }
+
+    /* 4. On réduit la marge pour que le contenu remonte */
+    .main .block-container {
+        padding-top: 2rem !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 # ============================================
 # CHARGEMENT DES DONNÉES
 # ============================================
