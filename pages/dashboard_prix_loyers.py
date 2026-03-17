@@ -208,7 +208,7 @@ with st.sidebar:
     st.markdown("""
     <div style='text-align: center; margin-bottom: 2rem;'>
         <div style='font-size: 3rem;'>🏠</div>
-        <h3 style='color: #0F172A;'>Yaka Nangu</h3>
+        <h3 style='color: #0F172A;'>Dashboard Prix Immo</h3>
         <p style='color: #64748B; font-size: 0.9rem;'>Dashboard Immobilier</p>
     </div>
     """, unsafe_allow_html=True)
