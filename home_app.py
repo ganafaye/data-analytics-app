@@ -1015,6 +1015,29 @@ with col_dash1:
             st.switch_page("pages/dashboard_v2.py")
         else:
             st.warning("⚠️ Dashboard sécurisé. Identifiez-vous pour consulter les statistiques.")
+with col_dash2:
+    st.markdown("""
+        <div class='dashboard-card'>
+            <div class='dashboard-icon'>🏠</div>
+            <h2 class='dashboard-title'>Dashboard Prix Immobilier • Dakar Immobilier</h2>
+            <p class='app-description'>Analyse intelligente du marché immobilier dakarois. Visualisation des prix par quartier, tendances du marché et prédictions IA (Modèle Champion R²=55%).</p>
+            <div class='dashboard-meta'>
+                <span class='dashboard-tag'>Immobilier</span>
+                <span class='dashboard-tag'>Carte interactive</span>
+                <span class='dashboard-tag'>Prix/m²</span>
+                <span class='dashboard-tag'>Machine Learning</span>
+                <span class='dashboard-tag'>Quartiers</span>
+            </div>
+            <div style='margin-top: 0.75rem; font-size: 0.85rem; color: #10b981;'>
+                ⚡ Modèle Champion • R² = 55% • MAE = 256,845 FCFA
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    if st.button("🏠 Ouvrir Dashboar Immobilier Dakar", key="dash_immo", use_container_width=True, help="Lancer le dashboard immobilier"):
+        if is_authorized():
+            st.switch_page("pages/dashboard_prix_loyers.py")  # Adapte le nom du fichier
+        else:
+            st.warning("⚠️ Dashboard sécurisé. Identifiez-vous pour consulter les données immobilières.")
 
 # --- SECTION RÉALISATEUR ---
 st.markdown("""
