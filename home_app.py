@@ -681,7 +681,7 @@ st.markdown("""
 st.markdown("""
     <div class='stats-grid'>
         <div class='stat-card'>
-            <div class='stat-number'>4</div>
+            <div class='stat-number'>5</div>
             <div class='stat-label'>Applications IA</div>
         </div>
         <div class='stat-card'>
@@ -704,7 +704,7 @@ st.markdown("""
     <div class='section-header'>
         <div class='section-icon'>🧠</div>
         <h2 class='section-title'>Intelligence Artificielle</h2>
-        <span class='section-count'>2 applications</span>
+        <span class='section-count'>3 applications</span>
     </div>
 """, unsafe_allow_html=True)
 
@@ -728,6 +728,53 @@ with col_ia1:
             st.switch_page("pages/app_prediction_prix_loyer.py")
         else:
             st.warning("⚠️ Authentification requise")
+
+with col_ia1:
+    st.markdown("""
+        <div class='app-card'>
+            <div class='app-icon'>🏙️</div>
+            <h3 class='app-title'>Dakar Immo AI</h3>
+            <p class='app-description'>Prédiction intelligente des loyers à Dakar avec Random Forest et visualisations interactives.</p>
+            <div class='app-tags'>
+                <span class='app-tag primary'>Random Forest</span>
+                <span class='app-tag success'>Version 2.0</span>
+                <span class='app-tag'>Immobilier</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Vérification de l'autorisation avant d'afficher le lien
+    if is_authorized():
+        st.markdown(f"""
+            <a href="https://app-dkr-immo.onrender.com" target="_blank" style="text-decoration: none;">
+                <button style="
+                    background: linear-gradient(135deg, #4361ee, #7209b7);
+                    color: white;
+                    border: none;
+                    border-radius: 14px;
+                    padding: 0.6rem 1.2rem;
+                    font-weight: 500;
+                    font-size: 0.9rem;
+                    transition: all 0.3s;
+                    width: 100%;
+                    cursor: pointer;
+                    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+                ">
+                    🚀 Lancer Dakar Immo (Production)
+                </button>
+            </a>
+            <style>
+                /* Petit effet de survol pour le bouton HTML */
+                button:hover {{
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.5) !important;
+                }}
+            </style>
+        """, unsafe_allow_html=True)
+    else:
+        # Si l'utilisateur n'est pas loggé, on affiche un bouton grisé ou un message
+        st.button("🚀 Lancer Dakar Immo", key="rent_disabled", disabled=True, use_container_width=True)
+        st.warning("⚠️ Authentification requise")
 
 with col_ia2:
     st.markdown("""
